@@ -1,151 +1,201 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Table Filter</title>
-    <style>
-        /* 스타일 정의 */
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-
-        .filter-container {
-            margin-bottom: 20px;
-        }
-
-        .timetable-container {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr); /* 6열 (시간 + 5요일) */
-            grid-auto-rows: 40px; /* 각 셀의 높이 */
-            border: 1px solid #333;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .timetable-container div {
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 40px;
-            text-align: center;
-        }
-
-        .timetable-header {
-            background-color: #f0f0f0;
-            font-weight: bold;
-        }
-
-        .time-slot {
-            background-color: #fff;
-        }
-    </style>
+    <title>시간표 관리 시스템</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/images/og_image.png">
+    <meta property="og:url" content="/timetable">
+    <meta property="og:site_name" content="시간표 관리">
+    <meta property="og:title" content="시간표 관리 시스템">
+    <meta property="og:description" content="대학생들을 위한 시간표 관리 시스템">
+    <meta name="description" content="대학생들을 위한 시간표 관리 시스템">
+    <meta name="keywords" content="시간표, 수강신청, 강의평가, 학점계산기, 대학생, 대학교">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/container.table.css">
+    <link rel="icon" href="/favicon.ico">
+    <script src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/timetable.js"></script>
 </head>
 <body>
-<!-- 시간표 모양 -->
-<h1>Time Table</h1>
-<div class="timetable-container" id="timetable">
-    <!-- 시간표 헤더 (시간 및 요일) -->
-    <div class="timetable-header">Time</div>
-    <div class="timetable-header">Mon</div>
-    <div class="timetable-header">Tue</div>
-    <div class="timetable-header">Wed</div>
-    <div class="timetable-header">Thu</div>
-    <div class="timetable-header">Fri</div>
 
-    <!-- 시간표 시간대 -->
-    <!-- 반복적으로 시간대를 표시합니다 -->
-    <div class="time-slot">9:00</div>
-    <div></div><div></div><div></div><div></div><div></div>
-    <div class="time-slot">10:00</div>
-    <div></div><div></div><div></div><div></div><div></div>
-    <div class="time-slot">11:00</div>
-    <div></div><div></div><div></div><div></div><div></div>
-    <!-- 나머지 시간대 추가 -->
-</div>
+<nav>
+    <div class="wrap">
+        <div id="logo">
+            <a href="/"><img src="/images/logo.png" alt="로고"></a>
+            <p><span class="name">시간표 관리 시스템</span></p>
+        </div>
+        <ul id="menu">
+            <li><a href="/">게시판</a></li>
+            <li class="active"><a href="/timetable">시간표</a></li>
+            <li><a href="/lecture">강의실</a></li>
+            <li><a href="/calculator">학점계산기</a></li>
+        </ul>
+    </div>
+</nav>
 
-<!-- 필터 옵션 선택 -->
-<h2>Filter Time Table</h2>
-<div class="filter-container">
-    <form id="filterForm">
-        <label for="daysOfWeek">Days of Week (comma separated):</label>
-        <input type="text" id="daysOfWeek" name="daysOfWeek" placeholder="월,화"><br><br>
+<div id="container" class="timetable">
+    <aside>
+        <form class="select">
+            <select id="semesters">
+                <option>2024년 겨울학기</option>
+                <option>2024년 2학기</option>
+                <!-- 다른 학기 옵션들 추가 -->
+            </select>
+        </form>
+        <div class="title">
+            <h1 id="tableName">시간표 1</h1>
+            <ul class="info">
+                <li><span id="tableCredit">0</span> 학점</li>
+                <li><time id="tableUpdatedAt">09/17 17:31</time> 변경</li>
+            </ul>
+            <ol class="buttons threecols">
+                <li><a class="export">이미지</a></li>
+                <li><a class="setting">설정</a></li>
+            </ol>
+        </div>
+        <div class="menu">
+            <ol>
+                <li class="active"><a href="#" class="primary">시간표 1</a></li>
+                <li class="extension"><a class="create">새 시간표 만들기</a></li>
+            </ol>
+        </div>
+    </aside>
 
-        <label for="startTime">Start Time:</label>
-        <input type="number" id="startTime" name="startTime" step="0.5" placeholder="9.0"><br><br>
+    <div class="wrap">
+        <div class="tablehead">
+            <table>
+                <tr>
+                    <th></th>
+                    <td>월</td>
+                    <td>화</td>
+                    <td>수</td>
+                    <td>목</td>
+                    <td>금</td>
+                </tr>
+            </table>
+        </div>
 
-        <label for="endTime">End Time:</label>
-        <input type="number" id="endTime" name="endTime" step="0.5" placeholder="17.0"><br><br>
+        <div class="tablebody">
+            <table>
+                <tbody>
+                <!-- 교시 표시 -->
+                <tr>
+                    <th>1교시</th>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '월'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '화'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '수'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '목'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '금'}"
+                        th:text="${course.courseName}"></td>
+                </tr>
+                <tr>
+                    <th>2교시</th>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '월'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '화'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '수'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '목'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '금'}"
+                        th:text="${course.courseName}"></td>
+                </tr>
+                <tr>
+                    <th>3교시</th>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '월'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '화'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '수'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '목'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '금'}"
+                        th:text="${course.courseName}"></td>
+                </tr>
+                <tr>
+                    <th>4교시</th>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '월'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '화'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '수'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '목'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '금'}"
+                        th:text="${course.courseName}"></td>
+                </tr>
+                <tr>
+                    <th>5교시</th>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '월'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '화'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '수'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '목'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '금'}"
+                        th:text="${course.courseName}"></td>
+                </tr>
+                <tr>
+                    <th>6교시</th>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '월'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '화'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '수'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '목'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '금'}"
+                        th:text="${course.courseName}"></td>
+                </tr>
+                <tr>
+                    <th>7교시</th>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '월'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '화'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '수'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '목'}"
+                        th:text="${course.courseName}"></td>
+                    <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '금'}"
+                        th:text="${course.courseName}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        <label for="professorName">Professor Name:</label>
-        <input type="text" id="professorName" name="professorName"><br><br>
-
-        <label for="courseName">Course Name:</label>
-        <input type="text" id="courseName" name="courseName"><br><br>
-
-        <label for="departmentName">Department Name:</label>
-        <input type="text" id="departmentName" name="departmentName"><br><br>
-
-        <button type="button" onclick="fetchFilteredCombinations()">Search</button>
+    <!-- 시간표 설정 모달 -->
+    <form id="tableSetting" class="modal">
+        <a class="close"></a>
+        <h3>시간표 설정</h3>
+        <label>이름</label>
+        <input type="text" name="name" value="" maxlength="40">
+        <input type="submit" value="설정 저장" class="button">
     </form>
 </div>
 
-<h2>Filtered Results</h2>
-<div id="results"></div>
+<footer id="bottom">
+    <div class="wrap">
+        <address>
+            <strong>시간표 관리 시스템</strong>
+            <span>© 2024 All Rights Reserved</span>
+        </address>
+    </div>
+</footer>
 
-<script>
-    function fetchFilteredCombinations() {
-        // 입력한 값 가져오기
-        const daysOfWeek = document.getElementById('daysOfWeek').value;
-        const startTime = document.getElementById('startTime').value;
-        const endTime = document.getElementById('endTime').value;
-        const professorName = document.getElementById('professorName').value;
-        const courseName = document.getElementById('courseName').value;
-        const departmentName = document.getElementById('departmentName').value;
-
-        // Fetch API를 사용하여 백엔드 API 호출
-        const url = `/courses/filtered?daysOfWeek=${daysOfWeek}&startTime=${startTime}&endTime=${endTime}&professorName=${professorName}&courseName=${courseName}&departmentName=${departmentName}`;
-
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                // 결과를 표시할 HTML을 만듭니다.
-                const resultsDiv = document.getElementById('results');
-                resultsDiv.innerHTML = '';  // 기존 결과 지우기
-
-                data.forEach(combination => {
-                    const div = document.createElement('div');
-                    div.innerHTML = `<strong>Combination:</strong> ${combination.map(course => course.courseName).join(', ')}`;
-                    resultsDiv.appendChild(div);
-                });
-
-                // 시간표 업데이트
-                updateTimetable(data);
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }
-
-    function updateTimetable(data) {
-        const timetable = document.getElementById('timetable');
-        // 모든 셀 초기화
-        timetable.querySelectorAll('div:not(.timetable-header):not(.time-slot)').forEach(cell => {
-            cell.innerHTML = '';
-        });
-
-        // 수업 데이터를 시간표에 표시
-        data.forEach(combination => {
-            combination.forEach(course => {
-                const dayIndex = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(course.dayOfWeek);
-                const timeSlot = course.startPeriod; // 수업 시작 시간
-                const cellIndex = dayIndex + timeSlot * 6; // 셀 위치 계산
-
-                // 해당 셀에 수업 정보를 입력
-                timetable.children[cellIndex].innerHTML = course.courseName + "<br>" + course.professorName;
-            });
-        });
-    }
-</script>
+<script src="/js/timetable.js"></script>
 </body>
 </html>

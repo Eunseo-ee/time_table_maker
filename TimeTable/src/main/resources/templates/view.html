@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시간표 관리 시스템</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/timetable.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <a href="/"><img src="/images/logo.png" alt="로고"></a>
+        <h1>시간표 관리 시스템</h1>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="/">홈</a></li>
+            <li><a href="/timetable">시간표</a></li>
+            <li><a href="/lecture">강의실</a></li>
+            <li><a href="/calculator">학점계산기</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <h2>나의 시간표</h2>
+    <table class="timetable">
+        <thead>
+        <tr>
+            <th>시간</th>
+            <th>월</th>
+            <th>화</th>
+            <th>수</th>
+            <th>목</th>
+            <th>금</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="i : ${#numbers.sequence(1, 7)}">
+            <th th:text="'교시 ' + i"></th>
+            <td>
+                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '월' && ${course.startPeriod} == i"
+                      th:text="${course.courseName}"></span>
+            </td>
+            <td>
+                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '화' && ${course.startPeriod} == i"
+                      th:text="${course.courseName}"></span>
+            </td>
+            <td>
+                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '수' && ${course.startPeriod} == i"
+                      th:text="${course.courseName}"></span>
+            </td>
+            <td>
+                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '목' && ${course.startPeriod} == i"
+                      th:text="${course.courseName}"></span>
+            </td>
+            <td>
+                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '금' && ${course.startPeriod} == i"
+                      th:text="${course.courseName}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<footer>
+    <p>© 2024 시간표 관리 시스템. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-package com.example.Time_Table;
+package com.example.TimeTable;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
