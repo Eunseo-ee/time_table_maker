@@ -1,7 +1,9 @@
-package com.example.TimeTable.repository;
+package com.example.timetable.repository;
 
-import com.example.TimeTable.model.Courses;
+import com.example.timetable.model.Courses;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface CourseRepository extends JpaRepository<Courses, Long> {
 }

@@ -1,9 +1,11 @@
-package com.example.TimeTable.model;
+package com.example.timetable.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
+@Setter
 @Getter
 @Entity
 @Table(name = "departments")
@@ -25,15 +27,4 @@ public class Departments {
         this.code = code;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 }

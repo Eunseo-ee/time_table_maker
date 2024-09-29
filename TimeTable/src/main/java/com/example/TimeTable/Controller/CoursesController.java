@@ -1,7 +1,7 @@
-package com.example.TimeTable.Controller;
+package com.example.timetable.controller;
 
-import com.example.TimeTable.model.Courses;
-import com.example.TimeTable.Service.CourseService;
+import com.example.timetable.model.Courses;
+import com.example.timetable.Service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

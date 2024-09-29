@@ -1,74 +1,100 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>시간표 관리 시스템</title>
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/timetable.css">
+  <title>시간표 관리 시스템</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/common.css">
 </head>
 <body>
 
-<header>
-    <div class="logo">
-        <a href="/"><img src="/images/logo.png" alt="로고"></a>
-        <h1>시간표 관리 시스템</h1>
+<nav>
+  <div class="wrap">
+    <div id="logo">
+      <a href="/"><img src="/images/logo.png" alt="로고"></a>
+      <p><span class="name">시간표 관리 시스템</span></p>
     </div>
-    <nav>
-        <ul>
-            <li><a href="/">홈</a></li>
-            <li><a href="/timetable">시간표</a></li>
-            <li><a href="/lecture">강의실</a></li>
-            <li><a href="/calculator">학점계산기</a></li>
-        </ul>
-    </nav>
-</header>
+    <ul id="menu">
+      <li><a href="/">게시판</a></li>
+      <li class="active"><a href="/timetable">시간표</a></li>
+      <li><a href="/lecture">강의실</a></li>
+      <li><a href="/calculator">학점계산기</a></li>
+    </ul>
+  </div>
+</nav>
 
-<main class="container">
-    <h2>나의 시간표</h2>
-    <table class="timetable">
-        <thead>
+<div id="container" class="timetable">
+  <aside>
+    <form class="select">
+      <select id="semesters">
+        <option>2024년 겨울학기</option>
+        <option>2024년 2학기</option>
+        <!-- 다른 학기 옵션들 추가 -->
+      </select>
+    </form>
+    <div class="title">
+      <h1 id="tableName">시간표 1</h1>
+      <ul class="info">
+        <li><span id="tableCredit">0</span> 학점</li>
+        <li><time id="tableUpdatedAt">09/17 17:31</time> 변경</li>
+      </ul>
+    </div>
+  </aside>
+
+  <div class="wrap">
+    <div class="tablehead">
+      <table>
         <tr>
-            <th>시간</th>
-            <th>월</th>
-            <th>화</th>
-            <th>수</th>
-            <th>목</th>
-            <th>금</th>
+          <th></th>
+          <td>월</td>
+          <td>화</td>
+          <td>수</td>
+          <td>목</td>
+          <td>금</td>
         </tr>
-        </thead>
+      </table>
+    </div>
+
+    <div class="tablebody">
+      <table>
         <tbody>
-        <tr th:each="i : ${#numbers.sequence(1, 7)}">
-            <th th:text="'교시 ' + i"></th>
-            <td>
-                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '월' && ${course.startPeriod} == i"
-                      th:text="${course.courseName}"></span>
-            </td>
-            <td>
-                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '화' && ${course.startPeriod} == i"
-                      th:text="${course.courseName}"></span>
-            </td>
-            <td>
-                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '수' && ${course.startPeriod} == i"
-                      th:text="${course.courseName}"></span>
-            </td>
-            <td>
-                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '목' && ${course.startPeriod} == i"
-                      th:text="${course.courseName}"></span>
-            </td>
-            <td>
-                <span th:each="course : ${courses}" th:if="${course.dayOfWeek} == '금' && ${course.startPeriod} == i"
-                      th:text="${course.courseName}"></span>
-            </td>
+        <tr>
+          <th></th>
+          <th>월</th>
+          <th>화</th>
+          <th>수</th>
+          <th>목</th>
+          <th>금</th>
+        </tr>
+        <tr th:each="hour : ${#numbers.sequence(1, 7)}">  <!-- 1교시부터 7교시까지 반복 -->
+          <th th:text="${hour} + '교시'"></th>  <!-- 1교시, 2교시 등 표시 -->
+          <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '월'} and ${course.startPeriod == hour}"
+              th:text="${course.courseName}"></td>
+          <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '화'} and ${course.startPeriod == hour}"
+              th:text="${course.courseName}"></td>
+          <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '수'} and ${course.startPeriod == hour}"
+              th:text="${course.courseName}"></td>
+          <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '목'} and ${course.startPeriod == hour}"
+              th:text="${course.courseName}"></td>
+          <td th:each="course : ${courses}" th:if="${course.dayOfWeek == '금'} and ${course.startPeriod == hour}"
+              th:text="${course.courseName}"></td>
         </tr>
         </tbody>
-    </table>
-</main>
+      </table>
+    </div>
+  </div>
+</div>
 
-<footer>
-    <p>© 2024 시간표 관리 시스템. All Rights Reserved.</p>
+<footer id="bottom">
+  <div class="wrap">
+    <address>
+      <strong>시간표 관리 시스템</strong>
+      <span>© 2024 All Rights Reserved</span>
+    </address>
+  </div>
 </footer>
 
+<script src="/js/timetable.js"></script>
 </body>
 </html>

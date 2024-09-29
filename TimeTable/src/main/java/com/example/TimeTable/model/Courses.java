@@ -1,31 +1,52 @@
-package com.example.TimeTable.model;
+package com.example.timetable.model;
 
-import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "courses")
 public class Courses {
 
+    @Setter
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "department_id")
     private Integer department_id;
+    @Setter
+    @Getter
     @Column(name = "courseCode")
     private Integer courseCode;
+    @Setter
+    @Getter
     @Column(name = "courseName")
     private String courseName;
+    @Setter
+    @Getter
     @Column(name = "courseNumber")
     private Integer courseNumber;
+    @Getter
+    @Setter
     @Column(name = "division")
     private String division;
+    @Getter
+    @Setter
     @Column(name = "credit")
     private Integer credit;
+    @Getter
+    @Setter
     @Column(name = "capacity")
     private Integer capacity;
+    @Getter
+    @Setter
     @Column(name = "professorName")
     private String professorName;
+    @Setter
+    @Getter
     @Column(name = "classroom")
     private String classroom;
     @Column(name = "day_of_week")
@@ -56,74 +77,11 @@ public class Courses {
         this.end_period = end_period;
     }
 
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Integer getDepartmentId() {
         return department_id;
     }
     public void setDepartmentId(Integer departmentId) {
         this.department_id = departmentId;
-    }
-
-    public Integer getCourseCode() {
-        return courseCode;
-    }
-    public void setCourseCode(Integer courseCode) {
-        this.courseCode = courseCode;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
-    public Integer getCourseNumber() {
-        return courseNumber;
-    }
-    public void setCourseNumber(Integer courseNumber) {
-        this.courseNumber = courseNumber;
-    }
-
-    public String getDivision() {
-        return division;
-    }
-    public void setDivision(String division) {
-        this.division = division;
-    }
-
-    public Integer getCredit() {
-        return credit;
-    }
-    public void setCredit(Integer credit) {
-        this.credit = credit;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
-    public String getProfessorName() {
-        return professorName;
-    }
-    public void setProfessorName(String professorName) {
-        this.professorName = professorName;
-    }
-
-    public String getClassroom() {
-        return classroom;
-    }
-    public void setClassroom(String classroom) {
-        this.classroom = classroom;
     }
 
     public String getDayOfWeek() {

@@ -1,9 +1,9 @@
-package com.example.TimeTable.Service;
+package com.example.timetable.Service;
 
-import com.example.TimeTable.model.Courses;
-import com.example.TimeTable.repository.CourseRepository;
-import com.example.TimeTable.repository.DepartmentRepository;
-import com.example.TimeTable.model.Departments;
+import com.example.timetable.model.Courses;
+import com.example.timetable.repository.CourseRepository;
+import com.example.timetable.repository.DepartmentRepository;
+import com.example.timetable.model.Departments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
