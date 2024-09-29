@@ -1,0 +1,102 @@
+* {
+    box-sizing: border-box; //박스 크기 계산을 쉽게 하기 위해서 border-box를 적용했다.
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+header .container {
+    width: 1180px;
+    height: 80px;
+    margin: auto;
+    border-bottom: solid 1px grey; //container 태그의 크기를 지정했다. 가운데 맞춤을 위해 margin auto
+}
+
+.container .logo {
+    height: 80px;
+    width: 150px;
+    float:left;
+    margin-left : 25px;
+}
+
+.container .logo img {
+    height: 70px;
+    margin-top: 5px;
+    object-fit: cover;
+    float:left;
+}
+
+.container .logo p {
+    width: 80px;
+    height:80px;
+    margin:0px;
+    float:left;
+}
+
+.container .logo span:nth-child(1) {
+    color:#c62917;
+    margin:auto;
+    display: block;
+    font-size:8px;
+    margin-top:15px;
+    margin-left:10px;
+}
+
+.container .logo span:nth-child(2) {
+    font-size:25px;
+    margin:auto;
+}
+
+
+.container .menu {
+    height: 80px;
+    width: 600px;
+    float:left;
+    margin-left: 170px;
+}
+
+.container .menu ul {
+    margin-top: 30px;
+    display: block;
+    list-style-type: none;
+}
+
+.container .menu li{
+    float:left;
+    margin-left: 15px;
+
+}
+
+.container .menu li a{
+    text-decoration: none;
+    color:black;
+    font-weight:bold;
+}
+
+
+.container .menu li a:hover{
+    text-decoration: none;
+    color: #c62917;
+    font-weight:bold;
+}
+
+
+
+.container .icon {
+    height: 50px;
+    width: 100px;
+    float:right;
+    margin-right:40px;
+    margin-top:28px;
+}
+
+
+.container .icon img {
+    height: 30px;
+    float:right;
+    display:block;
+    margin-right:15px;
+
+}
