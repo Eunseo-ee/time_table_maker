@@ -5,15 +5,29 @@ import com.example.timetable.Service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
 @Controller
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:63342"})
+// 여기에 CORS 허용 도메인을 명시
 public class TimetableController {
 
     @Autowired
     private CourseService courseService;
+    @GetMapping("/")  // 루트 경로 요청을 처리
+    public String home() {
+        return "view";  // templates 폴더 안에 있는 index.html 파일을 반환
+    }
+    @GetMapping("/view")
+    public String viewCourses(Model model) {
+        List<Courses> courses = courseService.getAllCourses();
+        model.addAttribute("courses", courses);
+        return "view"; // view.html로 렌더링
+    }
+
 
     @GetMapping("/timetable")
     public String showTimeTable(Model model) {
@@ -24,6 +38,6 @@ public class TimetableController {
         model.addAttribute("courses", courses);
 
         // templates/timetable.html 파일을 렌더링
-        return "timetable";
+        return "view";
     }
 }

@@ -9,27 +9,32 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/courses")
+//@RequestMapping("/api/courses")
+
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:63342"})
+
+//@CrossOrigin(origins = {"http://localhost:8080", "http://anotherdomain.com"})
+
 public class CoursesController {
 
     @Autowired
     private CourseService courseService;
 
     // 모든 수업 정보 가져오기 (Thymeleaf 템플릿 사용)
-    @GetMapping("/all")
+    @GetMapping("/api/courses/all")
     public String getAllCourses(Model model) {
         List<Courses> courses = courseService.getAllCourses();
         model.addAttribute("courses", courses); // courses라는 이름으로 데이터를 전달
-        return "courseList"; // templates/courseList.html로 렌더링
+        return "view"; // templates/courseList.html로 렌더링
     }
 
-    @PostMapping("/add")
+    @PostMapping("/api/courses/add")
     public Courses createCourse(@RequestBody Courses course) {
         return courseService.saveCourse(course);
     }
 
     // 사용자 조건에 맞는 시간표 조합을 찾는 API 엔드포인트
-    @GetMapping("/filtered")
+    @GetMapping("/api/courses/filtered")
     public String getFilteredCombinations(
             @RequestParam(required = false) List<String> daysOfWeek, // 예: ["월", "화"]
             @RequestParam(required = false) Float startTime, // 예: 9.0
@@ -47,6 +52,13 @@ public class CoursesController {
         );
 
         model.addAttribute("filteredCombinations", filteredCombinations); // Thymeleaf 템플릿에 데이터 전달
-        return "timetable"; // templates/timetable.html로 렌더링
+        return "view"; // templates/timetable.html로 렌더링
     }
+    @GetMapping("/api/courses/list")
+    public List<Courses> getCourses() {
+        // 모든 강의 데이터를 반환
+        return courseService.getAllCourses();
+    }
+
+
 }
