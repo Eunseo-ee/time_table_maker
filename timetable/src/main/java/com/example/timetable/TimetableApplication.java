@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
 @EntityScan("com.example.timetable.model")
-@ComponentScan(basePackages = { "com.example.timetable.model" })
+@ComponentScan(basePackages = { "com.example.timetable" })
 @EnableJpaRepositories("com.example.timetable.repository")
 public class TimetableApplication {
 

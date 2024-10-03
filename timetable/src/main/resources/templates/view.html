@@ -137,11 +137,9 @@
         <td>수</td>
         <td>목</td>
         <td>금</td>
-        <td></td>
       </tr>
       <tr>
         <td>1교시</td>
-        <td></td>
         <td></td>
         <td></td>
         <td></td>
@@ -155,11 +153,9 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
       </tr>
       <tr>
         <td>3교시</td>
-        <td></td>
         <td></td>
         <td></td>
         <td></td>
@@ -173,11 +169,9 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
       </tr>
       <tr>
         <td>5교시</td>
-        <td></td>
         <td></td>
         <td></td>
         <td></td>
@@ -191,7 +185,6 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
       </tr>
       <tr>
         <td>7교시</td>
@@ -200,60 +193,42 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
       </tr>
-
     </table>
-    <button id="toggleListButton">강의 목록 열기</button>
-    <div class="list">
-      <!-- 강의 목록을 보여주는 부분 -->
-      <div class="head">
-        <!-- 태그 정보가 있는 부분 -->
-        <div class="tag">
-          <div>학년</div>
-          <div>이수구분</div>
-          <div>과목번호-분반</div>
-          <div>과목명</div>
-          <div>담당교수</div>
-          <div>학점</div>
-          <div>시간</div>
-          <div>강의실/강의시간</div>
-          <div>강의평</div>
-          <div>담은 인원</div>
-        </div>
-        <div class="lhead">
-          <div>학년</div>
-          <div>이수구분</div>
-          <div>과목번호-분반</div>
-          <div>과목명</div>
-          <div>담당교수</div>
-          <div>학점</div>
-          <div>시간</div>
-          <div>강의실/강의시간</div>
-          <div>강의평</div>
-          <div>담은 인원</div>
-        </div>
-      </div>
+  </div>
 
-      <div class="body">
-
-        <!-- 강의 데이터를 반복적으로 출력 -->
-        <ul id="mainList">
-          <li th:each="course : ${courses}">
-            <div th:text="${courses.departmen_id}">학년</div>
-            <div th:text="${courses.division}">이수구분</div>
-            <div th:text="${courses.courseCode}">과목번호-분반</div>
-            <div th:text="${courses.courseName}">과목명</div>
-            <div th:text="${courses.professorName}">담당교수</div>
-            <div th:text="${courses.credit}">학점</div>
-            <div th:text="${courses.start_period} + '-' + ${courses.end_period}">시간</div>
-            <div th:text="${courses.classroom}">강의실/강의시간</div>
-            <div th:text="${courses.capacity}">담은 인원</div>
-          </li>
-        </ul>
+  <button id="toggleListButton">강의 목록 열기</button>
+  <div class="list">
+    <!-- 강의 목록을 보여주는 부분 -->
+    <div class="head">
+      <!-- 태그 정보가 있는 부분 -->
+      <div class="tag">
+        <div>과</div>
+        <div>과목명</div>
+        <div>이수구분</div>
+        <div>담당교수</div>
+        <div>학점</div>
+        <div>시간</div>
+        <div>강의실</div>
+        <div>수강정원</div>
       </div>
     </div>
 
+    <div class="body">
+      <!-- 강의 데이터를 반복적으로 출력 -->
+      <ul id="mainList">
+        <li th:each="course : ${courses}">
+          <div th:text="${course.department_id}">과</div>
+          <div th:text="${course.courseName}">과목명</div>
+          <div th:text="${course.division}">이수구분</div>
+          <div th:text="${course.professorName}">담당교수</div>
+          <div th:text="${course.credit}">학점</div>
+          <div th:text="${course.dayOfWeek} + ' ' +${course.start_period} + '-' + ${courses.end_period}">시간</div>
+          <div th:text="${course.classroom}">강의실</div>
+          <div th:text="${course.capacity}">수강정원</div>
+        </li>
+      </ul>
+    </div>
   </div>
 </main>
 <script>
@@ -280,7 +255,7 @@
   // 서버에서 데이터를 가져와서 리스트를 만드는 함수
   function loadList() {
     // Fetch API를 사용해 서버에서 강의 데이터를 가져옴
-    fetch('/api/courses/list')
+    fetch('http://localhost:8080/courses/list')
             .then(response => {
               if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -304,10 +279,22 @@
       const list = document.createElement('li');
       const course = data[j]; // 현재 강의 데이터
 
-      // 강의의 각 속성을 div에 넣어 리스트 아이템을 만듦
-      Object.keys(course).forEach((key, i) => {
+      // 각 속성에 맞게 div 요소를 생성
+      const attributes = [
+        course.department_id,     // 과
+        course.courseName,       // 과목명
+        course.division,         // 이수구분
+        course.professorName,    // 담당교수
+        course.credit,           // 학점
+        `${course.dayOfWeek} ${course.start_period}-${course.end_period}`,  // 시간
+        course.classroom,        // 강의실
+        course.capacity          // 수강정원
+      ];
+
+      // 각 속성을 flexBox에 맞게 div 요소로 변환
+      attributes.forEach((attribute, i) => {
         const div = document.createElement('div');
-        div.innerHTML = course[key]; // 속성 값을 div에 설정
+        div.innerHTML = attribute ? attribute : ''; // 값이 있으면 출력, 없으면 빈 문자열
         div.style.flex = flexBox[i]; // flex 스타일 적용
         list.appendChild(div); // 리스트에 추가
       });

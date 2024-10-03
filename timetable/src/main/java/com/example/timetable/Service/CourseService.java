@@ -6,6 +6,7 @@ import com.example.timetable.repository.DepartmentRepository;
 import com.example.timetable.model.Departments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +20,8 @@ public class CourseService {
     @Autowired
     private DepartmentRepository departmentRepository; // DepartmentRepository 주입
 
-    // 모든 수업을 불러오는 메서드
     public List<Courses> getAllCourses() {
-        return courseRepository.findAll(); // static 제거 후 인스턴스를 통해 호출
+        return courseRepository.findAll();
     }
 
     // 새로운 수업을 저장하는 메서드
@@ -30,8 +30,8 @@ public class CourseService {
     }
 
     // 필터링된 조합 찾기 메서드
-    public List<List<Courses>> findFilteredCombinations(List<String> daysOfWeek, Float startPeriod, Float endPeriod, String professorName, String courseName, String division, int credit, String departmentName) {
-        // 1. 과 이름을 통해 department_id를 조회
+    public List<List<Courses>> findFilteredCombinations(
+            List<String> daysOfWeek, Float startTime, Float endTime, String professorName, String courseName, String division, int credit, String departmentName) {        // 1. 과 이름을 통해 department_id를 조회
         Long department_id = null;
         if (departmentName != null) {
             Departments department = departmentRepository.findByName(departmentName); // repository 인스턴스 사용
@@ -58,7 +58,7 @@ public class CourseService {
             }
 
             // 4. 조합이 사용자의 조건에 맞는지 확인
-            if (isValidCombination(combination, daysOfWeek, startPeriod, endPeriod, professorName, courseName, division, credit, departmentName)) {
+            if (isValidCombination(combination, daysOfWeek, startTime, endTime, professorName, courseName, division, credit, departmentName)) {
                 validCombinations.add(combination);
             }
         }

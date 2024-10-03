@@ -7,52 +7,47 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "courses")
+@Setter
+@Getter
 public class Courses {
 
-    @Setter
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "department_id")
     private Integer department_id;
-    @Setter
-    @Getter
+
     @Column(name = "courseCode")
     private Integer courseCode;
-    @Setter
-    @Getter
+
     @Column(name = "courseName")
     private String courseName;
-    @Setter
-    @Getter
+
     @Column(name = "courseNumber")
     private Integer courseNumber;
-    @Getter
-    @Setter
+
     @Column(name = "division")
     private String division;
-    @Getter
-    @Setter
+
     @Column(name = "credit")
     private Integer credit;
-    @Getter
-    @Setter
+
     @Column(name = "capacity")
     private Integer capacity;
-    @Getter
-    @Setter
+
     @Column(name = "professorName")
     private String professorName;
-    @Setter
-    @Getter
+
     @Column(name = "classroom")
     private String classroom;
+
     @Column(name = "day_of_week")
-    private String day_of_week;
+    private String dayOfWeek;
+
     @Column(name = "start_period")
     private Float start_period;
+
     @Column(name = "end_period")
     private Float end_period;
 
@@ -62,7 +57,7 @@ public class Courses {
     // 생성자, Getter 및 Setter 메소드
     public Courses(int department_id, Integer courseCode, String courseName, Integer courseNumber,
                    String division, Integer credit, Integer capacity, String professorName, String classroom,
-                   String day_of_week,Float start_period,Float end_period) {
+                   String dayOfWeek,Float start_period,Float end_period) {
         this.department_id = department_id;
         this.courseCode = courseCode;
         this.courseName = courseName;
@@ -72,7 +67,7 @@ public class Courses {
         this.capacity = capacity;
         this.professorName = professorName;
         this.classroom = classroom;
-        this.day_of_week = day_of_week;
+        this.dayOfWeek = dayOfWeek;
         this.start_period = start_period;
         this.end_period = end_period;
     }
@@ -85,10 +80,10 @@ public class Courses {
     }
 
     public String getDayOfWeek() {
-        return day_of_week;
+        return dayOfWeek;
     }
     public void setDayOfWeek(String day_of_week) {
-        this.day_of_week = day_of_week;
+        this.dayOfWeek = dayOfWeek;
     }
 
     public float getStartPeriod() {
