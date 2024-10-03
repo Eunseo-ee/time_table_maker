@@ -47,16 +47,16 @@ public class CoursesController {
             @RequestParam(required = false) List<String> daysOfWeek, // 예: ["월", "화"]
             @RequestParam(required = false) Float startTime, // 예: 9.0
             @RequestParam(required = false) Float endTime, // 예: 17.0
-            @RequestParam(required = false) String professorName, // 예: "김교수"
-            @RequestParam(required = false) String courseName, // 예: "프로그래밍"
             @RequestParam(required = false) String division, // 예: "전선"
-            @RequestParam(required = false) int credit, // 예: "3"
+            @RequestParam(required = false) Integer credit, // 예: "3"
             @RequestParam(required = false) String departmentName, // 과 이름 추가
+            @RequestParam(required = false) String searchOption,
+            @RequestParam(required = false) String searchQuery,
             Model model // Thymeleaf 템플릿에 데이터를 전달하기 위한 Model 객체
     ) {
         // 필터링된 조합을 찾기 위해 서비스 메서드를 호출
         return courseService.findFilteredCombinations(
-                daysOfWeek, startTime, endTime, professorName, courseName, division, credit, departmentName);
+                daysOfWeek, startTime, endTime, searchOption, searchQuery, division, credit, departmentName);
 
     }
 }

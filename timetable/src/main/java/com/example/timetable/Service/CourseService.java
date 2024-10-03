@@ -29,6 +29,16 @@ public class CourseService {
         return courseRepository.save(course); // static 제거 후 인스턴스를 통해 호출
     }
 
+    // 필터링된 강의 목록을 가져오는 메소드
+    public List<Courses> getFilteredCourses(String department, String division, Integer credit, String searchOption, String searchQuery) {
+        // 조건에 따른 필터링 로직 추가
+        if (searchOption != null && searchQuery != null && !searchQuery.isEmpty()) {
+            return courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
+        } else {
+            return courseRepository.findAll();  // 기본적으로 모든 강의를 반환
+        }
+    }
+
     // 필터링된 조합 찾기 메서드
     public List<List<Courses>> findFilteredCombinations(
             List<String> daysOfWeek, Float startTime, Float endTime, String professorName, String courseName, String division, int credit, String departmentName) {        // 1. 과 이름을 통해 department_id를 조회
@@ -86,5 +96,21 @@ public class CourseService {
             if (division != null && !course.getDivision().equals(division)) return false;
         }
         return true;
+    }
+
+    public void removeWhitespaceInClassroom() {
+        List<Courses> courses = courseRepository.findAll();
+
+        for (Courses course : courses) {
+            String classroom = course.getClassroom();
+            if (classroom != null && !classroom.isEmpty()) {
+                // 공백을 기준으로 첫 번째 부분만 가져옴
+                String updatedClassroom = classroom.split(" ")[0];
+                course.setClassroom(updatedClassroom);  // 공백 이후 제거한 값 설정
+            }
+        }
+
+        // 변경된 데이터를 저장
+        courseRepository.saveAll(courses);
     }
 }

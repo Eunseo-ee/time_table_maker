@@ -48,63 +48,9 @@
     <aside>
       <form class="select">
         <select id="semesters"
-        ><option>2023년 겨울학기</option
-        ><option>2023년 2학기</option
-        ><option>2023년 여름학기</option
-        ><option>2023년 1학기</option
-        ><option>2022년 겨울학기</option
-        ><option>2022년 2학기</option
-        ><option>2022년 여름학기</option
-        ><option>2022년 1학기</option
-        ><option>2021년 겨울학기</option
-        ><option>2021년 2학기</option
-        ><option>2021년 여름학기</option
-        ><option>2021년 1학기</option
-        ><option>2020년 겨울학기</option
-        ><option>2020년 2학기</option
-        ><option>2020년 여름학기</option
-        ><option>2020년 1학기</option
-        ><option>2019년 겨울학기</option
-        ><option>2019년 2학기</option
-        ><option>2019년 여름학기</option
-        ><option>2019년 1학기</option
-        ><option>2018년 겨울학기</option
-        ><option>2018년 2학기</option
-        ><option>2018년 여름학기</option
-        ><option>2018년 1학기</option
-        ><option>2017년 겨울학기</option
-        ><option>2017년 2학기</option
-        ><option>2017년 여름학기</option
-        ><option>2017년 1학기</option
-        ><option>2016년 겨울학기</option
-        ><option>2016년 2학기</option
-        ><option>2016년 여름학기</option
-        ><option>2016년 1학기</option
-        ><option>2015년 겨울학기</option
-        ><option>2015년 2학기</option
-        ><option>2015년 여름학기</option
-        ><option>2015년 1학기</option
-        ><option>2014년 겨울학기</option
-        ><option>2014년 2학기</option
-        ><option>2014년 여름학기</option
-        ><option>2014년 1학기</option
-        ><option>2013년 겨울학기</option
-        ><option>2013년 2학기</option
-        ><option>2013년 여름학기</option
-        ><option>2013년 1학기</option
-        ><option>2012년 겨울학기</option
-        ><option>2012년 2학기</option
-        ><option>2012년 여름학기</option
-        ><option>2012년 1학기</option
-        ><option>2011년 겨울학기</option
-        ><option>2011년 2학기</option
-        ><option>2011년 여름학기</option
-        ><option>2011년 1학기</option
-        ><option>2010년 겨울학기</option
-        ><option>2010년 2학기</option
-        ><option>2010년 여름학기</option
-        ><option>2010년 1학기</option></select
-        >
+        ><option>2024년 겨울학기</option
+        ><option>2024년 2학기</option>
+        </select>
       </form>
       <div class="current"> //현재 시간표에 대한 부분
         <p>시간표 1</p>
@@ -201,6 +147,99 @@
   <div class="list">
     <!-- 강의 목록을 보여주는 부분 -->
     <div class="head">
+      <div class="search-options">
+        <label for="department">과 선택:</label>
+        <select id="department">
+          <option value="">전체</option>
+          <option value="기계시스템디자인공학과">기계시스템디자인공학과</option>
+          <option value="기계자동차공학과">기계자동차공학과</option>
+          <option value="안전공학과">안전공학과</option>
+          <option value="신소재공학과">신소재공학과</option>
+          <option value="건설시스템공학과">건설시스템공학과</option>
+          <option value="건축공학전공">건축공학전공</option>
+          <option value="건축학전공">건축학전공</option>
+          <option value="반도체융합공학전공">반도체융합공학전공</option>
+          <option value="전기정보공학과">전기정보공학과</option>
+          <option value="컴퓨터공학과">컴퓨터공학과</option>
+          <option value="스마트ICT융합공학과">스마트ICT융합공학과</option>
+          <option value="전자공학과">전자공학과</option>
+          <option value="IT융합소프트웨어전공">IT융합소프트웨어전공</option>
+          <option value="화공생명공학과">화공생명공학과</option>
+          <option value="환경공학과">환경공학과</option>
+          <option value="식품생명공학과">식품생명공학과</option>
+          <option value="정밀화학과">정밀화학과</option>
+          <option value="스포츠과학과">스포츠과학과</option>
+          <option value="안경광학과">안경광학과</option>
+          <option value="조형대학">조형대학</option>
+          <option value="시각디자인전공">시각디자인전공</option>
+          <option value="산업디자인전공">산업디자인전공</option>
+          <option value="도예학과">도예학과</option>
+          <option value="금속공예디자인학과">금속공예디자인학과</option>
+          <option value="조형예술학과">조형예술학과</option>
+          <option value="영어영문학과">영어영문학과</option>
+          <option value="행정학과">행정학과</option>
+          <option value="문예창작학과">문예창작학과</option>
+          <option value="한국문화전공">한국문화전공</option>
+          <option value="산업정보시스템전공">산업정보시스템전공</option>
+          <option value="ITM전공">ITM전공</option>
+          <option value="경영학전공">경영학전공</option>
+          <option value="글로벌테크노경영전공">글로벌테크노경영전공</option>
+          <option value="MSDE학과">MSDE학과</option>
+          <option value="빅데이터경영공학전공">빅데이터경영공학전공</option>
+          <option value="창업융합전공">창업융합전공</option>
+          <option value="지식재산기술경영전공">지식재산기술경영전공</option>
+          <option value="미래융합대학">미래융합대학</option>
+          <option value="융합기계공학과">융합기계공학과</option>
+          <option value="헬스피트니스학과">헬스피트니스학과</option>
+          <option value="건설환경융합공학과">건설환경융합공학과</option>
+          <option value="문화예술학과">문화예술학과</option>
+          <option value="영어과">영어과</option>
+          <option value="벤처경영학과">벤처경영학과</option>
+          <option value="정보통신융합공학과">정보통신융합공학과</option>
+          <option value="미래에너지융합학과">미래에너지융합학과</option>
+          <option value="지능형반도체공학과">지능형반도체공학과</option>
+          <option value="인공지능응용학과">인공지능응용학과</option>
+          <option value="창업교육센터">창업교육센터</option>
+          <option value="국제교류처">국제교류처</option>
+          <option value="교양대학">교양대학</option>
+          <option value="글로벌기초교육학부">글로벌기초교육학부</option>
+          <option value="글로벌한국어문화학부">글로벌한국어문화학부</option>
+
+        </select>
+
+        <label for="division">이수구분:</label>
+        <select id="division">
+          <option value="">전체</option>
+          <option value="교필">교필</option>
+          <option value="기필">기필</option>
+          <option value="전필">전필</option>
+          <option value="전선">전선</option>
+        </select>
+
+        <label for="credit">학점 선택:</label>
+        <select id="credit">
+          <option value="">전체</option>
+          <option value="1">1학점</option>
+          <option value="2">2학점</option>
+          <option value="3">3학점</option>
+          <option value="4">4학점</option>
+          <option value="6">6학점</option>
+          <option value="12">12학점</option>
+        </select>
+
+        <label for="search-option">검색 항목 선택:</label>
+        <select id="search-option">
+          <option value="courseName">과목명</option>
+          <option value="professorName">교수명</option>
+          <option value="courseCode">과목코드</option>
+          <option value="classroom">강의실</option>
+        </select>
+
+        <label for="search-query">검색어 입력:</label>
+        <input type="text" id="search-query" placeholder="검색어를 입력하세요" />
+
+        <button id="searchButton">검색</button>
+      </div>
       <!-- 태그 정보가 있는 부분 -->
       <div class="tag">
         <div>과</div>
@@ -218,7 +257,7 @@
       <!-- 강의 데이터를 반복적으로 출력 -->
       <ul id="mainList">
         <li th:each="course : ${courses}">
-          <div th:text="${course.department_id}">과</div>
+          <div th:text="${course.departmentName}">과</div>
           <div th:text="${course.courseName}">과목명</div>
           <div th:text="${course.division}">이수구분</div>
           <div th:text="${course.professorName}">담당교수</div>
@@ -233,7 +272,7 @@
 </main>
 <script>
   // Flex box 스타일을 저장하는 배열
-  const flexBox = [0.5, 0.5, 1.5, 1, 1, 1, 0.5, 3, 1, 1];
+  const flexBox = [1, 1, 0.5, 0.5, 0.5, 0.3, 0.5, 0.5, 4, 0.5];
 
   // Toggle button과 mainList 요소를 가져옴
   const toggleButton = document.getElementById('toggleListButton');
@@ -281,7 +320,7 @@
 
       // 각 속성에 맞게 div 요소를 생성
       const attributes = [
-        course.department_id,     // 과
+        course.departmentName,     // 과
         course.courseName,       // 과목명
         course.division,         // 이수구분
         course.professorName,    // 담당교수
