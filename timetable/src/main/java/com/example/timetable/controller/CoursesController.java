@@ -3,6 +3,7 @@ package com.example.timetable.controller;
 import com.example.timetable.model.Courses;
 import com.example.timetable.Service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,20 +44,13 @@ public class CoursesController {
 
     // 사용자 조건에 맞는 시간표 조합을 찾는 API 엔드포인트
     @GetMapping("/filtered")
-    public List<List<Courses>> getFilteredCombinations(
-            @RequestParam(required = false) List<String> daysOfWeek, // 예: ["월", "화"]
-            @RequestParam(required = false) Float startTime, // 예: 9.0
-            @RequestParam(required = false) Float endTime, // 예: 17.0
-            @RequestParam(required = false) String division, // 예: "전선"
-            @RequestParam(required = false) Integer credit, // 예: "3"
-            @RequestParam(required = false) String departmentName, // 과 이름 추가
+    public List<Courses> getFilteredCourses(
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String division,
+            @RequestParam(required = false) Integer credit,
             @RequestParam(required = false) String searchOption,
-            @RequestParam(required = false) String searchQuery,
-            Model model // Thymeleaf 템플릿에 데이터를 전달하기 위한 Model 객체
-    ) {
-        // 필터링된 조합을 찾기 위해 서비스 메서드를 호출
-        return courseService.findFilteredCombinations(
-                daysOfWeek, startTime, endTime, searchOption, searchQuery, division, credit, departmentName);
+            @RequestParam(required = false) String searchQuery) {
 
+        return courseService.getFilteredCourses(department, division, credit, searchOption, searchQuery);
     }
 }

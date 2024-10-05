@@ -34,19 +34,27 @@ public class CourseService {
         // 조건에 따른 필터링 로직 추가
         if (searchOption != null && searchQuery != null && !searchQuery.isEmpty()) {
             return courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
-        } else {
+        }
+        else if () {
+        }
+        else {
             return courseRepository.findAll();  // 기본적으로 모든 강의를 반환
         }
     }
 
     // 필터링된 조합 찾기 메서드
     public List<List<Courses>> findFilteredCombinations(
-            List<String> daysOfWeek, Float startTime, Float endTime, String professorName, String courseName, String division, int credit, String departmentName) {        // 1. 과 이름을 통해 department_id를 조회
+            List<String> daysOfWeek, Float startTime, Float endTime, String professorName, String courseName, String division, int credit, String departmentName) {
+
         Long department_id = null;
-        if (departmentName != null) {
-            Departments department = departmentRepository.findByName(departmentName); // repository 인스턴스 사용
+
+        // Department name으로 department_id 조회
+        if (departmentName != null && !departmentName.isEmpty()) {
+            Departments department = departmentRepository.findByName(departmentName);
             if (department != null) {
                 department_id = department.getId();
+            } else {
+                System.out.println("해당 과가 존재하지 않습니다: " + departmentName);  // 과가 존재하지 않을 때 로그 출력
             }
         }
 

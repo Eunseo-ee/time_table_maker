@@ -19,5 +19,4 @@ public interface CourseRepository extends JpaRepository<Courses, Long> {
             + "WHEN :searchOption = 'courseCode' THEN c.courseCode "
             + "WHEN :searchOption = 'classroom' THEN c.classroom ELSE '' END) LIKE %:searchQuery%)")
     List<Courses> findBySearchCriteria(String department, String division, Integer credit, String searchOption, String searchQuery);
-
 }
