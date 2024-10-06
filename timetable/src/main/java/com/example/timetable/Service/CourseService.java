@@ -35,7 +35,8 @@ public class CourseService {
         if (searchOption != null && searchQuery != null && !searchQuery.isEmpty()) {
             return courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
         }
-        else if () {
+        else if (searchOption == null && searchQuery == null) {
+            return courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
         }
         else {
             return courseRepository.findAll();  // 기본적으로 모든 강의를 반환
