@@ -43,6 +43,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// 색상 배열 정의 (각 강의마다 다른 색을 적용)
+// 색상 배열 정의 (각 강의마다 다른 색을 적용)
+const colorPalette = [
+    '#f6c7c7', '#bad4f1', '#fdeebd', '#ccffcc', '#ffccff', '#cc99ff', '#ffff99', '#99ff99', '#99ffff'
+];
+let colorIndex = 0; // 색상을 순서대로 선택하기 위한 인덱스
+
 // 이미 추가된 강의 시간을 추적하는 배열
 const addedCourses = [];
 
@@ -58,63 +65,71 @@ function fillTimeTable(course, isTemporary = false) {
     let isConflict = false; // 시간 중복 여부를 확인하는 변수
 
     const daysAndPeriods = course.time.split(', '); // ex. "월 1-2, 목 5" 형식
+    const courseColor = colorPalette[colorIndex % colorPalette.length]; // 색상 선택
+    colorIndex++; // 다음 강의는 다른 색상 사용
 
+    // 중복된 시간 여부를 우선 확인
     daysAndPeriods.forEach(slot => {
         const [day, periodRange] = slot.split(' ');
         const dayCode = dayOfWeekMap[day]; // 요일 매핑
 
-        // periodRange가 "5"와 같이 단일 교시일 경우도 처리
         const [startPeriod, endPeriod] = periodRange.includes('-')
             ? periodRange.split('-').map(Number)
             : [parseInt(periodRange), parseInt(periodRange)]; // 단일 교시 처리
 
         const finalEndPeriod = endPeriod || startPeriod;
 
-        // 중복된 시간 감지: 이미 추가된 강의와 시간이 겹치는지 확인
+        // 각 교시별로 중복 여부를 확인
+        for (let period = startPeriod; period <= finalEndPeriod; period++) {
+            const cellId = `${dayCode}-${period}`;
+            const cell = document.getElementById(cellId);
+
+            // 중복된 셀이 발견되면 전체 추가를 막음
+            if (cell && cell.classList.contains('occupied')) {
+                isConflict = true; // 하나라도 중복된 시간이 있으면 강의 전체를 추가하지 않음
+            }
+        }
+    });
+
+    // 강의의 전체 시간이 유효하지 않으면 추가하지 않음
+    if (isConflict) {
+        alert(`시간이 중복되어 추가할 수 없습니다.`);
+        return true; // 중복된 강의는 추가하지 않음
+    }
+
+    // 유효한 강의일 경우에만 시간표에 추가
+    daysAndPeriods.forEach(slot => {
+        const [day, periodRange] = slot.split(' ');
+        const dayCode = dayOfWeekMap[day]; // 요일 매핑
+
+        const [startPeriod, endPeriod] = periodRange.includes('-')
+            ? periodRange.split('-').map(Number)
+            : [parseInt(periodRange), parseInt(periodRange)]; // 단일 교시 처리
+
+        const finalEndPeriod = endPeriod || startPeriod;
+
+        // 각 셀에 동일한 색상을 적용하고 첫 셀에만 강의 정보 표시
         for (let period = startPeriod; period <= finalEndPeriod; period++) {
             const cellId = `${dayCode}-${period}`;
             const cell = document.getElementById(cellId);
 
             if (cell && !isTemporary) {
-                if (cell.classList.contains('occupied')) {
-                    isConflict = true;
+                cell.style.backgroundColor = courseColor; // 모든 셀에 같은 배경색 적용
+                if (period === startPeriod) {
+                    // 시작 셀에만 강의 정보 표시
+                    cell.innerHTML = `${course.courseName} (${course.professorName})`;
+                    cell.style.verticalAlign = 'middle';
+                } else {
+                    // 나머지 셀은 비워둠
+                    cell.innerHTML = '';
                 }
+                cell.classList.add('occupied'); // 셀에 "occupied" 클래스 추가 (이미 점유된 시간)
             }
         }
 
-        if (!isConflict && !isTemporary) {
-            // 시작 셀을 찾음
-            const startCellId = `${dayCode}-${startPeriod}`;
-            const startCell = document.getElementById(startCellId);
-
-            // 시간표의 각 교시에 해당하는 셀을 채움
-            if (startCell) {
-                startCell.innerHTML = `${course.courseName} (${course.professorName})`;
-                startCell.style.backgroundColor = '#bbc5e4';  // 시각적 구분을 위한 배경색
-                startCell.style.verticalAlign = 'middle';
-                startCell.rowSpan = finalEndPeriod - startPeriod + 1;
-                startCell.classList.add('occupied'); // 셀에 "occupied" 클래스 추가 (이미 점유된 시간)
-            }
-
-            // 병합된 셀의 나머지 셀은 숨김 처리
-            for (let period = startPeriod + 1; period <= finalEndPeriod; period++) {
-                const tempCellId = `${dayCode}-${period}`;
-                const tempCell = document.getElementById(tempCellId);
-
-                if (tempCell) {
-                    tempCell.style.display = 'none'; // 셀 숨기기
-                }
-            }
-
-            // 추가된 강의를 시간표에 기록
-            addedCourses.push({ dayCode, startPeriod, endPeriod: finalEndPeriod, courseName: course.courseName, professorName: course.professorName });
-        }
+        // 추가된 강의를 시간표에 기록
+        addedCourses.push({ dayCode, startPeriod, endPeriod: finalEndPeriod, courseName: course.courseName, professorName: course.professorName });
     });
-
-    // 시간이 중복되면 경고 메시지를 띄움
-    if (isConflict && !isTemporary) {
-        alert(`시간이 중복되어 추가할 수 없습니다`);
-    }
 
     return isConflict;
 }
@@ -135,7 +150,6 @@ function highlightTemporary(course) {
         const [day, periodRange] = slot.split(' ');
         const dayCode = dayOfWeekMap[day]; // 요일 매핑
 
-        // periodRange가 "5"와 같이 단일 교시일 경우도 처리
         const [startPeriod, endPeriod] = periodRange.includes('-')
             ? periodRange.split('-').map(Number)
             : [parseInt(periodRange), parseInt(periodRange)]; // 단일 교시 처리
@@ -148,7 +162,7 @@ function highlightTemporary(course) {
             const cell = document.getElementById(cellId);
 
             if (cell && !cell.classList.contains('occupied')) {
-                cell.style.backgroundColor = 'rgba(230,169,239,0.6)'; // 연한 색으로 표시
+                cell.style.backgroundColor = 'rgba(236,214,239,0.63)'; // 연한 색으로 표시
             }
         }
     });
@@ -182,8 +196,8 @@ function clearTemporary(course) {
 
             if (cell) {
                 if (cell.classList.contains('occupied')) {
-                    // 이미 추가된 수업이면 원래 색상으로 복원
-                    cell.style.backgroundColor = '#bbc5e4';
+                    // 이미 추가된 수업이면 원래 색상(`data-color`)으로 복원
+                    cell.style.backgroundColor = cell.getAttribute('data-color');
                 } else {
                     // 그렇지 않으면 색상 초기화
                     cell.style.backgroundColor = '';
@@ -243,5 +257,4 @@ document.getElementById('mainList').addEventListener('click', function(event) {
         }
     }
 });
-
 
