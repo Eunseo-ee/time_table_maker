@@ -202,3 +202,38 @@ td {
     background-color: #45a049;
 }
 
+#departmentContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.search-options button {
+    padding: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 150px;
+    z-index: 1;
+    list-style-type: none;
+    padding-left: 0;
+    margin: 5px 0 0 0;
+}
+
+.dropdown .child {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown .child:hover {
+    background-color: #f0f0f0;
+}

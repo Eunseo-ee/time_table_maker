@@ -1,3 +1,74 @@
+const departmentButton = document.getElementById('departmentButton');
+const departmentList = document.getElementById('departmentList');
+const divisionButton = document.getElementById('divisionButton');
+const divisionList = document.getElementById('divisionList');
+const creditButton = document.getElementById('creditButton');
+const creditList = document.getElementById('creditList');
+
+// 드롭다운 토글 기능
+function toggleDropdown(button, list) {
+    button.addEventListener('click', (event) => {
+        event.preventDefault();
+        list.style.display = list.style.display === 'block' ? 'none' : 'block';
+    });
+}
+
+// 드롭다운 선택 시 필터 적용 기능
+function selectDropdownOption(button, list, paramName) {
+    list.addEventListener('click', (event) => {
+        if (event.target.classList.contains('child')) {
+            const selectedValue = event.target.getAttribute('data-value');
+            button.textContent = selectedValue || button.getAttribute('data-default');
+            list.style.display = 'none';
+            applyFilters(); // 선택한 값으로 필터링 적용
+        }
+    });
+}
+
+// 외부 클릭 시 드롭다운 닫기
+document.addEventListener('click', (event) => {
+    if (!departmentButton.contains(event.target) && !departmentList.contains(event.target)) {
+        departmentList.style.display = 'none';
+    }
+    if (!divisionButton.contains(event.target) && !divisionList.contains(event.target)) {
+        divisionList.style.display = 'none';
+    }
+    if (!creditButton.contains(event.target) && !creditList.contains(event.target)) {
+        creditList.style.display = 'none';
+    }
+});
+
+// 필터링 적용 함수
+function applyFilters() {
+    const department = departmentButton.textContent !== '과 선택' ? departmentButton.textContent : '';
+    const division = divisionButton.textContent !== '이수구분 선택' ? divisionButton.textContent : '';
+    const credit = creditButton.textContent !== '학점 선택' ? creditButton.textContent : '';
+
+    const params = new URLSearchParams();
+    if (department) params.append("department", department);
+    if (division) params.append("division", division);
+    if (credit) params.append("credit", credit);
+
+    fetch(`http://localhost:8080/courses/filtered?${params.toString()}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Filtered data:', data);
+            makeList(data); // 필터링된 데이터를 이용해 목록 생성
+        })
+        .catch(error => console.error('Error fetching filtered data:', error));
+}
+
+// 드롭다운 초기화
+toggleDropdown(departmentButton, departmentList);
+selectDropdownOption(departmentButton, departmentList, 'department');
+
+toggleDropdown(divisionButton, divisionList);
+selectDropdownOption(divisionButton, divisionList, 'division');
+
+toggleDropdown(creditButton, creditList);
+selectDropdownOption(creditButton, creditList, 'credit');
+
+
 document.body.addEventListener('click', function(event) {
     if (event.target.classList.contains('deleteButton')) {
         document.querySelector('.list').style.display = 'none'; // 목록 닫기
@@ -43,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// 색상 배열 정의 (각 강의마다 다른 색을 적용)
 // 색상 배열 정의 (각 강의마다 다른 색을 적용)
 const colorPalette = [
     '#f6c7c7', '#bad4f1', '#fdeebd', '#ccffcc', '#ffccff', '#cc99ff', '#ffff99', '#99ff99', '#99ffff'
@@ -257,4 +327,5 @@ document.getElementById('mainList').addEventListener('click', function(event) {
         }
     }
 });
+
 

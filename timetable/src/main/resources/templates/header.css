@@ -8,17 +8,17 @@ body {
 }
 
 header .container {
-    width: 1180px;
+    width: 1580px;
     height: 80px;
     margin: auto;
-    border-bottom: solid 1px grey; //container 태그의 크기를 지정했다. 가운데 맞춤을 위해 margin auto
+    border-bottom: solid 4px whitesmoke; //container 태그의 크기를 지정했다. 가운데 맞춤을 위해 margin auto
 }
 
 .container .logo {
     height: 80px;
     width: 150px;
     float:left;
-    margin-left : 25px;
+    margin-left : 100px;
 }
 
 .container .logo img {
@@ -39,8 +39,9 @@ header .container {
     color:#c62917;
     margin:auto;
     display: block;
-    font-size:8px;
-    margin-top:15px;
+    font-size:12px;
+    font-weight:bold;
+    margin-top:20px;
     margin-left:10px;
 }
 
@@ -50,7 +51,8 @@ header .container {
 }
 
 .container .logo span:nth-child(2) {
-    font-size: 25px;
+    font-size: 22px;
+    font-weight:500;
     margin: auto;
     white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
@@ -92,9 +94,9 @@ header .container {
 
 .container .icon {
     height: 50px;
-    width: 100px;
+    width: 300px;
     float:right;
-    margin-right:40px;
+    margin-right:150px;
     margin-top:28px;
 }
 
