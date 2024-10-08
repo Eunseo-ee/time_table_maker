@@ -1,127 +1,58 @@
-const departmentButton = document.getElementById('departmentButton');
-const departmentList = document.getElementById('departmentList');
-const divisionButton = document.getElementById('divisionButton');
-const divisionList = document.getElementById('divisionList');
-const creditButton = document.getElementById('creditButton');
-const creditList = document.getElementById('creditList');
-
-// 드롭다운 토글 기능
-function toggleDropdown(button, list) {
-    button.addEventListener('click', (event) => {
-        event.preventDefault();
-        list.style.display = list.style.display === 'block' ? 'none' : 'block';
-    });
-}
-
-// 드롭다운 선택 시 필터 적용 기능
-function selectDropdownOption(button, list, paramName) {
-    list.addEventListener('click', (event) => {
-        if (event.target.classList.contains('child')) {
-            const selectedValue = event.target.getAttribute('data-value');
-            button.textContent = selectedValue || button.getAttribute('data-default');
-            list.style.display = 'none';
-            applyFilters(); // 선택한 값으로 필터링 적용
-        }
-    });
-}
-
-// 외부 클릭 시 드롭다운 닫기
-document.addEventListener('click', (event) => {
-    if (!departmentButton.contains(event.target) && !departmentList.contains(event.target)) {
-        departmentList.style.display = 'none';
-    }
-    if (!divisionButton.contains(event.target) && !divisionList.contains(event.target)) {
-        divisionList.style.display = 'none';
-    }
-    if (!creditButton.contains(event.target) && !creditList.contains(event.target)) {
-        creditList.style.display = 'none';
-    }
-});
-
-// 필터링 적용 함수
-function applyFilters() {
-    const department = departmentButton.textContent !== '과 선택' ? departmentButton.textContent : '';
-    const division = divisionButton.textContent !== '이수구분 선택' ? divisionButton.textContent : '';
-    const credit = creditButton.textContent !== '학점 선택' ? creditButton.textContent : '';
-
-    const params = new URLSearchParams();
-    if (department) params.append("department", department);
-    if (division) params.append("division", division);
-    if (credit) params.append("credit", credit);
-
-    fetch(`http://localhost:8080/courses/filtered?${params.toString()}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Filtered data:', data);
-            makeList(data); // 필터링된 데이터를 이용해 목록 생성
-        })
-        .catch(error => console.error('Error fetching filtered data:', error));
-}
-
-// 드롭다운 초기화
-toggleDropdown(departmentButton, departmentList);
-selectDropdownOption(departmentButton, departmentList, 'department');
-
-toggleDropdown(divisionButton, divisionList);
-selectDropdownOption(divisionButton, divisionList, 'division');
-
-toggleDropdown(creditButton, creditList);
-selectDropdownOption(creditButton, creditList, 'credit');
-
-
-document.body.addEventListener('click', function(event) {
-    if (event.target.classList.contains('deleteButton')) {
-        document.querySelector('.list').style.display = 'none'; // 목록 닫기
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    const searchButton = document.getElementById('searchButton');
-
-    if (searchButton) {
-        searchButton.addEventListener('click', function () {
-            console.log('Search button clicked');
-
-            // 입력된 값들 가져오기
-            const department = document.getElementById('department').value.trim();
-            const division = document.getElementById('division').value.trim();
-            const credit = document.getElementById('credit').value.trim();
-            const searchOption = document.getElementById('search-option').value.trim();
-            const searchQuery = document.getElementById('search-query').value.trim();
-
-            // 빈 값이 아닌 파라미터만 요청에 포함시키기 위해 객체 생성
-            let params = new URLSearchParams();
-
-            // 각 필터링 옵션들이 비어 있지 않으면 URL에 추가
-            if (department) params.append("department", department);
-            if (division) params.append("division", division);
-            if (credit) params.append("credit", credit);
-            if (searchOption && searchQuery) {
-                params.append("searchOption", searchOption);
-                params.append("searchQuery", searchQuery); // 검색어가 있을 때만 추가
-            }
-            // 서버로 필터링된 데이터를 요청
-            fetch(`http://localhost:8080/courses/filtered?${params.toString()}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Filtered data:', data);
-                    makeList(data);  // 필터링된 데이터를 이용해 목록 생성
-                })
-                .catch(error => console.error('Error fetching filtered data:', error));
-        });
-    } else {
-        console.error("Search button not found");
-    }
-});
+// document.body.addEventListener('click', function(event) {
+//     if (event.target.classList.contains('deleteButton')) {
+//         document.querySelector('.list').style.display = 'none'; // 목록 닫기
+//     }
+// });
+//
+// document.addEventListener('DOMContentLoaded', function () {
+//     const searchButton = document.getElementById('searchButton');
+//
+//     if (searchButton) {
+//         searchButton.addEventListener('click', function () {
+//             console.log('Search button clicked');
+//
+//             // 입력된 값들 가져오기
+//             const department = document.getElementById('department').value.trim();
+//             const division = document.getElementById('division').value.trim();
+//             const credit = document.getElementById('credit').value.trim();
+//             const searchOption = document.getElementById('search-option').value.trim();
+//             const searchQuery = document.getElementById('search-query').value.trim();
+//
+//             // 빈 값이 아닌 파라미터만 요청에 포함시키기 위해 객체 생성
+//             let params = new URLSearchParams();
+//
+//             // 각 필터링 옵션들이 비어 있지 않으면 URL에 추가
+//             if (department) params.append("department", department);
+//             if (division) params.append("division", division);
+//             if (credit) params.append("credit", credit);
+//             if (searchOption && searchQuery) {
+//                 params.append("searchOption", searchOption);
+//                 params.append("searchQuery", searchQuery); // 검색어가 있을 때만 추가
+//             }
+//             // 서버로 필터링된 데이터를 요청
+//             fetch(`http://localhost:8080/courses/filtered?${params.toString()}`)
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     console.log('Filtered data:', data);
+//                     makeList(data);  // 필터링된 데이터를 이용해 목록 생성
+//                 })
+//                 .catch(error => console.error('Error fetching filtered data:', error));
+//         });
+//     } else {
+//         console.error("Search button not found");
+//     }
+// });
+//
 
 // 색상 배열 정의 (각 강의마다 다른 색을 적용)
 const colorPalette = [
-    '#f6c7c7', '#bad4f1', '#fdeebd', '#ccffcc', '#ffccff', '#cc99ff', '#ffff99', '#99ff99', '#99ffff'
+    '#d9e9ff', '#c6e9ff', '#b1e2ff', '#89ceff', '#6297bd', '#6290bd', '#597eac', '#6b88ac', '#5084a6'
 ];
+
 let colorIndex = 0; // 색상을 순서대로 선택하기 위한 인덱스
 
-// 이미 추가된 강의 시간을 추적하는 배열
-const addedCourses = [];
+// 강의 정보를 추가할 때마다 색상과 시간을 추적하기 위한 객체
+const courseColorMap = {};
 
 // 강의 목록에서 항목을 클릭할 때 시간표를 채우는 함수
 function fillTimeTable(course, isTemporary = false) {
@@ -135,7 +66,8 @@ function fillTimeTable(course, isTemporary = false) {
     let isConflict = false; // 시간 중복 여부를 확인하는 변수
 
     const daysAndPeriods = course.time.split(', '); // ex. "월 1-2, 목 5" 형식
-    const courseColor = colorPalette[colorIndex % colorPalette.length]; // 색상 선택
+    const courseColor = courseColorMap[course.courseName] || colorPalette[colorIndex % colorPalette.length]; // 강의 색상
+    courseColorMap[course.courseName] = courseColor; // 강의 색상 저장
     colorIndex++; // 다음 강의는 다른 색상 사용
 
     // 중복된 시간 여부를 우선 확인
@@ -185,6 +117,19 @@ function fillTimeTable(course, isTemporary = false) {
 
             if (cell && !isTemporary) {
                 cell.style.backgroundColor = courseColor; // 모든 셀에 같은 배경색 적용
+                cell.setAttribute('data-color', courseColor); // 셀에 배경색을 저장
+
+                // 연속된 강의 시간에서는 윗경계선과 아래경계선 색상을 배경색과 일치
+                if (period > startPeriod) {
+                    const previousCell = document.getElementById(`${dayCode}-${period - 1}`);
+                    if (previousCell && previousCell.getAttribute('data-color') === courseColor) {
+                        cell.style.borderTop = `2px solid ${courseColor}`; // 위쪽 경계선을 배경색으로 설정
+                        previousCell.style.borderBottom = `2px solid ${courseColor}`; // 아래쪽 경계선을 배경색으로 설정
+                        cell.setAttribute('data-border-top', courseColor); // 경계선 색상 저장
+                        previousCell.setAttribute('data-border-bottom', courseColor);
+                    }
+                }
+
                 if (period === startPeriod) {
                     // 시작 셀에만 강의 정보 표시
                     cell.innerHTML = `${course.courseName} (${course.professorName})`;
@@ -196,9 +141,6 @@ function fillTimeTable(course, isTemporary = false) {
                 cell.classList.add('occupied'); // 셀에 "occupied" 클래스 추가 (이미 점유된 시간)
             }
         }
-
-        // 추가된 강의를 시간표에 기록
-        addedCourses.push({ dayCode, startPeriod, endPeriod: finalEndPeriod, courseName: course.courseName, professorName: course.professorName });
     });
 
     return isConflict;
@@ -231,7 +173,7 @@ function highlightTemporary(course) {
             const cellId = `${dayCode}-${period}`;
             const cell = document.getElementById(cellId);
 
-            if (cell && !cell.classList.contains('occupied')) {
+            if (cell) {
                 cell.style.backgroundColor = 'rgba(236,214,239,0.63)'; // 연한 색으로 표시
             }
         }
@@ -265,12 +207,19 @@ function clearTemporary(course) {
             const cell = document.getElementById(cellId);
 
             if (cell) {
-                if (cell.classList.contains('occupied')) {
-                    // 이미 추가된 수업이면 원래 색상(`data-color`)으로 복원
-                    cell.style.backgroundColor = cell.getAttribute('data-color');
+                const originalColor = cell.getAttribute('data-color');
+                cell.style.backgroundColor = originalColor ? originalColor : ''; // 저장된 색상 사용, 없으면 기본값
+
+                // 경계선 복원
+                if (cell.getAttribute('data-border-top')) {
+                    cell.style.borderTop = `2px solid ${cell.getAttribute('data-border-top')}`;
                 } else {
-                    // 그렇지 않으면 색상 초기화
-                    cell.style.backgroundColor = '';
+                    cell.style.borderTop = ''; // 기본 경계선으로 복원
+                }
+                if (cell.getAttribute('data-border-bottom')) {
+                    cell.style.borderBottom = `2px solid ${cell.getAttribute('data-border-bottom')}`;
+                } else {
+                    cell.style.borderBottom = ''; // 기본 경계선으로 복원
                 }
             }
         }
@@ -328,4 +277,82 @@ document.getElementById('mainList').addEventListener('click', function(event) {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const searchButton = document.getElementById('searchButton');
+    const departmentButton = document.getElementById('departmentButton');
+    const creditButton = document.getElementById('creditButton');
+    const divisionButton = document.getElementById('divisionButton');
+    const searchOptionButton = document.getElementById('searchOptionButton');
+
+    // 드롭다운 메뉴 버튼 클릭 시 표시/숨김
+    document.querySelectorAll('.dropdown-button').forEach(button => {
+        button.addEventListener('click', function () {
+            const menu = button.nextElementSibling;
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+
+    // 드롭다운 메뉴 항목 클릭 시 값 변경, 메뉴 숨기기, 필터링 실행
+    document.querySelectorAll('.dropdown-menu li').forEach(item => {
+        item.addEventListener('click', function () {
+            const button = item.parentElement.previousElementSibling;
+
+            // 검색 항목 버튼 클릭 시에만 텍스트 변경
+            if (button.id === 'searchOptionButton') {
+                button.textContent = item.textContent; // 선택한 항목으로 버튼 텍스트 변경
+            }
+
+            // 모든 항목에 대해 값 업데이트 및 메뉴 숨기기
+            button.dataset.value = item.getAttribute('data-value');
+            item.parentElement.style.display = 'none';
+
+            // 선택된 옵션에 따라 즉시 필터링 실행
+            executeFiltering();
+        });
+    });
+
+
+    if (searchButton) {
+        searchButton.addEventListener('click', executeFiltering);
+    }
+
+    // 닫기 버튼 클릭 시 목록 닫기
+    if (deleteButton) {
+        deleteButton.addEventListener('click', function () {
+            document.querySelector('.list').style.display = 'none';
+        });
+    }
+
+    function executeFiltering() {
+        console.log('Filtering started');
+
+        // 드롭다운에서 선택한 값들 가져오기
+        const department = departmentButton.dataset.value;
+        const division = divisionButton.dataset.value;
+        const credit = creditButton.dataset.value;
+        const searchOption = searchOptionButton.dataset.value;
+        const searchQuery = document.getElementById('searchQuery').value.trim();
+
+        // 빈 값이 아닌 파라미터만 요청에 포함시키기 위해 객체 생성
+        let params = new URLSearchParams();
+
+        // 각 필터링 옵션들이 비어 있지 않으면 URL에 추가
+        if (department) params.append("department", department);
+        if (division) params.append("division", division);
+        if (credit) params.append("credit", credit);
+        if (searchOption && searchQuery) {
+            params.append("searchOption", searchOption);
+            params.append("searchQuery", searchQuery); // 검색어가 있을 때만 추가
+        }
+
+        // 서버로 필터링된 데이터를 요청
+        fetch(`http://localhost:8080/courses/filtered?${params.toString()}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Filtered data:', data);
+                makeList(data);  // 필터링된 데이터를 이용해 목록 생성
+            })
+            .catch(error => console.error('Error fetching filtered data:', error));
+    }
+});
 
