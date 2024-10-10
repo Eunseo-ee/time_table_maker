@@ -232,10 +232,20 @@ td {
     margin-right: 1px;
 }
 
+.timeButton {
+    width: 70px;
+    height: 34px;
+    border-radius: 10px;
+    background-color: rgb(156, 171, 195);
+    font-size: 15px;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
 .deleteButton {
     width: 70px;
     height: 34px;
-    /*float: right;*/
     border-radius: 20px;
     background-color: #6b90c3;
     font-size: 15px;
