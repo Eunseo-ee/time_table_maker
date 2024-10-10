@@ -119,6 +119,7 @@ td {
     display: none;
     overflow-y: auto; /* 스크롤을 가능하게 설정 */
     box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
 
 .head {
@@ -126,27 +127,28 @@ td {
     height: 70px;
     background-color: white;
     border: solid 0.5px #d6d6d6;
+    padding: 0 15px; /* 양쪽 여백 추가 */
 }
 
-.head button {
-    width: 70px;
-    height: 34px;
-    float: right;
-    border-radius: 20px;
-    background-color: #6b90c3;
-    padding: 5px;
-    font-size: 15px;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
+/*.head button {*/
+/*    width: 70px;*/
+/*    height: 34px;*/
+/*    float: right;*/
+/*    border-radius: 20px;*/
+/*    background-color: #6b90c3;*/
+/*    padding: 0px;*/
+/*    font-size: 15px;*/
+/*    color: white;*/
+/*    border: none;*/
+/*    cursor: pointer;*/
+/*}*/
 
 .tag {
     width: 100%;
     display: flex;
     background-color: white;
-    padding: 3px;
     border-bottom: 1px solid #d6d6d6;
+    margin-top: 10px; /* 검색 옵션과 닫기 버튼 아래 여백 추가 */
 }
 
 .tag-item {
@@ -204,6 +206,12 @@ td {
     background-color: #aabfdc;
 }
 
+.search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .search-options {
     display: flex;
     align-items: center;
@@ -216,11 +224,24 @@ td {
     color: #474747;
     border: none;
     padding: 1px 1px;
+    width:70px;
+    height:30px;
     cursor: pointer;
     font-weight: lighter;
     border-radius: 20px;
-    margin-right: 4px;
-    margin-top:4px;
+    margin-right: 1px;
+}
+
+.deleteButton {
+    width: 70px;
+    height: 34px;
+    /*float: right;*/
+    border-radius: 20px;
+    background-color: #6b90c3;
+    font-size: 15px;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
 
 /* 드롭다운 버튼 스타일 */
@@ -240,13 +261,19 @@ td {
     display: none; /* 기본적으로 숨김 */
     list-style: none; /* 불릿 제거 */
     margin: 0;
-    padding: 0;
+    padding: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
     position: absolute;
     background-color: white;
     width: 200px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+    /* 드롭다운 최대 높이 및 스크롤 추가 */
+    max-height: 200px; /* 필요한 경우 적절한 높이로 조정 */
+    overflow-y: auto; /* 스크롤바 추가 */
+    z-index: 10; /* 다른 요소보다 위로 표시 */
+    left: 0; /* 버튼 바로 아래 위치 */
 }
 
 /* 드롭다운 메뉴 보이기 */
@@ -288,7 +315,7 @@ td {
 /* 검색 버튼 아이콘 스타일 */
 .search-icon {
     position: absolute;
-    right: 10px;
+    right: 1px;
     top: 50%;
     transform: translateY(-50%);
     background: none;

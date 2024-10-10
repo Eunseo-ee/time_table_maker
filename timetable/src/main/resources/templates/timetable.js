@@ -284,11 +284,35 @@ document.addEventListener('DOMContentLoaded', function () {
     const divisionButton = document.getElementById('divisionButton');
     const searchOptionButton = document.getElementById('searchOptionButton');
 
-    // 드롭다운 메뉴 버튼 클릭 시 표시/숨김
+    // 드롭다운 메뉴 버튼 클릭 시 표시/숨김 및 위치 조정
     document.querySelectorAll('.dropdown-button').forEach(button => {
         button.addEventListener('click', function () {
             const menu = button.nextElementSibling;
+
+            // 드롭다운 메뉴 표시
             menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+
+            // 버튼 바로 아래에 위치하도록 설정
+            const buttonRect = button.getBoundingClientRect();
+            menu.style.left = `${buttonRect.left + window.scrollX}px`; // 버튼과 같은 수평 위치
+
+            // 드롭다운 메뉴의 화면 위치 계산
+            const rect = menu.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // 화면 위로 벗어날 경우 아래로 위치 조정
+            if (rect.top < 0) {
+                menu.style.top = `${button.offsetHeight}px`;
+                menu.style.bottom = 'auto';
+            }
+            // 화면 아래로 벗어날 경우 위로 위치 조정
+            else if (rect.bottom > viewportHeight) {
+                menu.style.top = 'auto';
+                menu.style.bottom = `${button.offsetHeight}px`;
+            } else {
+                menu.style.top = `${button.offsetHeight}px`;
+                menu.style.bottom = 'auto';
+            }
         });
     });
 
