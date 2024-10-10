@@ -380,3 +380,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const timeButton = document.querySelector('.timeButton');
+    const timeModal = document.getElementById('timeModal');
+    const modalClose = document.getElementById('modalClose');
+
+    // .timeButton 클릭 시 모달 열기
+    timeButton.addEventListener('click', function () {
+        timeModal.style.display = 'block';
+    });
+
+    // 닫기 버튼 클릭 시 모달 닫기
+    modalClose.addEventListener('click', function () {
+        timeModal.style.display = 'none';
+    });
+
+    // 모달 외부 클릭 시 모달 닫기
+    window.addEventListener('click', function (event) {
+        if (event.target === timeModal) {
+            timeModal.style.display = 'none';
+        }
+    });
+});
