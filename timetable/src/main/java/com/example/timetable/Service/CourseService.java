@@ -30,18 +30,28 @@ public class CourseService {
     }
 
     // 필터링된 강의 목록을 가져오는 메소드
-    public List<Courses> getFilteredCourses(String department, String division, Integer credit, String searchOption, String searchQuery) {
-        // 조건에 따른 필터링 로직 추가
+    public List<Courses> getFilteredCourses(String department, String division, Integer credit, String searchOption, String searchQuery, List<String> selectedTimes) {
+        List<Courses> filteredCourses;
+
         if (searchOption != null && searchQuery != null && !searchQuery.isEmpty()) {
-            return courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
+            filteredCourses = courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
+        } else if (department != null || division != null || credit != null) {
+            filteredCourses = courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
+        } else {
+            filteredCourses = courseRepository.findAll();
         }
-        else if (searchOption == null && searchQuery == null) {
-            return courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
+
+        if (selectedTimes != null && !selectedTimes.isEmpty()) {
+            filteredCourses.removeIf(course -> {
+                boolean matchesTime = selectedTimes.stream()
+                        .anyMatch(time -> course.getFormattedTime().contains(time));
+                return !matchesTime;
+            });
         }
-        else {
-            return courseRepository.findAll();  // 기본적으로 모든 강의를 반환
-        }
+
+        return filteredCourses;
     }
+
 
     // 필터링된 조합 찾기 메서드
     public List<List<Courses>> findFilteredCombinations(

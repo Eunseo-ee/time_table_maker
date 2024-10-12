@@ -1,0 +1,86 @@
+header .container{
+    width: 1580px;
+    height: 80px;
+    margin: auto;
+    border-bottom: solid 4px whitesmoke; //container 태그의 크기를 지정했다. 가운데 맞춤을 위해 margin auto
+}
+
+.container .logo {
+    height: 80px;
+    width: 150px;
+    float:left;
+    margin-left : 100px;
+}
+
+.container .logo img {
+    height: 70px;
+    margin-top: 5px;
+    object-fit: cover;
+    float:left;
+}
+
+.container .logo p {
+    width: 80px;
+    height:80px;
+    margin:0px;
+    float:left;
+}
+
+.container .logo span:nth-child(1) {
+    color: #6b90c3;
+    margin:auto;
+    display: block;
+    font-size:12px;
+    font-weight:bold;
+    margin-top:20px;
+    margin-left:10px;
+}
+
+.container {
+    width: 100%; /* 원하는 컨테이너 크기로 설정 */
+    overflow: hidden; /* 넘치는 내용을 숨기기 */
+}
+
+.container .logo span:nth-child(2) {
+    font-size: 22px;
+    font-weight:500;
+    margin: auto;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+.main-table {
+    width: calc(60% - 340px);
+    height: auto;
+    float: right;
+    margin-left: 15px;
+    border-collapse: collapse;
+    border-spacing:0px;
+    table-layout: fixed;
+}
+
+.main-table .thead {
+    height: 40px;
+    border: solid 0.5px #bfbfbf;
+    text-align: center;
+    background-color: #f2f2f2;
+}
+
+.main-table tr {
+    height: 65px;
+    border: solid 0.5px #ffffff;
+    background-color: #f8f8f8;
+}
+
+.main-table td {
+    width: 8px;
+    border: solid 1px #bfbfbf;
+    text-align: center;
+}
+
+.col1 {
+    width: 5%;
+}
+
+.col7 {
+    width: 5%;
+}

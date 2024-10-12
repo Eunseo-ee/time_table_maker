@@ -49,8 +49,9 @@ public class CoursesController {
             @RequestParam(required = false) String division,
             @RequestParam(required = false) Integer credit,
             @RequestParam(required = false) String searchOption,
-            @RequestParam(required = false) String searchQuery) {
+            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false) List<String> selectedTimes) {
 
-        return courseService.getFilteredCourses(department, division, credit, searchOption, searchQuery);
+        return courseService.getFilteredCourses(department, division, credit, searchOption, searchQuery, selectedTimes);
     }
 }

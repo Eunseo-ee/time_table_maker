@@ -356,6 +356,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const credit = creditButton.dataset.value;
         const searchOption = searchOptionButton.dataset.value;
         const searchQuery = document.getElementById('searchQuery').value.trim();
+        const selectedTimes = Array.from(document.querySelectorAll('.small-timetable td.selected'))
+            .map(cell => cell.id) // 선택된 셀의 id 가져오기
 
         // 빈 값이 아닌 파라미터만 요청에 포함시키기 위해 객체 생성
         let params = new URLSearchParams();
@@ -367,6 +369,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (searchOption && searchQuery) {
             params.append("searchOption", searchOption);
             params.append("searchQuery", searchQuery); // 검색어가 있을 때만 추가
+        }
+        if (selectedTimes.length) {
+            params.append("selectedTimes", selectedTimes.join(',')); // 선택된 시간 목록을 ,로 구분하여 추가
         }
 
         // 서버로 필터링된 데이터를 요청
@@ -402,3 +407,32 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+let selectedTimes = [];
+
+document.addEventListener("DOMContentLoaded", function () {
+    // small-table의 모든 td 요소를 선택
+    const cells = document.querySelectorAll(".small-table td");
+
+    // 각 셀에 클릭 이벤트 리스너 추가
+    cells.forEach(cell => {
+        cell.addEventListener("click", function () {
+            toggleTimeSelection(cell.id); // 클릭 시 toggleTimeSelection 함수 호출
+        });
+    });
+
+    // 시간 선택 토글 함수
+    function toggleTimeSelection(cellId) {
+        const cell = document.getElementById(cellId);
+        if (cell) {
+            cell.classList.toggle("selected-time"); // 클래스 추가/제거
+        }
+    }
+});
+
+function filterCoursesBySelectedTimes(courses) {
+    const filteredCourses = courses.filter(course => {
+        return course.times.some(time => selectedTimes.includes(time));
+    });
+    makeList(filteredCourses);  // 필터링된 강의 목록 표시
+}

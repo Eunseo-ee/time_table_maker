@@ -137,6 +137,10 @@ public class Courses {
         this.end_period = end_period;
     }
 
+    public String getFormattedTime() {
+        return dayOfWeek + " " + start_period + (end_period != start_period ? "-" + end_period : "");
+    }
+
     public Integer getDepartmentId() {
         return department_id;
     }
