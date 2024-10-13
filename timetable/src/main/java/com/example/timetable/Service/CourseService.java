@@ -7,6 +7,10 @@ import com.example.timetable.model.Departments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+import java.util.stream.Collectors;  // Collectors 클래스 import
+import java.util.stream.Stream;      // Stream 클래스 import
+import java.util.Arrays;             // Arrays 클래스 import
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,27 +35,58 @@ public class CourseService {
 
     // 필터링된 강의 목록을 가져오는 메소드
     public List<Courses> getFilteredCourses(String department, String division, Integer credit, String searchOption, String searchQuery, List<String> selectedTimes) {
-        List<Courses> filteredCourses;
+        List<Courses> filteredCourses = courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
 
-        if (searchOption != null && searchQuery != null && !searchQuery.isEmpty()) {
-            filteredCourses = courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
-        } else if (department != null || division != null || credit != null) {
-            filteredCourses = courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
-        } else {
-            filteredCourses = courseRepository.findAll();
-        }
+        // 초기 필터링 로그
+        System.out.println("Initial filtered courses count: " + filteredCourses.size());
 
         if (selectedTimes != null && !selectedTimes.isEmpty()) {
-            filteredCourses.removeIf(course -> {
-                boolean matchesTime = selectedTimes.stream()
-                        .anyMatch(time -> course.getFormattedTime().contains(time));
-                return !matchesTime;
-            });
+            System.out.println("Selected times for filtering: " + selectedTimes);
+
+            // 필터링 과정에서 각 강의를 대상으로 필터 적용 결과 출력
+            filteredCourses = filteredCourses.stream()
+                    .filter(course -> {
+                        boolean isWithinTime = isTimeWithinSelectedTimes(course, selectedTimes);
+                        System.out.println("Course: " + course.getCourseName() + ", Time: " + course.getFormattedTime() + " -> " + (isWithinTime ? "Included" : "Excluded"));
+                        return isWithinTime;
+                    })
+                    .collect(Collectors.toList());
         }
+
+        // 최종 필터링 결과 로그
+        System.out.println("Final filtered courses count after time filter: " + filteredCourses.size());
 
         return filteredCourses;
     }
 
+    // 시간 포함 여부 확인 메서드 (Courses 객체를 매개변수로 받음)
+    private boolean isTimeWithinSelectedTimes(Courses course, List<String> selectedTimes) {
+        // 예: "월 1.0-3.0, 목 3.0-5.0" 형식으로 여러 요일과 시간을 가진 강의 처리
+        String[] courseTimeSlots = course.getFormattedTime().split(", ");
+
+        for (String timeSlot : courseTimeSlots) {
+            String[] courseTimeSplit = timeSlot.split(" ");
+            String courseDay = courseTimeSplit[0];
+            String[] coursePeriodRange = courseTimeSplit[1].split("-");
+            float courseStartPeriod = Float.parseFloat(coursePeriodRange[0]);
+            float courseEndPeriod = Float.parseFloat(coursePeriodRange[1]);
+
+            for (String selectedTime : selectedTimes) {
+                String[] selectedTimeSplit = selectedTime.split(" ");
+                String selectedDay = selectedTimeSplit[0];
+                String[] selectedPeriodRange = selectedTimeSplit[1].split("-");
+                float selectedStartPeriod = Float.parseFloat(selectedPeriodRange[0]);
+                float selectedEndPeriod = Float.parseFloat(selectedPeriodRange[1]);
+
+                // 선택한 요일과 수업 요일이 같고, 선택한 시간대가 강의 시간대와 겹치는 경우를 확인
+                if (selectedDay.equals(courseDay) &&
+                        ((selectedStartPeriod <= courseStartPeriod && selectedEndPeriod >= courseEndPeriod))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     // 필터링된 조합 찾기 메서드
     public List<List<Courses>> findFilteredCombinations(

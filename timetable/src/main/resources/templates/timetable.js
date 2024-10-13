@@ -421,18 +421,104 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // 적용 버튼 클릭 시 필터링 수행
+    const applyButton = document.getElementById("applyButton");
+    applyButton.addEventListener("click", function () {
+        console.log("Selected times for filtering:", selectedTimes);  // 선택된 시간 배열을 콘솔에 표시
+        executeFiltering(); // 필터링 함수 실행
+        document.getElementById("timeModal").style.display = 'none'; // 모달 닫기
+    });
+
+    // 초기화 버튼 클릭 시 선택 초기화
+    const resetButton = document.getElementById("resetButton");
+    resetButton.addEventListener("click", function () {
+        selectedTimes = [];
+        cells.forEach(cell => cell.classList.remove("selected-time")); // 모든 셀 선택 해제
+        console.log("Reset selected times.");
+    });
+
     // 시간 선택 토글 함수
     function toggleTimeSelection(cellId) {
         const cell = document.getElementById(cellId);
         if (cell) {
             cell.classList.toggle("selected-time"); // 클래스 추가/제거
+            if (selectedTimes.includes(cellId)) {
+                selectedTimes = selectedTimes.filter(time => time !== cellId);
+            } else {
+                selectedTimes.push(cellId);
+            }
+            console.log("Selected times:", selectedTimes);  // 선택된 시간 배열 확인
         }
     }
 });
 
-function filterCoursesBySelectedTimes(courses) {
-    const filteredCourses = courses.filter(course => {
-        return course.times.some(time => selectedTimes.includes(time));
+// 요일 및 숫자를 변환하고 범위로 합치는 함수
+function consolidateSelectedTimes(selectedTimes) {
+    const dayMap = { mon: '월', tue: '화', wed: '수', thu: '목', fri: '금' };
+    const consolidated = {}; // 요일별로 셀을 그룹화할 객체
+
+    // 요일별로 선택된 시간 정리
+    selectedTimes.forEach(time => {
+        const day = dayMap[time.slice(0, 3)]; // 요일을 한글로 변환
+        const period = parseFloat(time.slice(3)) + 0.0; // 숫자를 소수점 형식으로 변환
+
+        if (!consolidated[day]) consolidated[day] = [];
+        consolidated[day].push(period);
     });
-    makeList(filteredCourses);  // 필터링된 강의 목록 표시
+
+    // 각 요일의 시간을 연속 범위로 합치기
+    const ranges = Object.keys(consolidated).map(day => {
+        const periods = consolidated[day].sort((a, b) => a - b); // 정렬
+        let rangeStr = `${day}`;
+        let start = periods[0];
+        let end = start;
+
+        for (let i = 1; i < periods.length; i++) {
+            if (periods[i] === end + 1) {
+                end = periods[i];
+            } else {
+                rangeStr += ` ${start.toFixed(1)}-${end.toFixed(1)}, `;
+                start = periods[i];
+                end = start;
+            }
+        }
+        rangeStr += ` ${start.toFixed(1)}-${end.toFixed(1)}`;
+        return rangeStr;
+    });
+
+    return ranges.join(', '); // 예: "화 1.0-3.0, 수 2.0-4.0"
 }
+
+function executeFiltering() {
+    const department = departmentButton?.dataset.value || '';
+    const division = divisionButton?.dataset.value || '';
+    const credit = creditButton?.dataset.value || '';
+    const searchOption = searchOptionButton?.dataset.value || '';
+    const searchQuery = document.getElementById("searchQuery")?.value.trim() || '';
+
+    // 선택된 시간들을 범위 형식으로 변환
+    const selectedTimesString = consolidateSelectedTimes(selectedTimes);
+
+    let params = new URLSearchParams();
+    if (department) params.append("department", department);
+    if (division) params.append("division", division);
+    if (credit) params.append("credit", credit);
+    if (searchOption && searchQuery) {
+        params.append("searchOption", searchOption);
+        params.append("searchQuery", searchQuery);
+    }
+    if (selectedTimesString) {
+        params.append("selectedTimes", selectedTimesString);
+    }
+
+    console.log('Requesting filtered data with params:', params.toString());
+
+    fetch(`http://localhost:8080/courses/filtered?${params.toString()}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Filtered data:', data);
+            makeList(data);  // 필터링된 데이터로 목록 생성
+        })
+        .catch(error => console.error('Error fetching filtered data:', error));
+}
+
