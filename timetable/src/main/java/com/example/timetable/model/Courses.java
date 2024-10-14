@@ -116,6 +116,11 @@ public class Courses {
         return "정보 없음";
     }
 
+    @Setter
+    @Transient
+    private String formattedTime;
+
+
     // 기본 생성자
     public Courses() {}
 
