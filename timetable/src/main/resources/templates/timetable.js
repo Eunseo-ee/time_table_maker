@@ -440,7 +440,7 @@ function consolidateSelectedTimes(selectedTimes) {
         return rangeStr;
     });
 
-    return ranges.join(', '); // 예: "화 1.0-3.0, 수 2.0-4.0"
+    return ranges.join(','); // 예: "화 1.0-3.0, 수 2.0-4.0"
 }
 
 function executeFiltering() {

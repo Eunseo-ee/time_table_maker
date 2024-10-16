@@ -104,53 +104,56 @@ public class CourseService {
     // 시간 포함 여부 확인 메서드 (Courses 객체를 매개변수로 받음)
     private boolean isTimeWithinSelectedTimes(Courses course, List<String> selectedTimes) {
         String[] courseTimeSlots = course.getFormattedTime().split(", ");
+        System.out.println("Selected times for filtering: " + selectedTimes);
+        System.out.println("Course time slots: " + Arrays.toString(courseTimeSlots));
 
-        // 모든 선택한 시간대에 대해 비교
-        for (String selectedTime : selectedTimes) {
-            String[] selectedTimeSplit = selectedTime.split(" ");
-            if (selectedTimeSplit.length != 2) continue;
+        // 각 강의 시간대에 대해 선택된 시간대와 비교
+        for (String timeSlot : courseTimeSlots) {
+            System.out.println("Processing course time slot: " + timeSlot);
+            String[] courseTimeSplit = timeSlot.split(" ");
 
-            String selectedDay = selectedTimeSplit[0];
-            String[] selectedPeriodRange = selectedTimeSplit[1].split("-");
-            float selectedStartPeriod = Float.parseFloat(selectedPeriodRange[0]);
-            float selectedEndPeriod = Float.parseFloat(selectedPeriodRange[1]);
+            String courseDay = courseTimeSplit[0];
+            String[] coursePeriodRange = courseTimeSplit[1].split("-");
 
-            System.out.println("Selected time: " + selectedDay + " " + selectedStartPeriod + "-" + selectedEndPeriod);
+            float courseStartPeriod;
+            float courseEndPeriod;
+            courseStartPeriod = Float.parseFloat(coursePeriodRange[0]);
+            courseEndPeriod = Float.parseFloat(coursePeriodRange[1]);
 
-            // 강의 시간대와 비교
-            boolean isMatched = false;
-            for (String timeSlot : courseTimeSlots) {
-                if (!timeSlot.contains(" ")) continue;
+            boolean matchFound = false;  // 현재 강의 시간대에 대해 선택된 시간대와 일치하는 것이 있는지 추적
 
-                String[] courseTimeSplit = timeSlot.split(" ");
-                if (courseTimeSplit.length != 2) continue;
+            // 각 선택된 시간대와 강의 시간대를 비교
+            for (String selectedTime : selectedTimes) {
 
-                String courseDay = courseTimeSplit[0];
-                String[] coursePeriodRange = courseTimeSplit[1].split("-");
-                float courseStartPeriod = Float.parseFloat(coursePeriodRange[0]);
-                float courseEndPeriod = Float.parseFloat(coursePeriodRange[1]);
+                String[] selectedTimeSplit = selectedTime.split(" ");
 
-                System.out.println("Comparing with course time: " + courseDay + " " + courseStartPeriod + "-" + courseEndPeriod);
+                String selectedDay = selectedTimeSplit[0];
+                String[] selectedPeriodRange = selectedTimeSplit[1].split("-");
 
-                // 선택한 요일과 수업 요일이 같고, 선택한 시간대와 강의 시간대가 겹치는 경우
+                float selectedStartPeriod;
+                float selectedEndPeriod;
+                selectedStartPeriod = Float.parseFloat(selectedPeriodRange[0]);
+                selectedEndPeriod = Float.parseFloat(selectedPeriodRange[1]);
+
+                // 선택된 시간대와 강의 시간대가 일치하는지 확인
                 if (selectedDay.equals(courseDay) &&
                         (selectedStartPeriod <= courseStartPeriod && selectedEndPeriod >= courseEndPeriod)) {
-                    isMatched = true;
-                    break; // 해당 시간대에 대해 조건이 일치하면 반복 종료
+                    matchFound = true; // 일치하는 시간대가 있는 경우 true로 설정
+                    System.out.println("Match found for selected time: " + selectedTime);
+                    break;  // 현재 강의 시간대에 대해 매칭되면 더 이상 비교하지 않음
                 }
             }
 
-            if (!isMatched) {
-                System.out.println("No match found for selected time: " + selectedTime);
-                return false; // 하나라도 조건에 맞지 않으면 false 반환
+            if (!matchFound) {
+                // 현재 강의 시간대에 대해 일치하는 선택된 시간대가 하나도 없는 경우 false 반환
+                System.out.println("No match found for time slot: " + timeSlot);
+                return false;
             }
         }
-
-        return true; // 모든 시간대가 조건에 맞는 경우 true 반환
+        System.out.println("All selected times matched successfully");
+        // 모든 강의 시간대가 선택된 시간대와 일치하는 경우 true 반환
+        return true;
     }
-
-
-
 
     // 필터링된 조합 찾기 메서드
     public List<List<Courses>> findFilteredCombinations(
