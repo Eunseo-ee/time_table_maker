@@ -36,74 +36,79 @@ public class CourseService {
     // 필터링된 강의 목록을 가져오는 메소드
     public List<Courses> getFilteredCourses(String department, String division, Integer credit, String searchOption, String searchQuery, List<String> selectedTimes) {
         // 모든 수업 데이터를 가져옴
-        List<Courses> allCourses = courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
+        List<Courses> filteredCourses = courseRepository.findBySearchCriteria(department, division, credit, searchOption, searchQuery);
 
-        // 수업 병합 작업
-        List<Courses> mergedCourses = mergeCourses(allCourses);
-
-        // 시간 조건을 이용한 필터링
         if (selectedTimes != null && !selectedTimes.isEmpty()) {
-            mergedCourses = mergedCourses.stream()
-                    .filter(course -> isTimeWithinSelectedTimes(course, selectedTimes))
+            System.out.println("Selected times for filtering: " + selectedTimes);
+
+            // 필터링 과정에서 각 강의를 대상으로 필터 적용 결과 출력
+            filteredCourses = filteredCourses.stream()
+                    .filter(course -> {
+                        boolean isWithinTime = isTimeWithinSelectedTimes(course, selectedTimes);
+                        System.out.println("Course: " + course.getCourseName() + ", Time: " + course.getFormattedTime() + " -> " + (isWithinTime ? "Included" : "Excluded"));
+                        return isWithinTime;
+                    })
                     .collect(Collectors.toList());
         }
 
-        System.out.println("Final filtered courses count after time filter: " + mergedCourses.size());
+        // 최종 필터링 결과 로그
+        System.out.println("Final filtered courses count after time filter: " + filteredCourses.size());
 
-        return mergedCourses;
+        return filteredCourses;
     }
 
-    private List<Courses> mergeCourses(List<Courses> courses) {
-        List<Courses> mergedList = new ArrayList<>();
-
-        for (int i = 0; i < courses.size(); i++) {
-            Courses currentCourse = courses.get(i);
-            StringBuilder timeString = new StringBuilder(formatCourseTime(currentCourse));
-
-            // 다음 수업과 동일한 수업인지 확인
-            while (i + 1 < courses.size()) {
-                Courses nextCourse = courses.get(i + 1);
-
-                // 동일한 수업인지 확인 (과, 교수명, 학점, 강의실 등 비교)
-                if (isSameCourse(currentCourse, nextCourse)) {
-                    // 동일 수업의 시간을 병합
-                    timeString.append(", ").append(formatCourseTime(nextCourse));
-                    i++; // 이미 병합했으므로 다음 항목을 건너뜀
-                } else {
-                    break;
-                }
-            }
-
-            // 병합된 시간 설정
-            currentCourse.setFormattedTime(timeString.toString());
-            mergedList.add(currentCourse);
-        }
-
-        return mergedList;
-    }
-
-    private boolean isSameCourse(Courses course1, Courses course2) {
-        // 과, 수업 코드, 교수명, 학점, 강의실 등이 모두 동일한지 확인하여 동일 수업인지 판단
-        return course1.getDepartmentName().equals(course2.getDepartmentName()) &&
-                course1.getCourseCode().equals(course2.getCourseCode()) &&
-                course1.getCourseName().equals(course2.getCourseName()) &&
-                course1.getCourseNumber().equals(course2.getCourseNumber()) &&
-                course1.getProfessorName().equals(course2.getProfessorName()) &&
-                course1.getCredit().equals(course2.getCredit()) &&
-                course1.getDivision().equals(course2.getDivision()) &&
-                course1.getCapacity().equals(course2.getCapacity()) &&
-                course1.getClassroom().equals(course2.getClassroom());
-    }
-
-    private String formatCourseTime(Courses course) {
-        return course.getStartPeriod()==(course.getEndPeriod())
-                ? course.getDayOfWeek() + " " + course.getStartPeriod()
-                : course.getDayOfWeek() + " " + course.getStartPeriod() + "-" + course.getEndPeriod();
-    }
+//    private List<Courses> mergeCourses(List<Courses> courses) {
+//        List<Courses> mergedList = new ArrayList<>();
+//
+//        for (int i = 0; i < courses.size(); i++) {
+//            Courses currentCourse = courses.get(i);
+//            StringBuilder timeString = new StringBuilder(formatCourseTime(currentCourse));
+//
+//            // 다음 수업과 동일한 수업인지 확인
+//            while (i + 1 < courses.size()) {
+//                Courses nextCourse = courses.get(i + 1);
+//
+//                // 동일한 수업인지 확인 (과, 교수명, 학점, 강의실 등 비교)
+//                if (isSameCourse(currentCourse, nextCourse)) {
+//                    // 동일 수업의 시간을 병합
+//                    timeString.append(", ").append(formatCourseTime(nextCourse));
+//                    i++; // 이미 병합했으므로 다음 항목을 건너뜀
+//                } else {
+//                    break;
+//                }
+//            }
+//
+//            // 병합된 시간 설정
+//            currentCourse.setFormattedTime(timeString.toString());
+//            mergedList.add(currentCourse);
+//        }
+//
+//        return mergedList;
+//    }
+//
+//    private boolean isSameCourse(Courses course1, Courses course2) {
+//        // 과, 수업 코드, 교수명, 학점, 강의실 등이 모두 동일한지 확인하여 동일 수업인지 판단
+//        return course1.getDepartmentName().equals(course2.getDepartmentName()) &&
+//                course1.getCourseCode().equals(course2.getCourseCode()) &&
+//                course1.getCourseName().equals(course2.getCourseName()) &&
+//                course1.getCourseNumber().equals(course2.getCourseNumber()) &&
+//                course1.getProfessorName().equals(course2.getProfessorName()) &&
+//                course1.getCredit().equals(course2.getCredit()) &&
+//                course1.getDivision().equals(course2.getDivision()) &&
+//                course1.getCapacity().equals(course2.getCapacity()) &&
+//                course1.getClassroom().equals(course2.getClassroom());
+//    }
+//
+//    private String formatCourseTime(Courses course) {
+//        return course.getStartPeriod()==(course.getEndPeriod())
+//                ? course.getDayOfWeek() + " " + course.getStartPeriod()
+//                : course.getDayOfWeek() + " " + course.getStartPeriod() + "-" + course.getEndPeriod();
+//    }
 
     // 시간 포함 여부 확인 메서드 (Courses 객체를 매개변수로 받음)
-    private boolean isTimeWithinSelectedTimes(Courses course, List<String> selectedTimes) {
+    public boolean isTimeWithinSelectedTimes(Courses course, List<String> selectedTimes) {
         String[] courseTimeSlots = course.getFormattedTime().split(", ");
+        System.out.println(course.getCourseName());
         System.out.println("Selected times for filtering: " + selectedTimes);
         System.out.println("Course time slots: " + Arrays.toString(courseTimeSlots));
 

@@ -64,5 +64,4 @@ public class CoursesController {
 
         return courseService.getFilteredCourses(department, division, credit, searchOption, searchQuery, selectedTimeList);
     }
-
 }

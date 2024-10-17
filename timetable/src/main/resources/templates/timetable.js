@@ -475,4 +475,3 @@ function executeFiltering() {
         })
         .catch(error => console.error('Error fetching filtered data:', error));
 }
-
