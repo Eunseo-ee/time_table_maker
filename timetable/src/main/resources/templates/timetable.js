@@ -128,7 +128,7 @@ function highlightTemporary(course) {
             const cell = document.getElementById(cellId);
 
             if (cell) {
-                cell.style.backgroundColor = 'rgba(236,214,239,0.63)'; // 연한 색으로 표시
+                cell.style.backgroundColor = 'rgba(220,220,220,0.63)'; // 연한 색으로 표시
             }
         }
     });

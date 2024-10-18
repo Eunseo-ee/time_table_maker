@@ -57,54 +57,6 @@ public class CourseService {
         return filteredCourses;
     }
 
-//    private List<Courses> mergeCourses(List<Courses> courses) {
-//        List<Courses> mergedList = new ArrayList<>();
-//
-//        for (int i = 0; i < courses.size(); i++) {
-//            Courses currentCourse = courses.get(i);
-//            StringBuilder timeString = new StringBuilder(formatCourseTime(currentCourse));
-//
-//            // 다음 수업과 동일한 수업인지 확인
-//            while (i + 1 < courses.size()) {
-//                Courses nextCourse = courses.get(i + 1);
-//
-//                // 동일한 수업인지 확인 (과, 교수명, 학점, 강의실 등 비교)
-//                if (isSameCourse(currentCourse, nextCourse)) {
-//                    // 동일 수업의 시간을 병합
-//                    timeString.append(", ").append(formatCourseTime(nextCourse));
-//                    i++; // 이미 병합했으므로 다음 항목을 건너뜀
-//                } else {
-//                    break;
-//                }
-//            }
-//
-//            // 병합된 시간 설정
-//            currentCourse.setFormattedTime(timeString.toString());
-//            mergedList.add(currentCourse);
-//        }
-//
-//        return mergedList;
-//    }
-//
-//    private boolean isSameCourse(Courses course1, Courses course2) {
-//        // 과, 수업 코드, 교수명, 학점, 강의실 등이 모두 동일한지 확인하여 동일 수업인지 판단
-//        return course1.getDepartmentName().equals(course2.getDepartmentName()) &&
-//                course1.getCourseCode().equals(course2.getCourseCode()) &&
-//                course1.getCourseName().equals(course2.getCourseName()) &&
-//                course1.getCourseNumber().equals(course2.getCourseNumber()) &&
-//                course1.getProfessorName().equals(course2.getProfessorName()) &&
-//                course1.getCredit().equals(course2.getCredit()) &&
-//                course1.getDivision().equals(course2.getDivision()) &&
-//                course1.getCapacity().equals(course2.getCapacity()) &&
-//                course1.getClassroom().equals(course2.getClassroom());
-//    }
-//
-//    private String formatCourseTime(Courses course) {
-//        return course.getStartPeriod()==(course.getEndPeriod())
-//                ? course.getDayOfWeek() + " " + course.getStartPeriod()
-//                : course.getDayOfWeek() + " " + course.getStartPeriod() + "-" + course.getEndPeriod();
-//    }
-
     // 시간 포함 여부 확인 메서드 (Courses 객체를 매개변수로 받음)
     public boolean isTimeWithinSelectedTimes(Courses course, List<String> selectedTimes) {
         String[] courseTimeSlots = course.getFormattedTime().split(", ");
@@ -162,81 +114,76 @@ public class CourseService {
 
     // 필터링된 조합 찾기 메서드
     public List<List<Courses>> findFilteredCombinations(
-            List<String> daysOfWeek, Float startTime, Float endTime, String professorName, String courseName, String division, int credit, String departmentName) {
+            String department, List<String> courseNames, Integer totalCredits, List<String> availableTimes, List<String> requiredCourses) {
 
-        Long department_id = null;
+        List<Courses> filteredCombination= getAllCourses();
+        List<List<Courses>> combinations = new ArrayList<>();
 
-        // Department name으로 department_id 조회
-        if (departmentName != null && !departmentName.isEmpty()) {
-            Departments department = departmentRepository.findByName(departmentName);
-            if (department != null) {
-                department_id = department.getId();
-            } else {
-                System.out.println("해당 과가 존재하지 않습니다: " + departmentName);  // 과가 존재하지 않을 때 로그 출력
-            }
+        if(department != null && !department.isEmpty()) {
+            filteredCombination = filteredCombination.stream()
+                    .filter(course -> course.getDepartmentName().equals(department))
+                    .collect(Collectors.toList());
         }
 
-        // 2. 모든 수업 데이터 조회
-        List<Courses> allCourses = courseRepository.findAll(); // repository 인스턴스 사용
-        List<List<Courses>> validCombinations = new ArrayList<>();
-
-        // 3. 모든 가능한 조합을 생성
-        for (Courses course1 : allCourses) {
-            if (department_id != null && !Long.valueOf(course1.getDepartmentId()).equals(department_id)) continue;
-
-            List<Courses> combination = new ArrayList<>();
-            combination.add(course1);
-
-            for (Courses course2 : allCourses) {
-                if (!course1.equals(course2) && !isTimeOverlap(course1, course2)) {
-                    combination.add(course2);
-                }
-            }
-
-            // 4. 조합이 사용자의 조건에 맞는지 확인
-            if (isValidCombination(combination, daysOfWeek, startTime, endTime, professorName, courseName, division, credit, departmentName)) {
-                validCombinations.add(combination);
-            }
+        if (courseNames != null && !courseNames.isEmpty()) {
+            filteredCombination = filteredCombination.stream()
+                    .filter(course -> courseNames.contains(course.getCourseName()))
+                    .collect(Collectors.toList());
         }
 
-        return validCombinations;
+        if (availableTimes != null && !availableTimes.isEmpty()) {
+            System.out.println("Selected times for filtering: " + availableTimes);
+
+            // 필터링 과정에서 각 강의를 대상으로 필터 적용 결과 출력
+            filteredCombination = filteredCombination.stream()
+                    .filter(course -> {
+                        boolean isWithinTime = isTimeWithinSelectedTimes(course, availableTimes);
+                        System.out.println("Course: " + course.getCourseName() + ", Time: " + course.getFormattedTime() + " -> " + (isWithinTime ? "Included" : "Excluded"));
+                        return isWithinTime;
+                    })
+                    .collect(Collectors.toList());
+        }
+        // 필수 강의 필터링
+        List<Courses> requiredCoursesList = filteredCombination.stream()
+                .filter(course -> requiredCourses.contains(course.getCourseName()))
+                .collect(Collectors.toList());
+
+        // 필수 강의가 조건에 맞지 않는 경우 빈 조합 반환
+        if (requiredCoursesList.isEmpty()) {
+            System.out.println("No required courses found in the filtered list");
+            return combinations;
+        }
+
+        // 총 학점에 맞는 강의 조합 생성
+        generateCombinations(filteredCombination, requiredCoursesList, totalCredits, new ArrayList<>(), combinations);
+
+        return combinations;
     }
 
-    // 두 수업의 시간이 겹치는지 확인
-    private boolean isTimeOverlap(Courses course1, Courses course2) {
-        if (!course1.getDayOfWeek().equals(course2.getDayOfWeek())) {
-            return false;
+    private void generateCombinations(List<Courses> availableCourses, List<Courses> requiredCourses, Integer totalCredits,
+                                      List<Courses> currentCombination, List<List<Courses>> allCombinations) {
+        int currentCredits = currentCombination.stream().mapToInt(Courses::getCredit).sum();
+
+        // 총 학점 조건을 만족하는 경우 조합에 추가
+        if (currentCredits >= totalCredits) {
+            allCombinations.add(new ArrayList<>(currentCombination));
+            return;
         }
-        return !(course1.getEndPeriod() <= course2.getStartPeriod() || course2.getEndPeriod() <= course1.getStartPeriod());
-    }
 
-    // 조합이 사용자의 조건에 맞는지 확인
-    private boolean isValidCombination(List<Courses> combination, List<String> daysOfWeek, Float startPeriod,
-                                       Float endPeriod, String professorName, String courseName, String division, Integer credit, String departmentName) {
-        for (Courses course : combination) {
-            if (daysOfWeek != null && !daysOfWeek.contains(course.getDayOfWeek())) return false;
-            if (startPeriod != null && course.getStartPeriod() < startPeriod) return false;
-            if (endPeriod != null && course.getEndPeriod() > endPeriod) return false;
-            if (professorName != null && !course.getProfessorName().equals(professorName)) return false;
-            if (courseName != null && !course.getCourseName().equals(courseName)) return false;
-            if (division != null && !course.getDivision().equals(division)) return false;
-        }
-        return true;
-    }
-
-    public void removeWhitespaceInClassroom() {
-        List<Courses> courses = courseRepository.findAll();
-
-        for (Courses course : courses) {
-            String classroom = course.getClassroom();
-            if (classroom != null && !classroom.isEmpty()) {
-                // 공백을 기준으로 첫 번째 부분만 가져옴
-                String updatedClassroom = classroom.split(" ")[0];
-                course.setClassroom(updatedClassroom);  // 공백 이후 제거한 값 설정
+        // 필수 강의가 아직 추가되지 않은 경우 추가
+        for (Courses requiredCourse : requiredCourses) {
+            if (!currentCombination.contains(requiredCourse)) {
+                currentCombination.add(requiredCourse);
             }
         }
 
-        // 변경된 데이터를 저장
-        courseRepository.saveAll(courses);
+        // 남은 강의 중에서 조합 생성
+        for (Courses course : availableCourses) {
+            if (!currentCombination.contains(course)) {
+                currentCombination.add(course);
+                generateCombinations(availableCourses, requiredCourses, totalCredits, currentCombination, allCombinations);
+                currentCombination.remove(course);
+            }
+        }
     }
 }

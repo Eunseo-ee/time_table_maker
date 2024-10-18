@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>조합찾기</title>
-<!--    <link rel="stylesheet" href="table.css" />-->
+    <link rel="stylesheet" href="header.css" />
     <link rel="stylesheet" href="combination.css" />
+
+
 </head>
 <body>
 <header>
@@ -19,192 +21,316 @@
                 <span>서울과기대</span>
             </p>
         </div>
+
+        <div class="menu">
+            <ul>
+                <li><a href="view.html">시간표</a></li>
+                <li><a href="TimeTableCombination.html" target="_blank">시간표조합찾기</a></li>
+                <li><a href="/">TODO</a></li>
+                <li><a href="/">이수과목체크</a></li>
+                <li><a href="/">학점계산기</a></li>
+                <li><a href="/">친구</a></li>
+            </ul>
+        </div>
+        <div class="icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/1159/1159740.png" />
+            <img src="https://cdn-icons-png.flaticon.com/512/66/66933.png" />
+        </div>
     </div>
 </header>
-<div>
-    <span>
-        세로!
-    </span>
-    <table class="main-table">
-        <colgroup>
-            <col class="col1" />
-            <col class="col2" />
-            <col class="col3" />
-            <col class="col4" />
-            <col class="col5" />
-            <col class="col6" />
-        </colgroup>
-        <tr class="thead">
-            <td></td>
-            <td>월</td>
-            <td>화</td>
-            <td>수</td>
-            <td>목</td>
-            <td>금</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td id="mon-1"></td>
-            <td id="tue-1"></td>
-            <td id="wed-1"></td>
-            <td id="thu-1"></td>
-            <td id="fri-1"></td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td id="mon-2"></td>
-            <td id="tue-2"></td>
-            <td id="wed-2"></td>
-            <td id="thu-2"></td>
-            <td id="fri-2"></td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td id="mon-3"></td>
-            <td id="tue-3"></td>
-            <td id="wed-3"></td>
-            <td id="thu-3"></td>
-            <td id="fri-3"></td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td id="mon-4"></td>
-            <td id="tue-4"></td>
-            <td id="wed-4"></td>
-            <td id="thu-4"></td>
-            <td id="fri-4"></td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td id="mon-5"></td>
-            <td id="tue-5"></td>
-            <td id="wed-5"></td>
-            <td id="thu-5"></td>
-            <td id="fri-5"></td>
-        </tr>
-        <tr>
-            <td>6</td>
-            <td id="mon-6"></td>
-            <td id="tue-6"></td>
-            <td id="wed-6"></td>
-            <td id="thu-6"></td>
-            <td id="fri-6"></td>
-        </tr>
-        <tr>
-            <td>7</td>
-            <td id="mon-7"></td>
-            <td id="tue-7"></td>
-            <td id="wed-7"></td>
-            <td id="thu-7"></td>
-            <td id="fri-7"></td>
-        </tr>
-        <tr>
-            <td>8</td>
-            <td id="mon-8"></td>
-            <td id="tue-8"></td>
-            <td id="wed-8"></td>
-            <td id="thu-8"></td>
-            <td id="fri-8"></td>
-        </tr>
-        <tr>
-            <td>9</td>
-            <td id="mon-9"></td>
-            <td id="tue-9"></td>
-            <td id="wed-9"></td>
-            <td id="thu-9"></td>
-            <td id="fri-9"></td>
-        </tr>
-    </table>
-    <table class="main-table">
-        <colgroup>
-            <col class="col1" />
-            <col class="col2" />
-            <col class="col3" />
-            <col class="col4" />
-            <col class="col5" />
-            <col class="col6" />
-        </colgroup>
-        <tr class="thead">
-            <td></td>
-            <td>월</td>
-            <td>화</td>
-            <td>수</td>
-            <td>목</td>
-            <td>금</td>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td id="mon1"></td>
-            <td id="tue1"></td>
-            <td id="wed1"></td>
-            <td id="thu1"></td>
-            <td id="fri1"></td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td id="mon2"></td>
-            <td id="tue2"></td>
-            <td id="wed2"></td>
-            <td id="thu2"></td>
-            <td id="fri2"></td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td id="mon"></td>
-            <td id="tue3"></td>
-            <td id="wed3"></td>
-            <td id="thu3"></td>
-            <td id="fri3"></td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td id="mon4"></td>
-            <td id="tue4"></td>
-            <td id="wed4"></td>
-            <td id="thu4"></td>
-            <td id="fri4"></td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td id="mon5"></td>
-            <td id="tue5"></td>
-            <td id="wed5"></td>
-            <td id="thu5"></td>
-            <td id="fri5"></td>
-        </tr>
-        <tr>
-            <td>6</td>
-            <td id="mon6"></td>
-            <td id="tue6"></td>
-            <td id="wed6"></td>
-            <td id="thu6"></td>
-            <td id="fri6"></td>
-        </tr>
-        <tr>
-            <td>7</td>
-            <td id="mon7"></td>
-            <td id="tue7"></td>
-            <td id="wed7"></td>
-            <td id="thu7"></td>
-            <td id="fri7"></td>
-        </tr>
-        <tr>
-            <td>8</td>
-            <td id="mon8"></td>
-            <td id="tue8"></td>
-            <td id="wed8"></td>
-            <td id="thu8"></td>
-            <td id="fri8"></td>
-        </tr>
-        <tr>
-            <td>9</td>
-            <td id="mon9"></td>
-            <td id="tue9"></td>
-            <td id="wed9"></td>
-            <td id="thu9"></td>
-            <td id="fri9"></td>
-        </tr>
-    </table>
-</div>
+<main>
+    <div class="filterSection">
+        <table class="main-table">
+            <colgroup>
+                <col class="col1" />
+                <col class="col2" />
+                <col class="col3" />
+                <col class="col4" />
+                <col class="col5" />
+                <col class="col6" />
+            </colgroup>
+            <tr class="thead">
+                <td></td>
+                <td>월</td>
+                <td>화</td>
+                <td>수</td>
+                <td>목</td>
+                <td>금</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td id="mon-1"></td>
+                <td id="tue-1"></td>
+                <td id="wed-1"></td>
+                <td id="thu-1"></td>
+                <td id="fri-1"></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td id="mon-2"></td>
+                <td id="tue-2"></td>
+                <td id="wed-2"></td>
+                <td id="thu-2"></td>
+                <td id="fri-2"></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td id="mon-3"></td>
+                <td id="tue-3"></td>
+                <td id="wed-3"></td>
+                <td id="thu-3"></td>
+                <td id="fri-3"></td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td id="mon-4"></td>
+                <td id="tue-4"></td>
+                <td id="wed-4"></td>
+                <td id="thu-4"></td>
+                <td id="fri-4"></td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td id="mon-5"></td>
+                <td id="tue-5"></td>
+                <td id="wed-5"></td>
+                <td id="thu-5"></td>
+                <td id="fri-5"></td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td id="mon-6"></td>
+                <td id="tue-6"></td>
+                <td id="wed-6"></td>
+                <td id="thu-6"></td>
+                <td id="fri-6"></td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td id="mon-7"></td>
+                <td id="tue-7"></td>
+                <td id="wed-7"></td>
+                <td id="thu-7"></td>
+                <td id="fri-7"></td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td id="mon-8"></td>
+                <td id="tue-8"></td>
+                <td id="wed-8"></td>
+                <td id="thu-8"></td>
+                <td id="fri-8"></td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td id="mon-9"></td>
+                <td id="tue-9"></td>
+                <td id="wed-9"></td>
+                <td id="thu-9"></td>
+                <td id="fri-9"></td>
+            </tr>
+        </table>
+
+        <button id="departmentButton" class="dropdown-button">과 선택</button>
+        <ul id="departmentList" class="dropdown-menu">
+            <li data-value="">전체</li>
+            <li data-value="1">기계시스템디자인공학과</li>
+            <li data-value="2">기계자동차공학과</li>
+            <li data-value="3">안전공학과</li>
+            <li data-value="4">신소재공학과</li>
+            <li data-value="5">건설시스템공학과</li>
+            <li data-value="6">건축공학전공</li>
+            <li data-value="7">건축학전공</li>
+            <li data-value="8">반도체융합공학전공</li>
+            <li data-value="9">전기정보공학과</li>
+            <li data-value="10">컴퓨터공학과</li>
+            <li data-value="11">스마트ICT융합공학과</li>
+            <li data-value="12">전자공학과</li>
+            <li data-value="13">IT융합소프트웨어전공</li>
+            <li data-value="14">화공생명공학과</li>
+            <li data-value="15">환경공학과</li>
+            <li data-value="16">식품생명공학과</li>
+            <li data-value="17">정밀화학과</li>
+            <li data-value="18">스포츠과학과</li>
+            <li data-value="19">안경광학과</li>
+            <li data-value="20">시각디자인전공</li>
+            <li data-value="21">산업디자인전공</li>
+            <li data-value="22">도예학과</li>
+            <li data-value="23">금속공예디자인학과</li>
+            <li data-value="24">조형예술학과</li>
+            <li data-value="25">영어영문학과</li>
+            <li data-value="26">행정학과</li>
+            <li data-value="27">문예창작학과</li>
+            <li data-value="28">한국문화전공</li>
+            <li data-value="29">산업정보시스템전공</li>
+            <li data-value="30">ITM전공</li>
+            <li data-value="31">경영학전공</li>
+            <li data-value="32">글로벌테크노경영전공</li>
+            <li data-value="33">MSDE학과</li>
+            <li data-value="34">빅데이터경영공학전공</li>
+            <li data-value="35">창업융합전공</li>
+            <li data-value="36">지식재산기술경영전공</li>
+            <li data-value="37">융합기계공학과</li>
+            <li data-value="38">헬스피트니스학과</li>
+            <li data-value="39">건설환경융합공학과</li>
+            <li data-value="40">문화예술학과</li>
+            <li data-value="41">영어과</li>
+            <li data-value="42">벤처경영학과</li>
+            <li data-value="43">정보통신융합공학과</li>
+            <li data-value="44">미래에너지융합학과</li>
+            <li data-value="45">지능형반도체공학과</li>
+            <li data-value="46">인공지능응용학과</li>
+            <li data-value="47">창업교육센터</li>
+            <li data-value="48">국제교류처</li>
+            <li data-value="49">교양대학</li>
+            <li data-value="50">글로벌기초교육학부</li>
+            <li data-value="51">글로벌한국어문화학부</li>
+            <li data-value="52">미래융합대학</li>
+            <li data-value="53">조형대학</li>
+        </ul>
+
+        <button id="totalCreditButton" class="dropdown-button">학점</button>
+        <ul id="CreditList" class="dropdown-menu">
+            <li data-value="1">1</li>
+            <li data-value="2">2</li>
+            <li data-value="3">3</li>
+            <li data-value="4">4</li>
+            <li data-value="5">5</li>
+            <li data-value="6">6</li>
+            <li data-value="7">7</li>
+            <li data-value="8">8</li>
+            <li data-value="9">9</li>
+            <li data-value="10">10</li>
+            <li data-value="11">11</li>
+            <li data-value="12">12</li>
+            <li data-value="13">13</li>
+            <li data-value="14">14</li>
+            <li data-value="15">15</li>
+            <li data-value="16">16</li>
+            <li data-value="17">17</li>
+            <li data-value="18">18</li>
+            <li data-value="19">19</li>
+            <li data-value="20">20</li>
+            <li data-value="21">21</li>
+            <li data-value="22">22</li>
+        </ul>
+
+        <table class="small-table">
+            <colgroup>
+                <col class="col1" />
+                <col class="col2" />
+                <col class="col3" />
+                <col class="col4" />
+                <col class="col5" />
+                <col class="col6" />
+            </colgroup>
+            <thead>
+            <tr class="thead">
+                <td></td>
+                <td>월</td>
+                <td>화</td>
+                <td>수</td>
+                <td>목</td>
+                <td>금</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td id="mon1"></td>
+                <td id="tue1"></td>
+                <td id="wed1"></td>
+                <td id="thu1"></td>
+                <td id="fri1"></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td id="mon2"></td>
+                <td id="tue2"></td>
+                <td id="wed2"></td>
+                <td id="thu2"></td>
+                <td id="fri2"></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td id="mon3"></td>
+                <td id="tue3"></td>
+                <td id="wed3"></td>
+                <td id="thu3"></td>
+                <td id="fri3"></td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td id="mon4"></td>
+                <td id="tue4"></td>
+                <td id="wed4"></td>
+                <td id="thu4"></td>
+                <td id="fri4"></td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td id="mon5"></td>
+                <td id="tue5"></td>
+                <td id="wed5"></td>
+                <td id="thu5"></td>
+                <td id="fri5"></td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td id="mon6"></td>
+                <td id="tue6"></td>
+                <td id="wed6"></td>
+                <td id="thu6"></td>
+                <td id="fri6"></td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td id="mon7"></td>
+                <td id="tue7"></td>
+                <td id="wed7"></td>
+                <td id="thu7"></td>
+                <td id="fri7"></td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td id="mon8"></td>
+                <td id="tue8"></td>
+                <td id="wed8"></td>
+                <td id="thu8"></td>
+                <td id="fri8"></td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td id="mon9"></td>
+                <td id="tue9"></td>
+                <td id="wed9"></td>
+                <td id="thu9"></td>
+                <td id="fri9"></td>
+            </tr>
+            </tbody>
+        </table>
+        <button id="applyButton" class="applyButton">적용</button>
+        <button id="resetButton" class="resetButton">초기화</button>
+
+        <button id="generateButton">Generate Timetable</button>
+
+
+    </div>
+</main>
+
+<!--<div class="main_table">-->
+<!--&lt;!&ndash;    메인 시간표&ndash;&gt;-->
+<!--    -->
+<!--</div>-->
+<!--&lt;!&ndash; 시간표 스와이프 &ndash;&gt;-->
+<!--<span id="timetableSection">-->
+<!--    <button class="search-icon" id="prevButton">◀</button>-->
+<!--    <div id="timetableContainer">-->
+<!--        <div id="timetableSlider"></div>-->
+<!--    </div>-->
+<!--    <button class="search-icon" id="nextButton">▶</button>-->
+<!--</span>-->
+
+<script src="tableCombination.js"></script>
 </body>
 </html>

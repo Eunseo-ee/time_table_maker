@@ -64,4 +64,15 @@ public class CoursesController {
 
         return courseService.getFilteredCourses(department, division, credit, searchOption, searchQuery, selectedTimeList);
     }
+
+    @GetMapping("/generateTimetable")
+    public List<List<Courses>> generateTimetable(
+            @RequestParam String department,
+            @RequestParam(required = false) List<String> courseNames,
+            @RequestParam(required = false) Integer totalCredits,
+            @RequestParam(required = false) List<String> availableTimes,
+            @RequestParam(required = false) List<String> requiredCourses) {
+        // 조건에 맞는 모든 강의 조합을 생성
+        return courseService.findFilteredCombinations(department, courseNames, totalCredits, availableTimes, requiredCourses);
+    }
 }
