@@ -414,6 +414,4 @@ main aside .choice {
     cursor: pointer;
 }
 
-.selected-time {
-    background-color: #adbacc; /* 선택된 셀의 배경색 */
-}
+
