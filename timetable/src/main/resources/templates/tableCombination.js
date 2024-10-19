@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const courseElement = document.createElement('div');
             courseElement.className = 'course';
             courseElement.innerHTML = `
-                <p><strong>${course.courseName}</strong> (${course.professorName})</p>
+                <p><strong>${course.courseName}</strong></p>
                 <p>${course.dayOfWeek} ${course.startPeriod}-${course.endPeriod}</p>
                 <p>${course.classroom}</p>
             `;
@@ -254,19 +254,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const form = document.createElement('form');
         form.className = 'coursesForm';
 
-        courses.forEach(course => {
+        // 강의명 중복 제거
+        const uniqueCourses = Array.from(new Set(courses.map(course => course.courseName)));
+
+        uniqueCourses.forEach(courseName => {
             const checkboxWrapper = document.createElement('div');
             checkboxWrapper.className = 'checkbox-wrapper';
 
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            checkbox.id = `course-${course.courseCode}`;
+            checkbox.id = `course-${courseName}`;
             checkbox.name = 'courses';
-            checkbox.value = course.courseCode;
+            checkbox.value = courseName;
 
             const label = document.createElement('label');
             label.htmlFor = checkbox.id;
-            label.textContent = `${course.courseName} (${course.professorName})`;
+            label.textContent = `${courseName}`;
 
             checkboxWrapper.appendChild(checkbox);
             checkboxWrapper.appendChild(label);
