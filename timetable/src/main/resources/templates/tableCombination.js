@@ -259,23 +259,62 @@ document.addEventListener('DOMContentLoaded', function () {
 
         uniqueCourses.forEach(courseName => {
             const checkboxWrapper = document.createElement('div');
-            checkboxWrapper.className = 'checkbox-wrapper';
+            checkboxWrapper.className = 'checkbox-wrapper styled-checkbox'; // CSS 클래스 추가
 
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.id = `course-${courseName}`;
             checkbox.name = 'courses';
             checkbox.value = courseName;
+            checkbox.className = 'styled-checkbox-input'; // 체크박스에 스타일 클래스 추가
 
             const label = document.createElement('label');
             label.htmlFor = checkbox.id;
             label.textContent = `${courseName}`;
+            label.className = 'styled-checkbox-label'; // 라벨에 스타일 클래스 추가
 
             checkboxWrapper.appendChild(checkbox);
             checkboxWrapper.appendChild(label);
             form.appendChild(checkboxWrapper);
+
+            // 체크박스 상태 변경 로직
+            let clickCount = 0; // 클릭 횟수 추적
+            checkbox.addEventListener('click', function (e) {
+                e.preventDefault(); // 기본 체크 동작 방지
+                clickCount = (clickCount + 1) % 3; // 0, 1, 2 반복
+
+                if (clickCount === 0) {
+                    checkbox.checked = false;
+                    checkbox.setAttribute('data-state', 'unchecked');
+                } else if (clickCount === 1) {
+                    checkbox.checked = true;
+                    checkbox.setAttribute('data-state', 'checked');
+                } else if (clickCount === 2) {
+                    checkbox.checked = false;
+                    checkbox.setAttribute('data-state', 'intermediate');
+                }
+
+                updateCheckboxAppearance(checkbox);
+                console.log(`Checkbox ${courseName} state: ${checkbox.getAttribute('data-state')}`);
+            });
         });
 
         departmentContainer.appendChild(form);
     }
+
+    // 체크박스 상태에 따라 스타일을 업데이트하는 함수
+    function updateCheckboxAppearance(checkbox) {
+        if (checkbox.getAttribute('data-state') === 'checked') {
+            checkbox.classList.add('checked-state');
+            checkbox.classList.remove('intermediate-state');
+        } else if (checkbox.getAttribute('data-state') === 'intermediate') {
+            checkbox.classList.add('intermediate-state');
+            checkbox.classList.remove('checked-state');
+        } else {
+            checkbox.classList.remove('checked-state');
+            checkbox.classList.remove('intermediate-state');
+        }
+    }
+
+
 });

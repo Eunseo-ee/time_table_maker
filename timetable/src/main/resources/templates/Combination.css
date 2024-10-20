@@ -132,7 +132,7 @@ header .container{
     list-style: none; /* 불릿 제거 */
     margin: 10%;
     margin-left:0;
-    margin-top:30%;
+    margin-top:5%;
     margin-bottom:0%;
     padding: 5px;
     border: 1px solid #ddd;
@@ -191,35 +191,6 @@ header .container{
     cursor: pointer;
     margin:1%;
 }
-
-/*!* 모달 스타일 *!*/
-/*.modal {*/
-/*    display: none; !* 기본적으로 숨김 *!*/
-/*    position: fixed;*/
-/*    z-index: 1;*/
-/*    left: 0;*/
-/*    top: 0;*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*    background-color: rgba(0, 0, 0, 0.1); !* 배경 어둡게 *!*/
-/*}*/
-
-/*.modal-content {*/
-/*    background-color: #fefefe;*/
-/*    margin: 20% auto;*/
-/*    padding: 30px;*/
-/*    border: 1px solid #888;*/
-/*    width: 300px; !* 모달의 너비를 작게 설정 *!*/
-/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);*/
-/*}*/
-
-/*.close {*/
-/*    color: #aaa;*/
-/*    float: right;*/
-/*    font-size: 24px;*/
-/*    font-weight: bold;*/
-/*    cursor: pointer;*/
-/*}*/
 
 /* 작은 테이블 스타일 */
 .small-table {
@@ -284,9 +255,10 @@ header .container{
 }
 
 .checkbox-wrapper {
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
+    /*margin: 10px 0;*/
+    /*display: flex;*/
+    /*align-items: center;*/
+    display: none;
 }
 
 .checkbox-wrapper input[type="checkbox"] {
@@ -298,4 +270,43 @@ header .container{
     margin-left:0.5%;
     width:15%;
     background-color: #f3f3f3;
+}
+
+/* 체크박스 스타일링 */
+.styled-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* 각 항목 간의 간격 조절 */
+}
+
+/* 기본 체크박스 스타일링 */
+.styled-checkbox-input {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    appearance: none;
+    border: 2px solid #333;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* 체크된 상태 스타일 */
+.styled-checkbox-input.checked-state {
+    background-color: #9aacc3; /* 체크됐을 때 색상 */
+    border-color: #9aacc3;
+}
+
+/* 중립 상태 스타일 */
+.styled-checkbox-input.intermediate-state {
+    background-color: #f36bb5; /* 중립 상태일 때 색상 (오렌지) */
+    border-color: #f36bb5;
+}
+
+/* 체크되지 않은 상태 스타일 (기본) */
+.styled-checkbox-input {
+    background-color: transparent;
+    border-color: #333;
 }
