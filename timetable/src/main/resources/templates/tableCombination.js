@@ -1,10 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
     let selectedTimes = [];
+    let courseNames = [];
+    let requiredCourses = [];
 
     // 과 선택 버튼 및 강의 체크박스 표시 기능
     const departmentButton = document.getElementById('departmentButton');
     const departmentList = document.getElementById('departmentList');
     const departmentContainer = document.getElementById('departmentContainer'); // HTML에 이 ID가 있는지 확인하세요.
+    const totalCreditButton = document.getElementById('totalCreditButton');
+
+    let selectedDepartment = ''; // 선택된 학과 저장
+    let selectedTotalCredits = ''; // 선택된 학점 저장
 
     // small-table의 모든 td 요소를 선택
     const cells = document.querySelectorAll(".small-table td");
@@ -19,8 +25,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // 적용 버튼 클릭 시 필터링 수행
     const applyButton = document.getElementById("applyButton");
     applyButton.addEventListener("click", function () {
-        console.log("Selected times for filtering:", selectedTimes);  // 선택된 시간 배열을 콘솔에 표시
-        executeFiltering(); // 필터링 함수 실행
+        availableTimes = [...selectedTimes]; // 선택된 시간 리스트를 availableTimes에 저장
+        console.log("Available times for filtering:", availableTimes);
+        findFilteredCombinations(); // 조건에 맞는 시간표 조합 찾기 함수 실행
     });
 
     // 초기화 버튼 클릭 시 선택 초기화
@@ -151,12 +158,19 @@ document.addEventListener('DOMContentLoaded', function () {
             button.dataset.value = item.getAttribute('data-value');
             item.parentElement.style.display = 'none';
 
-            // 학과 선택 시 체크박스 리스트 생성
+            // 학과 선택 시 학과 값 업데이트
             if (button.id === 'departmentButton') {
-                const departmentValue = button.dataset.value;
-                if (departmentValue) {
-                    fetchCoursesByDepartment(departmentValue);
+                selectedDepartment = button.dataset.value;
+                console.log("Selected department:", selectedDepartment);
+                if (selectedDepartment) {
+                    fetchCoursesByDepartment(selectedDepartment);
                 }
+            }
+
+            // 학점 선택 시 학점 값 업데이트
+            if (button.id === 'totalCreditButton') {
+                selectedTotalCredits = button.dataset.value;
+                console.log("Selected total credits:", selectedTotalCredits);
             }
         });
     });
@@ -286,12 +300,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (clickCount === 0) {
                     checkbox.checked = false;
                     checkbox.setAttribute('data-state', 'unchecked');
+                    courseNames = courseNames.filter(name => name !== courseName);
+                    requiredCourses = requiredCourses.filter(name => name !== courseName);
                 } else if (clickCount === 1) {
                     checkbox.checked = true;
                     checkbox.setAttribute('data-state', 'checked');
+                    courseNames.push(courseName);
+                    requiredCourses = requiredCourses.filter(name => name !== courseName);
                 } else if (clickCount === 2) {
                     checkbox.checked = false;
                     checkbox.setAttribute('data-state', 'intermediate');
+                    requiredCourses.push(courseName);
                 }
 
                 updateCheckboxAppearance(checkbox);
