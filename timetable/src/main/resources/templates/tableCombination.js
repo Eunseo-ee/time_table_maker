@@ -25,9 +25,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // 적용 버튼 클릭 시 필터링 수행
     const applyButton = document.getElementById("applyButton");
     applyButton.addEventListener("click", function () {
-        availableTimes = [...selectedTimes]; // 선택된 시간 리스트를 availableTimes에 저장
-        console.log("Available times for filtering:", availableTimes);
-        findFilteredCombinations(); // 조건에 맞는 시간표 조합 찾기 함수 실행
+        console.log("Apply button clicked");
+        // 선택된 시간들을 availableTimes에 저장
+        availableTimes = [];
+        cells.forEach(cell => {
+            if (cell.classList.contains("selected-time")) {
+                availableTimes.push(cell.id);
+            }
+        });
+        console.log("Selected times saved:", availableTimes);
     });
 
     // 초기화 버튼 클릭 시 선택 초기화
@@ -55,29 +61,59 @@ document.addEventListener('DOMContentLoaded', function () {
     // Generate Timetable 버튼 기능
     const generateButton = document.getElementById('generateButton');
     generateButton.addEventListener('click', async function () {
-        const department = document.getElementById('departmentButton').dataset.value;
+        console.log("Generate button clicked"); // 클릭 이벤트 발생 확인용 로그
+
+        const department_id = document.getElementById('departmentButton').dataset.value;
         const totalCredits = document.getElementById('totalCreditButton').dataset.value;
         const availableTimesString = consolidateSelectedTimes(selectedTimes);
+
+        // courseNames와 requiredCourses 설정
+        const courseNames = [];
+        const requiredCourses = [];
+
+        // 모든 체크박스를 조회하여 courseNames와 requiredCourses 설정
+        document.querySelectorAll('.styled-checkbox-input').forEach(checkbox => {
+            const clickCount = parseInt(checkbox.dataset.clickCount) || 0;
+            if (clickCount === 1) {
+                courseNames.push(checkbox.value);
+            } else if (clickCount === 2) {
+                courseNames.push(checkbox.value);
+                requiredCourses.push(checkbox.value);
+            }
+        });
 
         // 서버로 필터링 요청
         try {
             const params = new URLSearchParams({
-                department: department,
+                department_id: department_id,
                 totalCredits: totalCredits,
+                availableTimes: availableTimesString,
+                courseNames: courseNames.join(','),
+                requiredCourses: requiredCourses.join(',')
             });
 
-            // availableTimes를 문자열로 변환하여 URL에 추가
-            if (availableTimesString) params.append("availableTimes", availableTimesString);
-
             const response = await fetch(`http://localhost:8080/courses/generateTimetable?${params.toString()}`);
-            timetableCombinations = await response.json();
+            const responseJson = await response.json();
+            console.log('Response JSON:', responseJson);
+            timetableCombinations = responseJson;
 
-            // 시간표 슬라이더 초기화 및 첫 시간표 표시
-            currentIndex = 0;
-            displayTimetable(currentIndex);
+            console.log("Generated timetable combinations:", timetableCombinations);
         } catch (error) {
             console.error('Error fetching timetable combinations:', error);
         }
+
+        // 시간표 슬라이더 초기화 및 첫 시간표 표시
+        currentIndex = 0;
+        displayTimetable(currentIndex);
+
+        // 콘솔에 전달된 조건 출력
+        console.log("Parameters for timetable generation:");
+        console.log("Department_id:", department_id);
+        console.log("Total Credits:", totalCredits);
+        console.log("Available Times:", availableTimesString);
+        console.log("Course Names:", courseNames);
+        console.log("Required Courses:", requiredCourses);
+        await findFilteredCombinations();
     });
 
     // 요일 및 숫자를 변환하고 범위로 합치는 함수
@@ -161,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // 학과 선택 시 학과 값 업데이트
             if (button.id === 'departmentButton') {
                 selectedDepartment = button.dataset.value;
-                console.log("Selected department:", selectedDepartment);
+                console.log("Selected department_id:", selectedDepartment);
                 if (selectedDepartment) {
                     fetchCoursesByDepartment(selectedDepartment);
                 }
@@ -250,6 +286,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch(`http://localhost:8080/courses/filtered?department=${departmentId}`);
             const courses = await response.json();
+            console.log(`Fetched courses for department ${departmentId}:`, courses); // 과에 맞는 강의들 확인용 로그
             displayCoursesCheckboxList(courses);
         } catch (error) {
             console.error('Error fetching courses:', error);
@@ -335,5 +372,34 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // 조건에 맞는 시간표 조합 찾기 함수
+    async function findFilteredCombinations() {
+        try {
+            // 현재 선택된 필터링 조건을 콘솔에 출력
+            console.log("Before calling findFilteredCombinations:");
+            console.log('Selected Department:', selectedDepartment);
+            console.log('Selected Total Credits:', selectedTotalCredits);
+            console.log('Selected Available Times:', availableTimes);
+            console.log('Selected Course Names:', courseNames);
+            console.log('Selected Required Courses:', requiredCourses);
 
+            const params = new URLSearchParams({
+                department_id: selectedDepartment,
+                totalCredits: selectedTotalCredits,
+                availableTimes: availableTimes.join(','),
+                courseNames: courseNames.join(','),
+                requiredCourses: requiredCourses.join(',')
+            });
+
+            console.log('Generated URL Parameters:', params.toString()); // URL 파라미터 확인
+
+            const response = await fetch(`http://localhost:8080/courses/generateTimetable?${params.toString()}`);
+            const timetableCombinations = await response.json();
+
+            // 시간표 표시 로직 추가
+            console.log("Generated timetable combinations:", timetableCombinations);
+        } catch (error) {
+            console.error('Error generating timetable combinations:', error);
+        }
+    }
 });

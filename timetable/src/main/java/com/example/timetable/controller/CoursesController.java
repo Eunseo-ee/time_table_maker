@@ -67,12 +67,12 @@ public class CoursesController {
 
     @GetMapping("/generateTimetable")
     public List<List<Courses>> generateTimetable(
-            @RequestParam String department,
-            @RequestParam(required = false) List<String> courseNames,
-            @RequestParam(required = false) Integer totalCredits,
-            @RequestParam(required = false) List<String> availableTimes,
-            @RequestParam(required = false) List<String> requiredCourses) {
+            @RequestParam("department_id") int department_id,
+            @RequestParam(value = "courseNames", required = false) List<String> courseNames,
+            @RequestParam("totalCredits") Integer totalCredits,
+            @RequestParam(value = "availableTimes", required = false) List<String> availableTimes,
+            @RequestParam(value = "requiredCourses", required = false) List<String> requiredCourses) {
         // 조건에 맞는 모든 강의 조합을 생성
-        return courseService.findFilteredCombinations(department, courseNames, totalCredits, availableTimes, requiredCourses);
+        return courseService.findFilteredCombinations(department_id, courseNames, totalCredits, availableTimes, requiredCourses);
     }
 }

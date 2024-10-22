@@ -60,13 +60,9 @@ public class CourseService {
     // 시간 포함 여부 확인 메서드 (Courses 객체를 매개변수로 받음)
     public boolean isTimeWithinSelectedTimes(Courses course, List<String> selectedTimes) {
         String[] courseTimeSlots = course.getFormattedTime().split(", ");
-        System.out.println(course.getCourseName());
-        System.out.println("Selected times for filtering: " + selectedTimes);
-        System.out.println("Course time slots: " + Arrays.toString(courseTimeSlots));
 
         // 각 강의 시간대에 대해 선택된 시간대와 비교
         for (String timeSlot : courseTimeSlots) {
-            System.out.println("Processing course time slot: " + timeSlot);
             String[] courseTimeSplit = timeSlot.split(" ");
 
             String courseDay = courseTimeSplit[0];
@@ -96,41 +92,54 @@ public class CourseService {
                 if (selectedDay.equals(courseDay) &&
                         (selectedStartPeriod <= courseStartPeriod && selectedEndPeriod >= courseEndPeriod)) {
                     matchFound = true; // 일치하는 시간대가 있는 경우 true로 설정
-                    System.out.println("Match found for selected time: " + selectedTime);
                     break;  // 현재 강의 시간대에 대해 매칭되면 더 이상 비교하지 않음
                 }
             }
 
             if (!matchFound) {
                 // 현재 강의 시간대에 대해 일치하는 선택된 시간대가 하나도 없는 경우 false 반환
-                System.out.println("No match found for time slot: " + timeSlot);
                 return false;
             }
         }
-        System.out.println("All selected times matched successfully");
         // 모든 강의 시간대가 선택된 시간대와 일치하는 경우 true 반환
         return true;
     }
 
     // 필터링된 조합 찾기 메서드
     public List<List<Courses>> findFilteredCombinations(
-            String department, List<String> courseNames, Integer totalCredits, List<String> availableTimes, List<String> requiredCourses) {
+            int department_id, List<String> courseNames, Integer totalCredits, List<String> availableTimes, List<String> requiredCourses) {
 
         List<Courses> filteredCombination= getAllCourses();
         List<List<Courses>> combinations = new ArrayList<>();
 
-        if(department != null && !department.isEmpty()) {
+        System.out.println("Before department filter, course count: " + filteredCombination.size());
+        if(department_id != 0) {
+            System.out.println(department_id);
             filteredCombination = filteredCombination.stream()
-                    .filter(course -> course.getDepartmentName().equals(department))
+                    .filter(course -> course.getDepartmentId().equals(department_id))
                     .collect(Collectors.toList());
         }
 
+        System.out.println("Before courseNames filter, course count: " + filteredCombination.size());
         if (courseNames != null && !courseNames.isEmpty()) {
+            System.out.println("Selected course names for filtering: " + courseNames);
+
             filteredCombination = filteredCombination.stream()
-                    .filter(course -> courseNames.contains(course.getCourseName()))
+                    .filter(course -> {
+                        boolean matches = courseNames.stream()
+                                .anyMatch(selectedCourseName -> selectedCourseName.trim().equalsIgnoreCase(course.getCourseName().trim()));
+
+                        // 필터링 과정에서 각 강의가 선택된 강의명과 일치하는지 확인
+                        System.out.println("Course: " + course.getCourseName() + " -> " + (matches ? "Included" : "Excluded"));
+
+                        return matches;
+                    })
                     .collect(Collectors.toList());
+
+            System.out.println("After courseNames filter, course count: " + filteredCombination.size());
         }
 
+        System.out.println("Before availableTimes filter, course count: " + filteredCombination.size());
         if (availableTimes != null && !availableTimes.isEmpty()) {
             System.out.println("Selected times for filtering: " + availableTimes);
 
@@ -138,11 +147,11 @@ public class CourseService {
             filteredCombination = filteredCombination.stream()
                     .filter(course -> {
                         boolean isWithinTime = isTimeWithinSelectedTimes(course, availableTimes);
-                        System.out.println("Course: " + course.getCourseName() + ", Time: " + course.getFormattedTime() + " -> " + (isWithinTime ? "Included" : "Excluded"));
                         return isWithinTime;
                     })
                     .collect(Collectors.toList());
         }
+        System.out.println("Before required courses filter, course count: " + filteredCombination.size());
         // 필수 강의 필터링
         List<Courses> requiredCoursesList = filteredCombination.stream()
                 .filter(course -> requiredCourses.contains(course.getCourseName()))
@@ -150,6 +159,9 @@ public class CourseService {
 
         // 필수 강의가 조건에 맞지 않는 경우 빈 조합 반환
         if (requiredCoursesList.isEmpty()) {
+            System.out.println("Required courses: " + requiredCourses);
+            System.out.println("Filtered courses after previous conditions: " + filteredCombination.stream()
+                    .map(Courses::getCourseName).collect(Collectors.toList()));
             System.out.println("No required courses found in the filtered list");
             return combinations;
         }
