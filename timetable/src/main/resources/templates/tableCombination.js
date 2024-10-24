@@ -97,6 +97,15 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Response JSON:', responseJson);
             timetableCombinations = responseJson;
 
+            // 콘솔에 전달된 조건 출력
+            console.log("Parameters for timetable generation:");
+            console.log("Department_id:", department_id);
+            console.log("Total Credits:", totalCredits);
+            console.log("Available Times:", availableTimes);
+            console.log("Course Names:", courseNames);
+            console.log("Required Courses:", requiredCourses);
+            await findFilteredCombinations();
+
             console.log("Generated timetable combinations:", timetableCombinations);
         } catch (error) {
             console.error('Error fetching timetable combinations:', error);
@@ -105,15 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // 시간표 슬라이더 초기화 및 첫 시간표 표시
         currentIndex = 0;
         displayTimetable(currentIndex);
-
-        // 콘솔에 전달된 조건 출력
-        console.log("Parameters for timetable generation:");
-        console.log("Department_id:", department_id);
-        console.log("Total Credits:", totalCredits);
-        console.log("Available Times:", availableTimesString);
-        console.log("Course Names:", courseNames);
-        console.log("Required Courses:", requiredCourses);
-        await findFilteredCombinations();
     });
 
     // 요일 및 숫자를 변환하고 범위로 합치는 함수
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const params = new URLSearchParams({
                 department_id: selectedDepartment,
                 totalCredits: selectedTotalCredits,
-                availableTimes: availableTimes.join(','),
+                availableTimes: consolidateSelectedTimes(selectedTimes),
                 courseNames: courseNames.join(','),
                 requiredCourses: requiredCourses.join(',')
             });

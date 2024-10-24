@@ -65,34 +65,65 @@ public class CourseService {
         for (String timeSlot : courseTimeSlots) {
             String[] courseTimeSplit = timeSlot.split(" ");
 
+            // 배열 길이 검사
+            if (courseTimeSplit.length < 2) {
+                System.out.println("Invalid time slot format for course: " + course.getCourseName() + ", timeSlot: " + timeSlot);
+                return false;
+            }
+
             String courseDay = courseTimeSplit[0];
             String[] coursePeriodRange = courseTimeSplit[1].split("-");
 
+            if (coursePeriodRange.length < 2) {
+                System.out.println("Invalid period range for course: " + course.getCourseName() + ", timeSlot: " + timeSlot);
+                return false;
+            }
+
             float courseStartPeriod;
             float courseEndPeriod;
-            courseStartPeriod = Float.parseFloat(coursePeriodRange[0]);
-            courseEndPeriod = Float.parseFloat(coursePeriodRange[1]);
+
+            try {
+                courseStartPeriod = Float.parseFloat(coursePeriodRange[0]);
+                courseEndPeriod = Float.parseFloat(coursePeriodRange[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid period format for course: " + course.getCourseName() + ", timeSlot: " + timeSlot);
+                return false;
+            }
 
             boolean matchFound = false;  // 현재 강의 시간대에 대해 선택된 시간대와 일치하는 것이 있는지 추적
 
             // 각 선택된 시간대와 강의 시간대를 비교
             for (String selectedTime : selectedTimes) {
-
                 String[] selectedTimeSplit = selectedTime.split(" ");
+
+                if (selectedTimeSplit.length < 2) {
+                    System.out.println("Invalid selected time format: " + selectedTime);
+                    continue; // 선택된 시간대 포맷이 유효하지 않은 경우 건너뜁니다.
+                }
 
                 String selectedDay = selectedTimeSplit[0];
                 String[] selectedPeriodRange = selectedTimeSplit[1].split("-");
 
+                if (selectedPeriodRange.length < 2) {
+                    System.out.println("Invalid selected period range: " + selectedTime);
+                    continue; // 선택된 시간대 범위가 유효하지 않은 경우 건너뜁니다.
+                }
+
                 float selectedStartPeriod;
                 float selectedEndPeriod;
-                selectedStartPeriod = Float.parseFloat(selectedPeriodRange[0]);
-                selectedEndPeriod = Float.parseFloat(selectedPeriodRange[1]);
 
-                // 선택된 시간대와 강의 시간대가 일치하는지 확인
+                try {
+                    selectedStartPeriod = Float.parseFloat(selectedPeriodRange[0]);
+                    selectedEndPeriod = Float.parseFloat(selectedPeriodRange[1]);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid selected period format: " + selectedTime);
+                    continue; // 선택된 시간대 포맷이 유효하지 않은 경우 건너뜁니다.
+                }
+
                 if (selectedDay.equals(courseDay) &&
                         (selectedStartPeriod <= courseStartPeriod && selectedEndPeriod >= courseEndPeriod)) {
-                    matchFound = true; // 일치하는 시간대가 있는 경우 true로 설정
-                    break;  // 현재 강의 시간대에 대해 매칭되면 더 이상 비교하지 않음
+                    matchFound = true;
+                    break;
                 }
             }
 
@@ -129,9 +160,6 @@ public class CourseService {
                         boolean matches = courseNames.stream()
                                 .anyMatch(selectedCourseName -> selectedCourseName.trim().equalsIgnoreCase(course.getCourseName().trim()));
 
-                        // 필터링 과정에서 각 강의가 선택된 강의명과 일치하는지 확인
-                        System.out.println("Course: " + course.getCourseName() + " -> " + (matches ? "Included" : "Excluded"));
-
                         return matches;
                     })
                     .collect(Collectors.toList());
@@ -156,18 +184,25 @@ public class CourseService {
         List<Courses> requiredCoursesList = filteredCombination.stream()
                 .filter(course -> requiredCourses.contains(course.getCourseName()))
                 .collect(Collectors.toList());
+        System.out.println("Required courses: " + requiredCourses);
 
         // 필수 강의가 조건에 맞지 않는 경우 빈 조합 반환
         if (requiredCoursesList.isEmpty()) {
             System.out.println("Required courses: " + requiredCourses);
             System.out.println("Filtered courses after previous conditions: " + filteredCombination.stream()
-                    .map(Courses::getCourseName).collect(Collectors.toList()));
+                    .map(Courses::getCourseName).toList());
             System.out.println("No required courses found in the filtered list");
             return combinations;
         }
 
         // 총 학점에 맞는 강의 조합 생성
         generateCombinations(filteredCombination, requiredCoursesList, totalCredits, new ArrayList<>(), combinations);
+
+        // 생성된 조합을 강의명 리스트로 출력
+        System.out.println("Generated combinations:");
+        for (List<Courses> combination : combinations) {
+            System.out.println(combination.stream().map(Courses::getCourseName).collect(Collectors.toList()));
+        }
 
         return combinations;
     }
@@ -179,6 +214,11 @@ public class CourseService {
         // 총 학점 조건을 만족하는 경우 조합에 추가
         if (currentCredits >= totalCredits) {
             allCombinations.add(new ArrayList<>(currentCombination));
+
+            // 생성된 조합이 너무 많으면 종료 (예: 100개로 제한)
+            if (allCombinations.size() >= 100) {
+                return;
+            }
             return;
         }
 
@@ -195,6 +235,10 @@ public class CourseService {
                 currentCombination.add(course);
                 generateCombinations(availableCourses, requiredCourses, totalCredits, currentCombination, allCombinations);
                 currentCombination.remove(course);
+                // 생성된 조합이 너무 많으면 종료 (예: 100개로 제한)
+                if (allCombinations.size() >= 100) {
+                    return;
+                }
             }
         }
     }
