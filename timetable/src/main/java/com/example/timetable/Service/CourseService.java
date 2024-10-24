@@ -211,35 +211,45 @@ public class CourseService {
                                       List<Courses> currentCombination, List<List<Courses>> allCombinations) {
         int currentCredits = currentCombination.stream().mapToInt(Courses::getCredit).sum();
 
-        // 총 학점 조건을 만족하는 경우 조합에 추가
-        if (currentCredits >= totalCredits) {
+        // 총 학점 조건을 만족하고 필수 강의가 모두 포함되었는지 검사
+        boolean allRequiredCoursesIncluded = requiredCourses.stream().allMatch(currentCombination::contains);
+        if (currentCredits <= totalCredits && allRequiredCoursesIncluded) {
             allCombinations.add(new ArrayList<>(currentCombination));
 
             // 생성된 조합이 너무 많으면 종료 (예: 100개로 제한)
             if (allCombinations.size() >= 100) {
                 return;
             }
-            return;
-        }
-
-        // 필수 강의가 아직 추가되지 않은 경우 추가
-        for (Courses requiredCourse : requiredCourses) {
-            if (!currentCombination.contains(requiredCourse)) {
-                currentCombination.add(requiredCourse);
-            }
         }
 
         // 남은 강의 중에서 조합 생성
         for (Courses course : availableCourses) {
-            if (!currentCombination.contains(course)) {
-                currentCombination.add(course);
-                generateCombinations(availableCourses, requiredCourses, totalCredits, currentCombination, allCombinations);
-                currentCombination.remove(course);
-                // 생성된 조합이 너무 많으면 종료 (예: 100개로 제한)
-                if (allCombinations.size() >= 100) {
-                    return;
-                }
+            // 동일한 강의명(다른 교수명, 강의실 등)인 경우 한 조합에 포함되지 않도록 필터링
+            boolean courseNameConflict = currentCombination.stream()
+                    .anyMatch(existingCourse -> existingCourse.getCourseName().equalsIgnoreCase(course.getCourseName()));
+            if (courseNameConflict) {
+                continue;
+            }
+
+            // 현재 학점이 총 학점을 초과하면 더 이상 조합을 만들지 않음
+            if (currentCredits + course.getCredit() > totalCredits) {
+                continue;
+            }
+
+            // 필수 강의인지 확인하고 이미 추가된 경우 건너뛰기
+            if (requiredCourses.contains(course) && currentCombination.contains(course)) {
+                continue;
+            }
+
+            currentCombination.add(course);
+            generateCombinations(availableCourses, requiredCourses, totalCredits, currentCombination, allCombinations);
+            currentCombination.remove(course);
+
+            // 생성된 조합이 너무 많으면 종료 (예: 100개로 제한)
+            if (allCombinations.size() >= 100) {
+                return;
             }
         }
     }
+
 }
