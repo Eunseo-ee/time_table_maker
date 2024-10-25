@@ -209,8 +209,23 @@ thead td {
     background-color: #f0f0f0;
 }
 
-/* 검색 버튼 아이콘 스타일 */
-.search-icon {
+.prevButton {
+    position: absolute;
+    right: 40%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 30px;
+    color: #666;
+}
+
+.prevButton:hover {
+    color: #357ab7; /* 아이콘에 마우스를 올렸을 때 색상 변경 */
+}
+
+.nextButton {
     position: absolute;
     right: 1px;
     top: 50%;
@@ -222,7 +237,7 @@ thead td {
     color: #666;
 }
 
-.search-icon:hover {
+.nextButton:hover {
     color: #357ab7; /* 아이콘에 마우스를 올렸을 때 색상 변경 */
 }
 

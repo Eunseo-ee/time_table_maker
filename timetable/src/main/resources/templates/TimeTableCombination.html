@@ -41,7 +41,8 @@
 <main>
     <div class="container">
         <div class="main-tables-container">
-            <table class="main-table">
+            <button class="prevButton" id="prevButton">◀</button>
+            <table class="main-table" id="comparing">
                 <colgroup>
                     <col class="col1" />
                     <col class="col2" />
@@ -221,6 +222,7 @@
                     <td id="fri_9"></td>
                 </tr>
             </table>
+            <button class="nextButton" id="nextButton">▶</button>
         </div>
         <div class="filter-container">
             <div class="button-group">
@@ -415,19 +417,7 @@
     </div>
 </main>
 
-<!--<div class="main_table">-->
-<!--&lt;!&ndash;    메인 시간표&ndash;&gt;-->
-<!--    -->
-<!--</div>-->
-<!--&lt;!&ndash; 시간표 스와이프 &ndash;&gt;-->
-<!--<span id="timetableSection">-->
-<!--    <button class="search-icon" id="prevButton">◀</button>-->
-<!--    <div id="timetableContainer">-->
-<!--        <div id="timetableSlider"></div>-->
-<!--    </div>-->
-<!--    <button class="search-icon" id="nextButton">▶</button>-->
-<!--</span>-->
-
 <script src="tableCombination.js?v=1.0"></script>
+<script src="tablePainter.js?v=1.0"></script>
 </body>
 </html>

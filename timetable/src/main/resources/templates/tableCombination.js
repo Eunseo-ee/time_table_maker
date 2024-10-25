@@ -155,7 +155,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 드롭다운 메뉴 버튼 클릭 시 표시/숨김 및 위치 조정
     document.querySelectorAll('.dropdown-button').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function (event) {
+            event.stopPropagation(); // 이벤트 전파 중지
             const menu = button.nextElementSibling;
 
             // 드롭다운 메뉴 표시
@@ -187,7 +188,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 드롭다운 메뉴 항목 클릭 시 값 변경, 메뉴 숨기기
     document.querySelectorAll('.dropdown-menu li').forEach(item => {
-        item.addEventListener('click', function () {
+        item.addEventListener('click', function (event) {
+            event.stopPropagation(); // 이벤트 전파 중지
             const button = item.parentElement.previousElementSibling;
 
             // 데이터 값 업데이트 및 메뉴 숨기기
@@ -209,76 +211,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log("Selected total credits:", selectedTotalCredits);
             }
         });
-    });
-
-    // 시간표 조합 표시 함수
-    let currentIndex = 0;
-    let timetableCombinations = [];
-    const prevButton = document.getElementById('prevButton');
-    const nextButton = document.getElementById('nextButton');
-    const timetableSlider = document.getElementById('timetableSlider');
-
-    prevButton.addEventListener('click', function () {
-        if (currentIndex > 0) {
-            currentIndex--;
-            displayTimetable(currentIndex);
-        }
-    });
-
-    nextButton.addEventListener('click', function () {
-        if (currentIndex < timetableCombinations.length - 1) {
-            currentIndex++;
-            displayTimetable(currentIndex);
-        }
-    });
-
-    function displayTimetable(index) {
-        timetableSlider.innerHTML = ''; // 기존 시간표 지우기
-
-        if (timetableCombinations.length === 0) {
-            timetableSlider.innerHTML = '<p>No timetables available</p>';
-            return;
-        }
-
-        const combination = timetableCombinations[index];
-        const timetable = document.createElement('div');
-        timetable.className = 'timetable';
-
-        combination.forEach(course => {
-            const courseElement = document.createElement('div');
-            courseElement.className = 'course';
-            courseElement.innerHTML = `
-                <p><strong>${course.courseName}</strong></p>
-                <p>${course.dayOfWeek} ${course.startPeriod}-${course.endPeriod}</p>
-                <p>${course.classroom}</p>
-            `;
-            timetable.appendChild(courseElement);
-        });
-
-        timetableSlider.appendChild(timetable);
-    }
-
-    // 과 선택 버튼을 눌렀을 때 드롭다운 메뉴 표시/숨김
-    departmentButton.addEventListener('click', function () {
-        departmentList.style.display = departmentList.style.display === 'block' ? 'none' : 'block';
-    });
-
-    // 드롭다운 메뉴에서 과를 선택했을 때
-    departmentList.addEventListener('click', function (event) {
-        if (event.target.tagName === 'LI') {
-            const selectedDepartment = event.target.textContent;
-            const selectedDepartmentValue = event.target.dataset.value;
-
-            departmentButton.textContent = selectedDepartment; // 버튼 텍스트 변경
-            departmentButton.dataset.value = selectedDepartmentValue; // 데이터 값 변경
-
-            departmentList.style.display = 'none'; // 드롭다운 메뉴 숨기기
-
-            if (selectedDepartmentValue) {
-                // 선택된 학과의 모든 강의 가져오기
-                fetchCoursesByDepartment(selectedDepartmentValue);
-            }
-        }
     });
 
     // 선택된 학과에 해당하는 모든 강의를 가져오는 함수
@@ -401,5 +333,40 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error generating timetable combinations:', error);
         }
+    }
+
+    // 시간표 조합 표시 함수
+    let currentIndex = 0;
+    let timetableCombinations = [];
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+    const timetableSlider = document.getElementById('timetableSlider');
+
+    prevButton.addEventListener('click', function () {
+        if (currentIndex > 0) {
+            currentIndex--;
+            displayTimetable(currentIndex);
+        }
+    });
+
+    nextButton.addEventListener('click', function () {
+        if (currentIndex < timetableCombinations.length - 1) {
+            currentIndex++;
+            displayTimetable(currentIndex);
+        }
+    });
+
+    function displayTimetable(index) {
+        if (timetableCombinations.length === 0) {
+            timetableSlider.innerHTML = '<p>No timetables available</p>';
+            return;
+        }
+
+        const combination = timetableCombinations[index];
+        timetableSlider.innerHTML = ''; // 슬라이더에 표시할 시간표 정보 초기화
+        timetableSlider.innerHTML = `<p>Displaying timetable ${index + 1} of ${timetableCombinations.length}</p>`;
+
+        // fillTimeTable 함수를 호출하여 시간표 테이블에 조합을 색칠
+        fillTimeTable(combination);
     }
 });
