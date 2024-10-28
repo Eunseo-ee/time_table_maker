@@ -326,10 +326,19 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Generated URL Parameters:', params.toString()); // URL 파라미터 확인
 
             const response = await fetch(`http://localhost:8080/courses/generateTimetable?${params.toString()}`);
-            const timetableCombinations = await response.json();
+            const responseJson = await response.json();
 
-            // 시간표 표시 로직 추가
-            console.log("Generated timetable combinations:", timetableCombinations);
+            // 시간표 조합들을 timetableCombinations 배열에 저장
+            timetableCombinations = responseJson;
+
+            // 첫 번째 시간표 조합을 표시
+            if (timetableCombinations.length > 0) {
+                currentIndex = 0;
+                displayTimetable(currentIndex);
+            } else {
+                console.log("No timetable combinations found");
+                clearTimeTable();
+            }
         } catch (error) {
             console.error('Error generating timetable combinations:', error);
         }
@@ -338,6 +347,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 시간표 조합 표시 함수
     let currentIndex = 0;
     let timetableCombinations = [];
+
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
     const timetableSlider = document.getElementById('timetableSlider');
@@ -357,16 +367,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function displayTimetable(index) {
-        if (timetableCombinations.length === 0) {
-            timetableSlider.innerHTML = '<p>No timetables available</p>';
-            return;
-        }
-
+        clearTimeTable(); // 기존 시간표 초기화
         const combination = timetableCombinations[index];
-        timetableSlider.innerHTML = ''; // 슬라이더에 표시할 시간표 정보 초기화
-        timetableSlider.innerHTML = `<p>Displaying timetable ${index + 1} of ${timetableCombinations.length}</p>`;
-
-        // fillTimeTable 함수를 호출하여 시간표 테이블에 조합을 색칠
-        fillTimeTable(combination);
+        if (combination) {
+            fillTimeTable(combination); // 새 시간표 조합을 셀에 색칠
+        } else {
+            console.log("No timetable combination available at index:", index);
+        }
     }
 });
