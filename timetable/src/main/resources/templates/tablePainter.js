@@ -13,43 +13,57 @@ function fillTimeTable(timetableCombination) {
         '금': 'fri'
     };
 
-    // 테이블 셀 초기화
-    clearTimeTable();
+    // 테이블 셀 초기화 (keep 테이블에 대한 초기화)
+    clearTimeTable('keep');
 
     timetableCombination.forEach(course => {
-        const daysAndPeriods = course.time.split(', '); // 예: "월 1-3, 수 2-4"
+        // course 객체가 유효한지 확인
+        if (!course || !course.dayOfWeek || course.startPeriod === undefined || course.endPeriod === undefined) {
+            console.error("Invalid course data:", course);
+            return; // 잘못된 데이터는 무시
+        }
+
+        const dayCode = dayOfWeekMap[course.dayOfWeek];
+        if (!dayCode) {
+            console.error("Invalid day code:", course.dayOfWeek);
+            return; // 유효하지 않은 day의 경우 무시
+        }
+
+        const startPeriod = parseInt(course.startPeriod);
+        const endPeriod = parseInt(course.endPeriod);
+        const finalEndPeriod = endPeriod || startPeriod;
+
         const courseColor = courseColorMap[course.courseName] || colorPalette[colorIndex % colorPalette.length];
         courseColorMap[course.courseName] = courseColor; // 강의 색상 저장
         colorIndex++; // 다음 강의는 다른 색상 사용
 
         // 시간표에 각 강의를 색칠
-        daysAndPeriods.forEach(slot => {
-            const [day, periodRange] = slot.split(' ');
-            const dayCode = dayOfWeekMap[day];
-
-            const [startPeriod, endPeriod] = periodRange.includes('-') ? periodRange.split('-').map(Number) : [parseInt(periodRange), parseInt(periodRange)];
-            const finalEndPeriod = endPeriod || startPeriod;
-
-            for (let period = startPeriod; period <= finalEndPeriod; period++) {
-                const cellId = `${dayCode}-${period}`;
-                const cell = document.getElementById(cellId);
-
-                if (cell) {
-                    cell.style.backgroundColor = courseColor; // 셀 배경색 설정
-                    cell.innerHTML = `<strong>${course.courseName}</strong><br>${course.professorName}`;
-                    cell.classList.add('occupied'); // 점유된 셀 표시
-                }
+        for (let period = startPeriod; period <= finalEndPeriod; period++) {
+            const cellId = `${dayCode}_${period}`;
+            console.log("Attempting to color cell with ID:", cellId);
+            const cell = document.getElementById(cellId);
+            if (!cell) {
+                console.error("Cell not found with ID:", cellId);
+            } else {
+                console.log("Cell found. Attempting to apply color.");
+                cell.style.backgroundColor = `${courseColor} !important`; // 셀 배경색 설정 (중요도를 높여 설정)
+                cell.innerHTML = `<strong>${course.courseName}</strong><br>${course.professorName}`;
+                cell.classList.add('occupied'); // 점유된 셀 표시
             }
-        });
+        }
     });
 }
 
 // 테이블 초기화 함수
-function clearTimeTable() {
-    const cells = document.querySelectorAll(".main-table td");
-    cells.forEach(cell => {
-        cell.style.backgroundColor = ''; // 배경색 초기화
-        cell.innerHTML = ''; // 내용 초기화
-        cell.classList.remove('occupied'); // 점유 클래스 제거
-    });
+function clearTimeTable(tableId) {
+    // 특정 테이블 ID에 해당하는 셀만 선택하여 초기화
+    const table = document.getElementById(tableId);
+    if (table) {
+        const cells = table.querySelectorAll("td");
+        cells.forEach(cell => {
+            cell.style.backgroundColor = ''; // 배경색 초기화
+            cell.innerHTML = ''; // 내용 초기화
+            cell.classList.remove('occupied'); // 점유 클래스 제거
+        });
+    }
 }
