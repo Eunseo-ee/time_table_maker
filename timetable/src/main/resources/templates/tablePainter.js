@@ -17,17 +17,8 @@ function fillTimeTable(timetableCombination) {
     clearTimeTable('keep');
 
     timetableCombination.forEach(course => {
-        // course 객체가 유효한지 확인
-        if (!course || !course.dayOfWeek || course.startPeriod === undefined || course.endPeriod === undefined) {
-            console.error("Invalid course data:", course);
-            return; // 잘못된 데이터는 무시
-        }
-
         const dayCode = dayOfWeekMap[course.dayOfWeek];
-        if (!dayCode) {
-            console.error("Invalid day code:", course.dayOfWeek);
-            return; // 유효하지 않은 day의 경우 무시
-        }
+        console.log(timetableCombination);
 
         const startPeriod = parseInt(course.startPeriod);
         const endPeriod = parseInt(course.endPeriod);
@@ -40,11 +31,9 @@ function fillTimeTable(timetableCombination) {
         // 시간표에 각 강의를 색칠
         for (let period = startPeriod; period <= finalEndPeriod; period++) {
             const cellId = `${dayCode}_${period}`;
-            console.log("Attempting to color cell with ID:", cellId);
             const cell = document.getElementById(cellId);
-            if (!cell) {
-                console.error("Cell not found with ID:", cellId);
-            } else {
+
+            if(cell){
                 console.log("Cell found. Attempting to apply color.");
                 cell.style.backgroundColor = `${courseColor} !important`; // 셀 배경색 설정 (중요도를 높여 설정)
                 cell.innerHTML = `<strong>${course.courseName}</strong><br>${course.professorName}`;

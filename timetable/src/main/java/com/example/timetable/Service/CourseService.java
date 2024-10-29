@@ -198,12 +198,6 @@ public class CourseService {
         // 총 학점에 맞는 강의 조합 생성
         generateCombinations(filteredCombination, requiredCoursesList, totalCredits, new ArrayList<>(), combinations);
 
-        // 생성된 조합을 강의명 리스트로 출력
-        System.out.println("Generated combinations:");
-        for (List<Courses> combination : combinations) {
-            System.out.println(combination.stream().map(Courses::getCourseName).collect(Collectors.toList()));
-        }
-
         return combinations;
     }
 
@@ -243,6 +237,13 @@ public class CourseService {
                 continue;
             }
 
+            // 시간 겹침 검사
+            boolean timeConflict = currentCombination.stream()
+                    .anyMatch(existingCourse -> !isTimeCompatible(existingCourse, course));
+            if (timeConflict) {
+                continue;
+            }
+
             currentCombination.add(course);
             generateCombinations(availableCourses, requiredCourses, totalCredits, currentCombination, allCombinations);
             currentCombination.remove(course);
@@ -253,5 +254,43 @@ public class CourseService {
             }
         }
     }
+    // 두 강의의 시간이 겹치는지 확인하는 메서드
+    private boolean isTimeCompatible(Courses course1, Courses course2) {
+        String[] timeSlots1 = course1.getFormattedTime().split(", ");
+        String[] timeSlots2 = course2.getFormattedTime().split(", ");
 
+        for (String timeSlot1 : timeSlots1) {
+            String[] split1 = timeSlot1.split(" ");
+            if (split1.length < 2) {
+                continue;
+            }
+            String day1 = split1[0];
+            String[] periodRange1 = split1[1].split("-");
+            if (periodRange1.length < 2) {
+                continue;
+            }
+            float start1 = Float.parseFloat(periodRange1[0]);
+            float end1 = Float.parseFloat(periodRange1[1]);
+
+            for (String timeSlot2 : timeSlots2) {
+                String[] split2 = timeSlot2.split(" ");
+                if (split2.length < 2) {
+                    continue;
+                }
+                String day2 = split2[0];
+                String[] periodRange2 = split2[1].split("-");
+                if (periodRange2.length < 2) {
+                    continue;
+                }
+                float start2 = Float.parseFloat(periodRange2[0]);
+                float end2 = Float.parseFloat(periodRange2[1]);
+
+                if (day1.equals(day2) && ((start1 <= end2 && start1 >= start2) || (start2 <= end1 && start2 >= start1))) {
+                    return false; // 시간이 겹치는 경우 호환되지 않음
+                }
+            }
+        }
+
+        return true; // 시간이 겹치지 않는 경우 호환됨
+    }
 }
