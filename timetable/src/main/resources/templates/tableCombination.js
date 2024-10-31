@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const dayMap = { mon: '월', tue: '화', wed: '수', thu: '목', fri: '금' };
         const consolidated = {}; // 요일별로 셀을 그룹화할 객체
 
+        console.log("Selected times before consolidation:", selectedTimes);
         // 요일별로 선택된 시간 정리
         selectedTimes.forEach(time => {
             const day = dayMap[time.slice(0, 3)]; // 요일을 한글로 변환
@@ -133,6 +134,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // 각 요일의 시간을 연속 범위로 합치기
         const ranges = Object.keys(consolidated).map(day => {
             const periods = consolidated[day].sort((a, b) => a - b); // 정렬
+            console.log(`Periods for ${day}:`, periods);
+
             let rangeStr = `${day}`;
             let start = periods[0];
             let end = start;
@@ -147,10 +150,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
             rangeStr += ` ${start}-${end}`;
+            console.log(`Range string for ${day}:`, rangeStr);
             return rangeStr;
         });
 
-        return ranges.join(','); // 예: "화 1-3, 수 2-4"
+        console.log("Final consolidated time string:", ranges.join(','));
+        return ranges.map(range => range.trim()).join(', '); // 예: "화 1-3, 수 2-4"
     }
 
     // 드롭다운 메뉴 버튼 클릭 시 표시/숨김 및 위치 조정

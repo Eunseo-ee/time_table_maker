@@ -60,9 +60,11 @@ public class CourseService {
     // 시간 포함 여부 확인 메서드 (Courses 객체를 매개변수로 받음)
     public boolean isTimeWithinSelectedTimes(Courses course, List<String> selectedTimes) {
         String[] courseTimeSlots = course.getFormattedTime().split(", ");
+        System.out.println("Checking times for course: " + course.getCourseName());
 
         // 각 강의 시간대에 대해 선택된 시간대와 비교
         for (String timeSlot : courseTimeSlots) {
+            System.out.println("Course time slot being checked: " + timeSlot);
             String[] courseTimeSplit = timeSlot.split(" ");
 
             // 배열 길이 검사
@@ -78,6 +80,8 @@ public class CourseService {
                 System.out.println("Invalid period range for course: " + course.getCourseName() + ", timeSlot: " + timeSlot);
                 return false;
             }
+
+            System.out.println("Parsed Course Day: " + courseDay + ", Period Range: " + coursePeriodRange[0] + " - " + coursePeriodRange[1]);
 
             float courseStartPeriod;
             float courseEndPeriod;
@@ -125,6 +129,8 @@ public class CourseService {
                     matchFound = true;
                     break;
                 }
+
+                System.out.println("Parsed Selected Day: " + selectedDay + ", Period Range: " + selectedPeriodRange[0] + " - " + selectedPeriodRange[1]);
             }
 
             if (!matchFound) {
@@ -150,6 +156,9 @@ public class CourseService {
                     .filter(course -> course.getDepartmentId().equals(department_id))
                     .collect(Collectors.toList());
         }
+
+        // 추가된 로그: 모든 강의 시간대 출력
+        filteredCombination.forEach(course -> System.out.println("Course: " + course.getCourseName() + ", Formatted Time: " + course.getFormattedTime()));
 
         System.out.println("Before courseNames filter, course count: " + filteredCombination.size());
         if (courseNames != null && !courseNames.isEmpty()) {
