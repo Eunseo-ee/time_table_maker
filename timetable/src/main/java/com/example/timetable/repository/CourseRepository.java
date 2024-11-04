@@ -19,4 +19,7 @@ public interface CourseRepository extends JpaRepository<Courses, Long> {
             + "WHEN :searchOption = 'courseCode' THEN c.courseCode "
             + "WHEN :searchOption = 'classroom' THEN c.classroom ELSE '' END) LIKE %:searchQuery%)")
     List<Courses> findBySearchCriteria(String department, String division, Integer credit, String searchOption, String searchQuery);
+    // 같은 강의명, 교수명, 강의실인 강의를 찾기 위한 쿼리 메서드
+    List<Courses> findByCourseNameAndProfessorNameAndClassroom(String courseName, String professorName, String classroom);
+
 }
