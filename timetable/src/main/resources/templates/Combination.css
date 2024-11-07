@@ -125,10 +125,21 @@ thead td {
     width: 100px; /* 각 셀의 너비 고정 */
     height: 50px; /* 각 셀의 높이 고정 */
     border: 1px solid #ddd; /* 셀 경계 스타일 */
-    text-align: center; /* 셀 내용 중앙 정렬 */
-    vertical-align: middle; /* 셀 수직 정렬 */
     overflow: hidden; /* 내용이 넘칠 경우 숨기기 */
     word-wrap: break-word; /* 긴 텍스트를 자동 줄바꿈 */
+}
+
+/* 1열과 1행은 중앙정렬 */
+.central-align {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 나머지 셀은 왼쪽 상단 정렬 */
+.left-top-align {
+    text-align: left;
+    vertical-align: top;
+    padding: 5px; /* 패딩 추가하여 조금 더 보기 좋게 정렬 */
 }
 
 .col1 {
