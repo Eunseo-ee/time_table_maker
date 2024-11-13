@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const combination = timetableCombinations[index];
         if (combination) {
             fillTimeTable(combination); // 새 시간표 조합을 셀에 색칠
-            
+            keepCombination=combination;
         } else {
             console.log("No timetable combination available at index:", index);
         }

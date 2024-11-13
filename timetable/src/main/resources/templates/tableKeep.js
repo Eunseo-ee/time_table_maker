@@ -1,98 +1,63 @@
-// 전역 변수로 현재 keep 테이블의 시간표 조합을 저장할 변수
-let keepCombination = [];
+// comparing 테이블에 시간표 출력 함수
+function fillComparingTable(timetableCombination) {
+    const dayOfWeekMap = {
+        '월': 'mon',
+        '화': 'tue',
+        '수': 'wed',
+        '목': 'thu',
+        '금': 'fri'
+    };
 
-// keep_button 클릭 시 'keep' 테이블의 내용을 'comparing' 테이블로 복사
-document.getElementById('keep_button').addEventListener('click', function() {
-    // 현재 keep 테이블의 내용을 keepCombination 변수에 저장합니다.
-    keepCombination = getTimetableCombination('keep');
-    // keep 테이블의 내용을 comparing 테이블로 복사합니다.
-    fillComparingTable(keepCombination)
+    // comparing 테이블 셀 초기화 (초기화를 하지 않으면 기존 내용이 유지될 수 있음)
+    clearTimeTable('comparing');
 
-// 'keep' 테이블의 시간표를 'comparing' 테이블에 복사하는 함수
-// 시간표 테이블에 색칠하는 함수
-    function fillComparingTable(timetableCombination) {
-        const dayOfWeekMap = {
-            '월': 'mon',
-            '화': 'tue',
-            '수': 'wed',
-            '목': 'thu',
-            '금': 'fri'
-        };
+    timetableCombination.forEach(course => {
+        const dayCode = dayOfWeekMap[course.dayOfWeek];
+        if (!dayCode) {
+            console.error("Invalid day code for course:", course);
+            return;
+        }
 
-        // 테이블 셀 초기화 (keep 테이블에 대한 초기화)
-        clearTimeTable('comparing');
+        const startPeriod = parseInt(course.startPeriod);
+        const endPeriod = parseInt(course.endPeriod) || startPeriod;
 
-        timetableCombination.forEach(course => {
-            const dayCode = dayOfWeekMap[course.dayOfWeek];
-            if (!dayCode) {
-                console.error("Invalid day code for course:", course);
-                return;
-            }
+        // 강의 색상 설정
+        const courseColor = courseColorMap[course.courseName];
 
-            const startPeriod = parseInt(course.startPeriod);
-            const endPeriod = parseInt(course.endPeriod);
-            const finalEndPeriod = endPeriod || startPeriod;
+        // comparing 테이블에 각 강의를 색칠
+        for (let period = startPeriod; period <= endPeriod; period++) {
+            const cellId = `${dayCode}-${period}`;
+            const cell = document.getElementById(cellId);
 
-            // 강의 색상 설정
-            const courseColor = courseColorMap[course.courseName] || colorPalette[colorIndex % colorPalette.length];
-            if (!courseColorMap[course.courseName]) {
-                courseColorMap[course.courseName] = courseColor; // 강의 색상 저장
-                colorIndex++; // 다음 강의는 다른 색상 사용
-            }
+            if (cell) {
+                cell.style.backgroundColor = courseColor; // 셀 배경색 설정
+                cell.classList.add('occupied'); // 점유된 셀 표시
 
-            // 시간표에 각 강의를 색칠
-            for (let period = startPeriod; period <= finalEndPeriod; period++) {
-                const cellId = `${dayCode}_${period}`;
-                const cell = document.getElementById(cellId);
-
-                if (cell) {
-                    console.log("Cell found. Attempting to apply color:", cellId);
-                    cell.style.backgroundColor = courseColor; // 셀 배경색 설정
-                    cell.classList.add('occupied'); // 점유된 셀 표시
-
-                    // 셀의 텍스트 정렬 설정
-                    if (period === startPeriod) {
-                        // 첫 번째 셀에만 강의명과 교수명 표시 및 왼쪽 상단 정렬
-                        cell.innerHTML = `<strong style="font-size: 14px; color: #2e2e2e;">${course.courseName}</strong><br><span style="font-size: 11px; color: #8c8c8c;">${course.professorName}</span>`;
-                        cell.classList.add('left-top-align');
-                    } else {
-                        // 나머지 셀은 비워두고 같은 색상 유지
-                        cell.innerHTML = '';
-                        cell.classList.add('left-top-align');
-                    }
+                // 셀의 텍스트 정렬 설정
+                if (period === startPeriod) {
+                    cell.innerHTML = `<strong style="font-size: 14px; color: #2e2e2e;">${course.courseName}</strong><br><span style="font-size: 11px; color: #8c8c8c;">${course.professorName}</span>`;
+                    cell.classList.add('left-top-align');
                 } else {
-                    console.error("Cell not found:", cellId);
+                    cell.innerHTML = '';
+                    cell.classList.add('left-top-align');
                 }
+            } else {
+                console.error("Cell not found:", cellId);
             }
-        });
-        // 첫 번째 행과 첫 번째 열의 셀 중앙 정렬 적용
-        applyCentralAlign('keep');
+        }
+    });
+
+    // 첫 번째 행과 첫 번째 열의 셀 중앙 정렬 적용
+    applyCentralAlign('comparing');
+}
+
+// 화살표 버튼 클릭 시 keep 테이블의 시간표 업데이트 (comparing 테이블은 그대로 유지)
+document.getElementById('some_arrow_button').addEventListener('click', function() {
+    if (timetableCombinations.length > 0) {
+        currentIndex = (currentIndex + 1) % timetableCombinations.length; // 다음 시간표로 이동
+        keepCombination = timetableCombinations[currentIndex]; // 새로운 keep 조합 설정
+        fillTimeTable('keep', keepCombination); // keep 테이블에 새로운 시간표 조합 출력
     }
 
-// 특정 테이블의 시간표 데이터를 가져오는 함수
-    function getTimetableCombination(tableId) {
-        const dayCodes = ['mon', 'tue', 'wed', 'thu', 'fri'];
-        const periods = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        let timetableCombination = [];
-
-        dayCodes.forEach(day => {
-            periods.forEach(period => {
-                const cellId = `${day}_${period}`;
-                const cell = document.getElementById(cellId);
-
-                if (cell && cell.classList.contains('occupied')) {
-                    const courseName = cell.querySelector('strong')?.textContent || '';
-                    const professorName = cell.querySelector('span')?.textContent || '';
-                    timetableCombination.push({
-                        dayOfWeek: day,
-                        startPeriod: period,
-                        courseName: courseName,
-                        professorName: professorName
-                    });
-                }
-            });
-        });
-
-        return timetableCombination;
-    }
-})
+    console.log("'keep' table updated, but 'comparing' table remains unchanged.");
+});

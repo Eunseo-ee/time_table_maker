@@ -3,6 +3,16 @@ const colorPalette = ['#d9e9ff', '#c6e9ff', '#b1e2ff', '#89ceff', '#6297bd', '#6
 let colorIndex = 0; // 색상을 순서대로 선택하기 위한 인덱스
 const courseColorMap = {}; // 강의 이름별로 색상을 저장하는 객체
 
+let keepCombination = []; // 현재 keep 테이블의 시간표 조합
+
+// keep_button 클릭 시 'keep' 테이블의 내용을 'comparing' 테이블로 복사
+document.getElementById('keep_button').addEventListener('click', function() {
+    console.log("keep_button");
+
+    fillComparingTable(keepCombination); // comparing 테이블에 시간표 출력
+
+});
+
 // 시간표 테이블에 색칠하는 함수
 function fillTimeTable(timetableCombination) {
     const dayOfWeekMap = {
@@ -15,9 +25,6 @@ function fillTimeTable(timetableCombination) {
 
     // 테이블 셀 초기화 (keep 테이블에 대한 초기화)
     clearTimeTable('keep');
-
-    // 현재 시간표 조합을 전역 변수에 저장
-    keepCombination = [...timetableCombination];
 
     timetableCombination.forEach(course => {
         const dayCode = dayOfWeekMap[course.dayOfWeek];
@@ -83,9 +90,9 @@ function applyCentralAlign(tableId) {
     }
 }
 
-// 테이블 초기화 함수
-function clearTimeTable() {
-    const cells = document.querySelectorAll(".main-table td");
+// 특정 테이블을 초기화하는 함수
+function clearTimeTable(tableId) {
+    const cells = document.querySelectorAll(`#${tableId} td`);
     cells.forEach((cell) => {
         // 첫 번째 행과 첫 번째 열은 지우지 않도록 조건을 추가합니다.
         const row = cell.parentElement.rowIndex;  // 행 인덱스 가져오기
@@ -100,4 +107,5 @@ function clearTimeTable() {
         }
     });
 }
+
 

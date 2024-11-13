@@ -170,7 +170,6 @@ public class CourseService {
         List<Courses> filteredCombination = getAllCourses();
         List<List<Courses>> combinations = new ArrayList<>();
 
-        System.out.println("Before department filter, course count: " + filteredCombination.size());
         if (department_id != 0) {
             System.out.println(department_id);
             filteredCombination = filteredCombination.stream()
@@ -181,7 +180,6 @@ public class CourseService {
         // 추가된 로그: 모든 강의 시간대 출력
         filteredCombination.forEach(course -> System.out.println("Course: " + course.getCourseName() + ", Formatted Time: " + course.getFormattedTime()));
 
-        System.out.println("Before courseNames filter, course count: " + filteredCombination.size());
         if (courseNames != null && !courseNames.isEmpty()) {
             System.out.println("Selected course names for filtering: " + courseNames);
 
@@ -197,7 +195,6 @@ public class CourseService {
             System.out.println("After courseNames filter, course count: " + filteredCombination.size());
         }
 
-        System.out.println("Before availableTimes filter, course count: " + filteredCombination.size());
         if (availableTimes != null && !availableTimes.isEmpty()) {
             System.out.println("Selected times for filtering: " + availableTimes);
 
@@ -210,8 +207,7 @@ public class CourseService {
                     .collect(Collectors.toList());
         }
 
-        System.out.println("Before required courses filter, course count: " + filteredCombination.size());
-        // 필수 강의 필터링
+       // 필수 강의 필터링
         List<Courses> requiredCoursesList = filteredCombination.stream()
                 .filter(course -> requiredCourses.contains(course.getCourseName()))
                 .collect(Collectors.toList());
@@ -231,6 +227,16 @@ public class CourseService {
 
         // 기존의 generateCombinations 호출
         generateCombinations(availableCourses, requiredCoursesList, totalCredits, new ArrayList<>(), combinations);
+
+        // 모든 조합에 대해 로그 출력
+        System.out.println("Generated combinations:");
+        for (List<Courses> combination : combinations) {
+            System.out.println("Combination:");
+            for (Courses course : combination) {
+                System.out.println("Course: " + course.getCourseName() + " (" + course.getProfessorName() + ")");
+            }
+            System.out.println("----");
+        }
 
         return combinations;
     }
@@ -254,7 +260,10 @@ public class CourseService {
         // 총 학점 조건을 만족하고 필수 강의가 모두 포함되었는지 검사
         boolean allRequiredCoursesIncluded = requiredCourses.stream().allMatch(currentCombination::contains);
         if (currentCredits <= totalCredits && allRequiredCoursesIncluded) {
-            allCombinations.add(new ArrayList<>(currentCombination));
+            // 중복 방지: 현재 조합이 이미 생성된 조합에 포함되어 있는지 검사
+            if (!isDuplicateCombination(currentCombination, allCombinations)) {
+                allCombinations.add(new ArrayList<>(currentCombination));
+            }
 
             // 생성된 조합이 너무 많으면 종료 (예: 100개로 제한)
             if (allCombinations.size() >= 100) {
@@ -262,39 +271,43 @@ public class CourseService {
             }
         }
 
-        // 필수 강의가 아직 추가되지 않은 경우 추가
-        for (Courses requiredCourse : requiredCourses) {
-            if (!currentCombination.contains(requiredCourse)) {
-                currentCombination.add(requiredCourse);
-            }
-        }
-
-        // 남은 강의 중에서 조합 생성
         for (Courses course : availableCourses) {
-            // 동일한 강의명, 교수명, 강의실을 가진 강의들을 찾기
-            List<Courses> relatedCourses = availableCourses.stream()
-                    .filter(c -> c.getCourseName().equals(course.getCourseName())
-                            && c.getProfessorName().equals(course.getProfessorName())
-                            && c.getClassroom().equals(course.getClassroom()))
-                    .collect(Collectors.toList());
+            if (currentCombination.contains(course)) {
+                continue; // 이미 현재 조합에 포함된 경우 건너뜀
+            }
 
-            // 만약 현재 조합에 이미 같은 강의가 포함되어 있다면, 중복 추가를 피하기 위해 건너뜀
-            boolean alreadyInCombination = relatedCourses.stream().anyMatch(currentCombination::contains);
-            if (alreadyInCombination) {
-                continue;
+            // 동일한 강의명, 교수명, 강의실을 가진 관련 강의들을 찾기
+            List<Courses> relatedCourses = getRelatedCourses(course);
+
+            // 현재 조합에 동일한 강의명을 가지면서 교수명이 다른 강의가 있는지 검사
+            boolean sameCourseNameDifferentProfessorExists = currentCombination.stream()
+                    .anyMatch(existingCourse -> existingCourse.getCourseName().equals(course.getCourseName()) &&
+                            !existingCourse.getProfessorName().equals(course.getProfessorName()));
+            if (sameCourseNameDifferentProfessorExists) {
+                continue; // 동일한 강의명이면서 교수명이 다른 경우 추가하지 않음
             }
 
             // 모든 관련 강의를 추가하기 전에 시간 겹침 검사 수행
             boolean allTimesCompatible = currentCombination.stream()
-                    .allMatch(existingCourse -> relatedCourses.stream()
-                            .allMatch(relatedCourse -> isTimeCompatible(existingCourse, relatedCourse)));
+                    .allMatch(existingCourse -> isTimeCompatible(existingCourse, course));
 
             if (!allTimesCompatible) {
-                continue; // 만약 시간대가 겹치는 경우 해당 강의들을 추가하지 않음
+                continue; // 만약 시간대가 겹치는 경우 해당 강의를 추가하지 않음
             }
 
-            // 모든 관련 강의를 추가
-            currentCombination.addAll(relatedCourses);
+            // 강의 추가 (관련 강의가 있는 경우 함께 추가)
+            currentCombination.add(course);
+            if (!relatedCourses.isEmpty()) {
+                // 관련 강의도 함께 추가
+                boolean relatedTimesCompatible = currentCombination.stream()
+                        .allMatch(existingCourse -> relatedCourses.stream()
+                                .allMatch(relatedCourse -> isTimeCompatible(existingCourse, relatedCourse)));
+
+                if (relatedTimesCompatible) {
+                    currentCombination.addAll(relatedCourses);
+                }
+            }
+
             int newCurrentCredits = currentCombination.stream().mapToInt(Courses::getCredit).sum();
 
             // 학점 초과 검사
@@ -302,16 +315,27 @@ public class CourseService {
                 generateCombinations(availableCourses, requiredCourses, totalCredits, currentCombination, allCombinations);
             }
 
-            // 관련 강의들을 모두 제거 (백트래킹)
-            currentCombination.removeAll(relatedCourses);
-
-            // 생성된 조합이 너무 많으면 종료 (예: 100개로 제한)
-            if (allCombinations.size() >= 100) {
-                return;
+            // 강의 제거 (백트래킹)
+            currentCombination.remove(course);
+            if (!relatedCourses.isEmpty()) {
+                // 관련 강의도 함께 제거
+                currentCombination.removeAll(relatedCourses);
             }
         }
     }
 
+
+    // 중복된 조합을 확인하는 메서드
+    private boolean isDuplicateCombination(List<Courses> combination, List<List<Courses>> allCombinations) {
+        for (List<Courses> existingCombination : allCombinations) {
+            if (existingCombination.size() == combination.size() &&
+                    existingCombination.containsAll(combination) &&
+                    combination.containsAll(existingCombination)) {
+                return true; // 중복된 조합이 존재
+            }
+        }
+        return false; // 중복되지 않음
+    }
 
     // 두 강의의 시간이 겹치는지 확인하는 메서드
     private boolean isTimeCompatible(Courses course1, Courses course2) {
