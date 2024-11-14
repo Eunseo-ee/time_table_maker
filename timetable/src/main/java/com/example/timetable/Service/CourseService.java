@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;  // Collectors 클래스 import
-import java.util.stream.Stream;      // Stream 클래스 import
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -259,6 +261,7 @@ public class CourseService {
 
         // 총 학점 조건을 만족하고 필수 강의가 모두 포함되었는지 검사
         boolean allRequiredCoursesIncluded = requiredCourses.stream().allMatch(currentCombination::contains);
+
         if (currentCredits <= totalCredits && allRequiredCoursesIncluded) {
             // 중복 방지: 현재 조합이 이미 생성된 조합에 포함되어 있는지 검사
             if (!isDuplicateCombination(currentCombination, allCombinations)) {
