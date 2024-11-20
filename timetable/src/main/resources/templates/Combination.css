@@ -150,6 +150,15 @@ thead td {
     width: 5%;
 }
 
+#keep tr:nth-child(1) td:nth-child(1) {
+    vertical-align: middle;
+    background-color: #c2d4ed;  /* 배경 색상 */
+    color: #474747;             /* 텍스트 색상 */
+    font-size:15px;
+    font-weight: bold;          /* 텍스트 굵게 */
+    line-height: 0.7;
+}
+
 .body {
     width: 50%;
     background-color: #f8f8f8;
@@ -408,3 +417,4 @@ thead td {
     height: 0; /* 세로 간격이 필요 없다면 0으로 설정 */
     display: inline-block; /* 인라인 요소로 유지 */
 }
+
