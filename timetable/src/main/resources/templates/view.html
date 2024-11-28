@@ -61,19 +61,12 @@
         ><option>2024년 2학기</option>
         </select>
       </form>
-      <div class="current"> //현재 시간표에 대한 부분
-        <p>시간표 1</p>
-      </div>
-      <div class="choice"> //시간표를 선택할 수 있는 부분
-        <ul>
-          <li><span>시간표1</span></li>
-          <li><span>시간표2</span></li>
-          <li><span>시간표3</span></li>
-          <li><span>새 시간표 만들기</span></li>
+      <div class="choice">
+        <ul id="timetableChoices">
         </ul>
       </div>
     </aside>
-    <table class="main-table">
+    <table class="main-table" id="main">
       <colgroup>
         <col class="col1" />
         <col class="col2" />
@@ -82,7 +75,7 @@
         <col class="col5" />
         <col class="col6" />
       </colgroup>
-      <tr class="thead">
+      <tr class="thead" id="thead">
         <td></td>
         <td>월</td>
         <td>화</td>
@@ -398,11 +391,7 @@
     </div>
   </div>
 </main>
-<script src="timetable.js"></script>
-<script src="tableKeep_KEEP.js"></script>
 <script>
-
-
   // Flex box 스타일을 저장하는 배열
   const flexBox = [1, 2, 0.5, 1, 0.5, 0.5, 0.7, 0.5, 0.5, 0.5];
 
@@ -502,9 +491,13 @@
       mainList.appendChild(list); // 리스트 추가
     }
   }
-
+  // DOMContentLoaded 이벤트 리스너 추가
+  document.addEventListener('DOMContentLoaded', function() {
+    updateTimetableChoices();
+  });
 
 </script>
-
+<script src="timetable.js"></script>
+<script src="tableKeep_KEEP.js"></script>
 </body>
 </html>

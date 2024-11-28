@@ -49,21 +49,21 @@ main aside .choice {
 
 .choice li {
     height: 50px;
-    padding: 15px;
+    /*padding: 15px;*/
     list-style-type: none;
     color: #bfbfbf;
 }
 
 .choice li:hover {
     height: 50px;
-    padding: 15px;
+    /*padding: 15px;*/
     list-style-type: none;
     background-color: #f8f8f8;
 }
 
 .choice li:visited {
     height: 50px;
-    padding: 15px;
+    /*padding: 15px;*/
     list-style-type: none;
     background-color: #f8f8f8;
 }
@@ -82,8 +82,8 @@ main aside .choice {
     table-layout: fixed;
 }
 
-.main-table .thead {
-    height: 40px;
+.main-table .thead td{
+    height: 1%;
     border: solid 0.5px #bfbfbf;
     text-align: center;
     background-color: #f2f2f2;
@@ -96,7 +96,8 @@ main aside .choice {
 }
 
 .main-table td {
-    width: 8px;
+    width: 100px; /* 각 셀의 너비 고정 */
+    height: 80px; /* 각 셀의 높이 고정 */
     border: solid 1px #bfbfbf;
     text-align: center;
 }
@@ -106,7 +107,7 @@ main aside .choice {
 }
 
 .col7 {
-    width: 5%;
+    width: 10%;
 }
 
 .list {
@@ -414,4 +415,31 @@ main aside .choice {
     cursor: pointer;
 }
 
+.timetable-item{
+    width: 300px;
+    height: 50px;
+    cursor: pointer;
+    padding-left:3%
+}
+
+.timetable-button,
+.new-timetable-button {
+    width: 300px;
+    height: 50px;
+    text-align: left; /* 버튼 내부 텍스트를 왼쪽 정렬 */
+    background: none;
+    border: none;
+    color: #617aa1; /* 링크 스타일 색상 */
+    cursor: grabbing;
+    font-size: 1rem;
+}
+
+.new-timetable-button {
+    margin-left:3%
+}
+
+.timetable-button:hover,
+.new-timetable-button:hover {
+    color: #0056b3; /* 호버 시 색상 변화 */
+}
 
