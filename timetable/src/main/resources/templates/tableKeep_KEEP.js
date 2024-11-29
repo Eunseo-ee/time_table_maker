@@ -1,3 +1,6 @@
+let activeTimetableIndex = null; // 현재 활성화된 시간표 인덱스를 관리하기 위한 전역 변수
+let savedTimetables = JSON.parse(localStorage.getItem('savedTimetables')) || []; // 로컬 스토리지에서 저장된 시간표 불러오기
+
 // comparing 테이블의 1행 1열 클릭 이벤트
 document.getElementById('KEEP_keep_button').addEventListener('click', function() {
     console.log('KEEPKEEP_button_clicked');
@@ -29,23 +32,8 @@ function saveTimetable(timetableData) {
     }
 }
 
-// let timetableToDelete = { /* 삭제하고 싶은 시간표 데이터 */ };
-// deleteTimetable(timetableToDelete);
-
-function deleteTimetable(timetableData) {
-    // 로컬 스토리지에서 저장된 시간표 목록을 불러오기
-    let savedTimetables = JSON.parse(localStorage.getItem('savedTimetables')) || [];
-
-    // 삭제하려는 시간표를 찾고 필터링하여 새로운 배열 생성
-    savedTimetables = savedTimetables.filter(savedTimetable => JSON.stringify(savedTimetable) !== JSON.stringify(timetableData));
-
-    // 필터링된 시간표 목록을 로컬 스토리지에 다시 저장
-    localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables));
-}
-
-
 function updateTimetableChoices() {
-    let savedTimetables = JSON.parse(localStorage.getItem('savedTimetables')) || [];
+    savedTimetables = JSON.parse(localStorage.getItem('savedTimetables')) || [];
 
     const choiceContainer = document.querySelector('#timetableChoices');
 
@@ -66,25 +54,30 @@ function updateTimetableChoices() {
         button.textContent = `시간표${index + 1}`;
         button.className = 'timetable-button';
 
-        // 클릭 이벤트 추가
+        // 왼쪽 클릭 이벤트 추가 - 시간표 활성화 및 메인 테이블에 시간표 표시
         button.addEventListener('click', () => {
             console.log(`시간표 ${index + 1} 클릭됨`);
-            displayTimetableInView(timetable);
+            activeTimetableIndex = index; // 활성화된 시간표 인덱스를 설정
+
+            // 로컬 스토리지에서 해당 시간표 데이터를 가져와 메인 테이블에 표시
+            let savedTimetables = JSON.parse(localStorage.getItem('savedTimetables')) || [];
+            if (activeTimetableIndex < savedTimetables.length) {
+                displayTimetableInView(savedTimetables[activeTimetableIndex]);
+            } else {
+                console.error(`저장된 시간표 데이터에 접근할 수 없습니다: 인덱스 ${activeTimetableIndex}`);
+            }
+
+            console.log(`활성화된 시간표 인덱스: ${activeTimetableIndex}`);
         });
 
-        // 오른쪽 클릭(컨텍스트 메뉴) 이벤트 추가
+        // 오른쪽 클릭 이벤트 추가 (삭제 기능)
         button.addEventListener('contextmenu', (event) => {
-            event.preventDefault(); // 기본 컨텍스트 메뉴 비활성화
-
-            // 삭제 확인 팝업
-            if (confirm(`시간표 ${index + 1}을(를) 삭제하시겠습니까?`)) {
-                // 로컬 스토리지에서 해당 시간표 삭제
-                savedTimetables.splice(index, 1);
-                localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables));
-
-                // 시간표 목록 갱신
-                updateTimetableChoices();
-
+            event.preventDefault(); // 기본 컨텍스트 메뉴 방지
+            const confirmDelete = confirm(`시간표 ${activeTimetableIndex + 1}을(를) 삭제하시겠습니까?`);
+            if (confirmDelete) {
+                savedTimetables.splice(activeTimetableIndex, 1); // 해당 시간표 삭제
+                localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables)); // 로컬 스토리지 업데이트
+                updateTimetableChoices(); // 삭제 후 시간표 목록 업데이트
                 console.log(`시간표 ${index + 1} 삭제됨`);
             }
         });
@@ -103,10 +96,49 @@ function updateTimetableChoices() {
 
     newTimetableButton.addEventListener('click', () => {
         console.log('새 시간표 만들기 버튼 클릭됨');
+        savedTimetables.push([]); // 빈 시간표 추가
+        localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables));
+        updateTimetableChoices(); // 갱신하여 새로운 시간표 추가 반영
     });
 
     newTimetableItem.appendChild(newTimetableButton);
     choiceContainer.appendChild(newTimetableItem);
+}
+
+
+function updateLocalStorageWithTimetable(course) {
+    if (activeTimetableIndex !== null && activeTimetableIndex >= 0) {
+        let savedTimetables = JSON.parse(localStorage.getItem('savedTimetables')) || [];
+
+        if (activeTimetableIndex < savedTimetables.length) {
+            console.log(`현재 활성화된 시간표 인덱스: ${activeTimetableIndex}`);
+            console.log(`기존 저장된 시간표:`, savedTimetables);
+
+            // 현재 활성화된 시간표에 강의를 추가
+            if (!savedTimetables[activeTimetableIndex]) {
+                savedTimetables[activeTimetableIndex] = [];
+            }
+
+            // 강의가 이미 추가되어 있는지 확인 후 중복 추가 방지
+            const isAlreadyAdded = savedTimetables[activeTimetableIndex].some(
+                savedCourse => savedCourse.courseName === course.courseName && savedCourse.time === course.time
+            );
+
+            if (!isAlreadyAdded) {
+                savedTimetables[activeTimetableIndex].push(course);
+                localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables));
+                console.log(`시간표 ${activeTimetableIndex + 1}에 강의가 추가되었습니다.`);
+            } else {
+                console.log(`강의가 이미 추가되어 있습니다: ${course.courseName}`);
+            }
+
+            console.log(`업데이트된 시간표:`, savedTimetables);
+        } else {
+            console.error(`잘못된 시간표 인덱스: ${activeTimetableIndex}`);
+        }
+    } else {
+        console.error("활성화된 시간표가 없습니다. 시간표를 먼저 선택하세요.");
+    }
 }
 
 // 시간표 테이블에 시간표를 표시하는 함수

@@ -87,6 +87,11 @@ function fillTimeTable(course, isTemporary = false) {
         }
     });
 
+    // 로컬 스토리지 업데이트
+    if (!isTemporary && activeTimetableIndex !== null && activeTimetableIndex >= 0) {
+        updateLocalStorageWithTimetable(course);
+    }
+
     return isConflict;
 }
 
