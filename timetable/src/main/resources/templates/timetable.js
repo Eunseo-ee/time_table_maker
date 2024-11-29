@@ -17,82 +17,72 @@ function fillTimeTable(course, isTemporary = false) {
         '목': 'thu',
         '금': 'fri'
     };
-    let isConflict = false; // 시간 중복 여부를 확인하는 변수
+    let isConflict = false;
 
     const daysAndPeriods = course.time.split(', '); // ex. "월 1-2, 목 5" 형식
-    const courseColor = courseColorMap[course.courseName] || colorPalette[colorIndex % colorPalette.length]; // 강의 색상
-    courseColorMap[course.courseName] = courseColor; // 강의 색상 저장
-    colorIndex++; // 다음 강의는 다른 색상 사용
+    const courseColor = courseColorMap[course.courseName] || colorPalette[colorIndex % colorPalette.length];
+    courseColorMap[course.courseName] = courseColor;
+    colorIndex++;
 
-    // 중복된 시간 여부를 우선 확인
+    // 중복된 시간 여부 확인
     daysAndPeriods.forEach(slot => {
         const [day, periodRange] = slot.split(' ');
-        const dayCode = dayOfWeekMap[day]; // 요일 매핑
+        const dayCode = dayOfWeekMap[day];
 
         const [startPeriod, endPeriod] = periodRange.includes('-')
             ? periodRange.split('-').map(Number)
-            : [parseInt(periodRange), parseInt(periodRange)]; // 단일 교시 처리
+            : [parseInt(periodRange), parseInt(periodRange)];
 
         const finalEndPeriod = endPeriod || startPeriod;
 
-        // 각 교시별로 중복 여부를 확인
         for (let period = startPeriod; period <= finalEndPeriod; period++) {
             const cellId = `${dayCode}-${period}`;
             const cell = document.getElementById(cellId);
 
             // 중복된 셀이 발견되면 전체 추가를 막음
             if (cell && cell.classList.contains('occupied')) {
-                isConflict = true; // 하나라도 중복된 시간이 있으면 강의 전체를 추가하지 않음
+                isConflict = true;
             }
         }
     });
 
-    // 강의의 전체 시간이 유효하지 않으면 추가하지 않음
     if (isConflict) {
         alert(`시간이 중복되어 추가할 수 없습니다.`);
-        return true; // 중복된 강의는 추가하지 않음
+        return true;
     }
 
     // 유효한 강의일 경우에만 시간표에 추가
     daysAndPeriods.forEach(slot => {
         const [day, periodRange] = slot.split(' ');
-        const dayCode = dayOfWeekMap[day]; // 요일 매핑
+        const dayCode = dayOfWeekMap[day];
 
         const [startPeriod, endPeriod] = periodRange.includes('-')
             ? periodRange.split('-').map(Number)
-            : [parseInt(periodRange), parseInt(periodRange)]; // 단일 교시 처리
+            : [parseInt(periodRange), parseInt(periodRange)];
 
         const finalEndPeriod = endPeriod || startPeriod;
 
-        // 각 셀에 동일한 색상을 적용하고 첫 셀에만 강의 정보 표시
         for (let period = startPeriod; period <= finalEndPeriod; period++) {
             const cellId = `${dayCode}-${period}`;
             const cell = document.getElementById(cellId);
 
             if (cell && !isTemporary) {
-                cell.style.backgroundColor = courseColor; // 모든 셀에 같은 배경색 적용
-                cell.setAttribute('data-color', courseColor); // 셀에 배경색을 저장
-
-                // 연속된 강의 시간에서는 윗경계선과 아래경계선 색상을 배경색과 일치
-                if (period > startPeriod) {
-                    const previousCell = document.getElementById(`${dayCode}-${period - 1}`);
-                    if (previousCell && previousCell.getAttribute('data-color') === courseColor) {
-                        cell.style.borderTop = `2px solid ${courseColor}`; // 위쪽 경계선을 배경색으로 설정
-                        previousCell.style.borderBottom = `2px solid ${courseColor}`; // 아래쪽 경계선을 배경색으로 설정
-                        cell.setAttribute('data-border-top', courseColor); // 경계선 색상 저장
-                        previousCell.setAttribute('data-border-bottom', courseColor);
-                    }
+                // 이미 배경색이 설정되어 있는 경우에만 기존 색상 저장
+                if (!cell.dataset.originalColor) {
+                    cell.dataset.originalColor = cell.style.backgroundColor || '';
                 }
 
+                // 강의 색상 적용
+                cell.style.backgroundColor = courseColor;
+                cell.setAttribute('data-color', courseColor);
+                cell.classList.add('occupied');
+
                 if (period === startPeriod) {
-                    // 시작 셀에만 강의 정보 표시
                     cell.innerHTML = `${course.courseName} (${course.professorName})`;
                     cell.style.verticalAlign = 'middle';
                 } else {
-                    // 나머지 셀은 비워둠
                     cell.innerHTML = '';
                 }
-                cell.classList.add('occupied'); // 셀에 "occupied" 클래스 추가 (이미 점유된 시간)
             }
         }
     });
@@ -100,7 +90,6 @@ function fillTimeTable(course, isTemporary = false) {
     return isConflict;
 }
 
-// 강의 목록 위에 마우스를 올리면 임시로 셀을 연하게 칠하는 함수
 function highlightTemporary(course) {
     const dayOfWeekMap = {
         '월': 'mon',
@@ -110,31 +99,37 @@ function highlightTemporary(course) {
         '금': 'fri'
     };
 
-    const daysAndPeriods = course.time.split(', '); // ex. "월 1-2, 목 5" 형식
+    const daysAndPeriods = course.time.split(', ');
 
     daysAndPeriods.forEach(slot => {
         const [day, periodRange] = slot.split(' ');
-        const dayCode = dayOfWeekMap[day]; // 요일 매핑
+        const dayCode = dayOfWeekMap[day];
 
         const [startPeriod, endPeriod] = periodRange.includes('-')
             ? periodRange.split('-').map(Number)
-            : [parseInt(periodRange), parseInt(periodRange)]; // 단일 교시 처리
+            : [parseInt(periodRange), parseInt(periodRange)];
 
         const finalEndPeriod = endPeriod || startPeriod;
 
-        // 셀을 연하게 칠하기 (addedCourses에 상관없이 모든 셀에 적용)
         for (let period = startPeriod; period <= finalEndPeriod; period++) {
             const cellId = `${dayCode}-${period}`;
             const cell = document.getElementById(cellId);
 
-            if (cell) {
-                cell.style.backgroundColor = 'rgba(220,220,220,0.63)'; // 연한 색으로 표시
+            if (cell && !cell.classList.contains('occupied')) {
+                // 원래 색상을 저장하는 부분 (이미 설정된 경우 덮어쓰지 않음)
+                if (!cell.dataset.originalColor) {
+                    cell.dataset.originalColor = cell.style.backgroundColor || '';
+                }
+
+                // 회색으로 임시 표시
+                cell.style.backgroundColor = 'rgba(220,220,220,0.63)';
+                cell.classList.add('highlighted-temporary');
             }
         }
     });
 }
 
-// 마우스를 다른 곳으로 옮기면 셀 색상을 초기화하는 함수
+
 function clearTemporary(course) {
     const dayOfWeekMap = {
         '월': 'mon',
@@ -144,41 +139,36 @@ function clearTemporary(course) {
         '금': 'fri'
     };
 
-    const daysAndPeriods = course.time.split(', '); // ex. "월 1-2, 목 5" 형식
+    const daysAndPeriods = course.time.split(', ');
 
     daysAndPeriods.forEach(slot => {
         const [day, periodRange] = slot.split(' ');
-        const dayCode = dayOfWeekMap[day]; // 요일 매핑
+        const dayCode = dayOfWeekMap[day];
+
         const [startPeriod, endPeriod] = periodRange.includes('-')
             ? periodRange.split('-').map(Number)
-            : [parseInt(periodRange), parseInt(periodRange)]; // 단일 교시 처리
+            : [parseInt(periodRange), parseInt(periodRange)];
 
         const finalEndPeriod = endPeriod || startPeriod;
 
-        // 셀 색상 초기화
         for (let period = startPeriod; period <= finalEndPeriod; period++) {
             const cellId = `${dayCode}-${period}`;
             const cell = document.getElementById(cellId);
 
-            if (cell) {
-                const originalColor = cell.getAttribute('data-color');
-                cell.style.backgroundColor = originalColor ? originalColor : ''; // 저장된 색상 사용, 없으면 기본값
-
-                // 경계선 복원
-                if (cell.getAttribute('data-border-top')) {
-                    cell.style.borderTop = `2px solid ${cell.getAttribute('data-border-top')}`;
-                } else {
-                    cell.style.borderTop = ''; // 기본 경계선으로 복원
+            // 강의가 추가된 셀이 아니면서 임시 하이라이트된 경우에만 복원
+            if (cell && cell.classList.contains('highlighted-temporary') && !cell.classList.contains('occupied')) {
+                // 원래 색상으로 복원
+                const originalColor = cell.dataset.originalColor;
+                if (originalColor !== undefined) {
+                    cell.style.backgroundColor = originalColor;
+                    delete cell.dataset.originalColor; // 복원 후 제거
                 }
-                if (cell.getAttribute('data-border-bottom')) {
-                    cell.style.borderBottom = `2px solid ${cell.getAttribute('data-border-bottom')}`;
-                } else {
-                    cell.style.borderBottom = ''; // 기본 경계선으로 복원
-                }
+                cell.classList.remove('highlighted-temporary');
             }
         }
     });
 }
+
 
 // 강의 목록에서 마우스를 올리고 내릴 때 이벤트 설정
 document.getElementById('mainList').addEventListener('mouseover', function(event) {

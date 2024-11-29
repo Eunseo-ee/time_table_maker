@@ -84,7 +84,7 @@ main aside .choice {
 
 .main-table .thead td{
     height: 1%;
-    border: solid 0.5px #bfbfbf;
+    border: solid 1px #e6e6e6;
     text-align: center;
     background-color: #f2f2f2;
 }
@@ -98,7 +98,7 @@ main aside .choice {
 .main-table td {
     width: 100px; /* 각 셀의 너비 고정 */
     height: 80px; /* 각 셀의 높이 고정 */
-    border: solid 1px #bfbfbf;
+    border: solid 1px #e6e6e6;
     text-align: center;
 }
 

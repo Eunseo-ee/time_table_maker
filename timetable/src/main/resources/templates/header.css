@@ -86,11 +86,9 @@ header .container {
 
 .container .menu li a:hover{
     text-decoration: none;
-    color: #c62917;
+    color: #1d4f93;
     font-weight:bold;
 }
-
-
 
 .container .icon {
     height: 50px;

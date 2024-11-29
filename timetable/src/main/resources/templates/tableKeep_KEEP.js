@@ -67,9 +67,26 @@ function updateTimetableChoices() {
         button.className = 'timetable-button';
 
         // 클릭 이벤트 추가
-        button.addEventListener('click', (event) => {
+        button.addEventListener('click', () => {
             console.log(`시간표 ${index + 1} 클릭됨`);
             displayTimetableInView(timetable);
+        });
+
+        // 오른쪽 클릭(컨텍스트 메뉴) 이벤트 추가
+        button.addEventListener('contextmenu', (event) => {
+            event.preventDefault(); // 기본 컨텍스트 메뉴 비활성화
+
+            // 삭제 확인 팝업
+            if (confirm(`시간표 ${index + 1}을(를) 삭제하시겠습니까?`)) {
+                // 로컬 스토리지에서 해당 시간표 삭제
+                savedTimetables.splice(index, 1);
+                localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables));
+
+                // 시간표 목록 갱신
+                updateTimetableChoices();
+
+                console.log(`시간표 ${index + 1} 삭제됨`);
+            }
         });
 
         listItem.appendChild(button);
@@ -142,20 +159,6 @@ function displayTimetableInView(timetableCombination) {
                     // 나머지 셀은 비워두고 같은 색상 유지
                     cell.innerHTML = '';
                     cell.classList.add('left-top-align');
-                }
-
-                // 구분선 조정 (강의 시간 외부와 맞닿는 부분은 기본 구분선 유지)
-                if (period === startPeriod) {
-                    cell.style.borderTop = '1px solid #d1d1d1'; // 강의의 시작 부분은 기본 구분선 유지
-                }
-                if (period === finalEndPeriod) {
-                    cell.style.borderBottom = '1px solid #d1d1d1'; // 강의의 끝 부분은 기본 구분선 유지
-                }
-                if (dayCode === 'mon') {
-                    cell.style.borderLeft = '1px solid #d1d1d1'; // 월요일의 왼쪽 구분선 유지
-                }
-                if (dayCode === '금') {
-                    cell.style.borderRight = '1px solid #d1d1d1'; // 금요일의 오른쪽 구분선 유지
                 }
             } else {
                 console.error("Cell not found:", cellId);

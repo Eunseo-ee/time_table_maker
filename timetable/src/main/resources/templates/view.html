@@ -392,6 +392,19 @@
   </div>
 </main>
 <script>
+  if (typeof window.courseColorMap === 'undefined') {
+    window.courseColorMap = {};
+  }
+  if (typeof window.colorIndex === 'undefined') {
+    window.colorIndex = 0;
+  }
+  if (typeof window.colorPalette === 'undefined') {
+    window.colorPalette = [
+      '#f4a7b9', '#a7c7e7', '#f7d794', '#e2f0d9', '#b39ddb',
+      '#ffb74d', '#4fc3f7', '#aed581', '#ff8a65', '#9575cd'
+    ];
+  }
+
   // Flex box 스타일을 저장하는 배열
   const flexBox = [1, 2, 0.5, 1, 0.5, 0.5, 0.7, 0.5, 0.5, 0.5];
 
