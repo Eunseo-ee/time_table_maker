@@ -119,13 +119,32 @@ function updateLocalStorageWithTimetable(course) {
                 savedTimetables[activeTimetableIndex] = [];
             }
 
+            // 강의 정보를 주어진 형식에 맞게 객체로 생성
+            const courseData = {
+                capacity: course.capacity,
+                classroom: course.classroom,
+                courseCode: course.courseCode,
+                courseName: course.courseName,
+                courseNumber: course.courseNumber,
+                credit: course.credit,
+                dayOfWeek: course.dayOfWeek,
+                departmentId: course.departmentId,
+                departmentName: course.departmentName,
+                division: course.division,
+                endPeriod: course.endPeriod,
+                formattedTime: course.formattedTime,
+                id: course.id,
+                professorName: course.professorName,
+                startPeriod: course.startPeriod
+            };
+
             // 강의가 이미 추가되어 있는지 확인 후 중복 추가 방지
             const isAlreadyAdded = savedTimetables[activeTimetableIndex].some(
-                savedCourse => savedCourse.courseName === course.courseName && savedCourse.time === course.time
+                savedCourse => savedCourse.courseCode === courseData.courseCode && savedCourse.dayOfWeek === courseData.dayOfWeek && savedCourse.startPeriod === courseData.startPeriod
             );
 
             if (!isAlreadyAdded) {
-                savedTimetables[activeTimetableIndex].push(course);
+                savedTimetables[activeTimetableIndex].push(courseData);
                 localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables));
                 console.log(`시간표 ${activeTimetableIndex + 1}에 강의가 추가되었습니다.`);
             } else {

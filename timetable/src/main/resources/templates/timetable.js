@@ -206,22 +206,38 @@ document.getElementById('mainList').addEventListener('mouseout', function(event)
 
 // 강의 목록을 클릭할 때 실행될 이벤트 설정
 document.getElementById('mainList').addEventListener('click', function(event) {
+    // 클릭된 li 요소를 찾음
     const target = event.target.closest('li');
 
     if (target) {
-        // 강의 데이터를 가져오기 위한 예시: 클릭된 li 요소에서 데이터를 가져옴
-        const course = {
-            courseName: target.querySelector('div:nth-child(2)').textContent,
-            professorName: target.querySelector('div:nth-child(4)').textContent,
-            time: target.querySelector('div:nth-child(6)').textContent // ex. "월 1-2, 목 5"
-        };
+        // li 요소의 data-course-id 속성을 이용해 강의 ID 가져오기
+        const courseId = target.getAttribute('data-course-id');
 
-        // 새로 추가할 강의 시간이 이미 시간표에 있는지 임시로 확인
-        const conflict = fillTimeTable(course, true);
+        if (courseId) {
+            // Fetch API를 사용해 백엔드로 강의 정보를 요청함
+            fetch(`http://localhost:8080/courses/${courseId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(courseData => {
+                    // 서버에서 받아온 강의 데이터를 사용하여 시간표에 추가
+                    const conflict = fillTimeTable(courseData, true);
 
-        if (!conflict) {
-            // 시간이 중복되지 않으면 실제로 시간표에 추가
-            fillTimeTable(course, false);
+                    if (!conflict) {
+                        // 시간이 중복되지 않으면 실제로 시간표에 추가
+                        fillTimeTable(courseData, false);
+                        // 로컬 스토리지에 시간표 업데이트
+                        updateLocalStorageWithTimetable(courseData);
+                    }
+                })
+                .catch(error => {
+                    console.error(`There has been a problem with your fetch operation: ${error.message}`);
+                });
+        } else {
+            console.error("강의 ID를 찾을 수 없습니다.");
         }
     }
 });

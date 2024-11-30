@@ -3,6 +3,7 @@ package com.example.timetable.controller;
 import com.example.timetable.model.Courses;
 import com.example.timetable.Service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -74,5 +75,15 @@ public class CoursesController {
             @RequestParam(value = "requiredCourses", required = false) List<String> requiredCourses) {
         // 조건에 맞는 모든 강의 조합을 생성
         return courseService.findFilteredCombinations(department_id, courseNames, totalCredits, availableTimes, requiredCourses);
+    }
+
+    @GetMapping("/{courseId}")
+    public ResponseEntity<Courses> getCourseById(@PathVariable Long courseId) {
+        Courses course = courseService.findCourseById(courseId);
+        if (course != null) {
+            return ResponseEntity.ok(course);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -359,6 +359,7 @@
       </div>
         <!-- 태그 정보가 있는 부분 -->
       <div class="tag">
+        <div class="tag-item" style="flex: 0.5;">번호</div>
         <div class="tag-item" style="flex: 1;">과</div>
         <div class="tag-item" style="flex: 2;">과목명</div>
         <div class="tag-item" style="flex: 0.5;">이수구분</div>
@@ -366,7 +367,7 @@
         <div class="tag-item" style="flex: 0.5;">학점</div>
         <div class="tag-item" style="flex: 0.5;">시간</div>
         <div class="tag-item" style="flex: 0.7;">강의실</div>
-        <div class="tag-item" style="flex: 0.5;">수강정원</div>
+<!--        <div class="tag-item" style="flex: 0.5;">수강정원</div>-->
       </div>
     </div>
 
@@ -374,6 +375,7 @@
       <!-- 강의 데이터를 반복적으로 출력 -->
       <ul id="mainList">
         <li th:each="course : ${courses}">
+          <div th:text="${course.id}">번호</div>
           <div th:text="${course.departmentName}">과</div>
           <div th:text="${course.courseName}">과목명</div>
           <div th:text="${course.division}">이수구분</div>
@@ -385,7 +387,7 @@
           <div th:text="${course.dayOfWeek} + ' ' +${course.start_period} + '-' + ${courses.end_period}">시간</div>
           {% endif %}
           <div th:text="${course.classroom}">강의실</div>
-          <div th:text="${course.capacity}">수강정원</div>
+<!--          <div th:text="${course.capacity}">수강정원</div>-->
         </li>
       </ul>
     </div>
@@ -465,8 +467,13 @@
       // 강의 정보를 표시
       const list = document.createElement('li');
       list.style.display = 'flex'; // Flexbox 설정
+      list.classList.add('course-item'); // 클래스 추가 (추후 참조에 용이)
+
+      // 강의 ID를 data-course-id로 설정
+      list.setAttribute('data-course-id', currentCourse.id); // 강의 ID 저장
 
       const attributes = [
+        { value: currentCourse.id, flex: 0.5 },      // 번호
         { value: currentCourse.departmentName, flex: 1 },
         { value: currentCourse.courseName, flex: 2 },
         { value: currentCourse.division, flex: 0.5 },
@@ -474,7 +481,7 @@
         { value: currentCourse.credit, flex: 0.5 },
         { value: timeString, flex: 0.7 }, // 병합된 시간 문자열
         { value: currentCourse.classroom, flex: 1 },
-        { value: currentCourse.capacity, flex: 0.5 }
+        // { value: currentCourse.capacity, flex: 0.5 }
       ];
 
       // 각 속성을 리스트에 추가
