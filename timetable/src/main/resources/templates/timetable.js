@@ -17,48 +17,28 @@ function fillTimeTable(course, isTemporary = false) {
         '목': 'thu',
         '금': 'fri'
     };
-    let isConflict = false;
 
-    const daysAndPeriods = course.time.split(', '); // ex. "월 1-2, 목 5" 형식
-    const courseColor = courseColorMap[course.courseName] || colorPalette[colorIndex % colorPalette.length];
-    courseColorMap[course.courseName] = courseColor;
-    colorIndex++;
-
-    // 중복된 시간 여부 확인
-    daysAndPeriods.forEach(slot => {
-        const [day, periodRange] = slot.split(' ');
-        const dayCode = dayOfWeekMap[day];
-
-        const [startPeriod, endPeriod] = periodRange.includes('-')
-            ? periodRange.split('-').map(Number)
-            : [parseInt(periodRange), parseInt(periodRange)];
-
-        const finalEndPeriod = endPeriod || startPeriod;
-
-        for (let period = startPeriod; period <= finalEndPeriod; period++) {
-            const cellId = `${dayCode}-${period}`;
-            const cell = document.getElementById(cellId);
-
-            // 중복된 셀이 발견되면 전체 추가를 막음
-            if (cell && cell.classList.contains('occupied')) {
-                isConflict = true;
-            }
-        }
-    });
-
-    if (isConflict) {
-        alert(`시간이 중복되어 추가할 수 없습니다.`);
-        return true;
+    if (!course.formattedTime) {
+        console.error("The course data does not have a formattedTime attribute:", course);
+        return;
     }
 
-    // 유효한 강의일 경우에만 시간표에 추가
+    const daysAndPeriods = course.formattedTime.split(', '); // ex. "월 1-2, 목 5" 형식
+    console.log("Parsed days and periods:", daysAndPeriods);
+
     daysAndPeriods.forEach(slot => {
         const [day, periodRange] = slot.split(' ');
-        const dayCode = dayOfWeekMap[day];
+
+        if (!day || !periodRange) {
+            console.error("Invalid slot data:", slot);
+            return;
+        }
+
+        const dayCode = dayOfWeekMap[day]; // 요일 매핑
 
         const [startPeriod, endPeriod] = periodRange.includes('-')
             ? periodRange.split('-').map(Number)
-            : [parseInt(periodRange), parseInt(periodRange)];
+            : [parseFloat(periodRange), parseFloat(periodRange)]; // 단일 교시 처리
 
         const finalEndPeriod = endPeriod || startPeriod;
 
@@ -67,15 +47,12 @@ function fillTimeTable(course, isTemporary = false) {
             const cell = document.getElementById(cellId);
 
             if (cell && !isTemporary) {
-                // 이미 배경색이 설정되어 있는 경우에만 기존 색상 저장
                 if (!cell.dataset.originalColor) {
                     cell.dataset.originalColor = cell.style.backgroundColor || '';
                 }
 
-                // 강의 색상 적용
-                cell.style.backgroundColor = courseColor;
-                cell.setAttribute('data-color', courseColor);
-                cell.classList.add('occupied');
+                cell.style.backgroundColor = course.color || 'lightblue'; // 강의 색상 적용
+                cell.classList.add('occupied'); // 셀에 점유 표시
 
                 if (period === startPeriod) {
                     cell.innerHTML = `${course.courseName} (${course.professorName})`;
@@ -86,13 +63,6 @@ function fillTimeTable(course, isTemporary = false) {
             }
         }
     });
-
-    // 로컬 스토리지 업데이트
-    if (!isTemporary && activeTimetableIndex !== null && activeTimetableIndex >= 0) {
-        updateLocalStorageWithTimetable(course);
-    }
-
-    return isConflict;
 }
 
 function highlightTemporary(course) {
@@ -104,24 +74,46 @@ function highlightTemporary(course) {
         '금': 'fri'
     };
 
-    const daysAndPeriods = course.time.split(', ');
+    // 필요한 필드가 있는지 확인
+    if (!course.formattedTime) {
+        console.error("Invalid course data: Missing formattedTime:", course);
+        return;
+    }
+
+    const daysAndPeriods = course.formattedTime.split(', '); // "월 1.0-2.0, 화 3.0-4.0" 형태
 
     daysAndPeriods.forEach(slot => {
+        if (!slot.includes(' ')) {
+            console.error("Invalid slot data:", slot);
+            return; // 유효하지 않은 데이터 건너뜀
+        }
+
         const [day, periodRange] = slot.split(' ');
-        const dayCode = dayOfWeekMap[day];
+        const dayCode = dayOfWeekMap[day]; // 요일 매핑
+
+        if (!dayCode) {
+            console.error("Invalid day code:", day);
+            return; // 유효하지 않은 요일 건너뜀
+        }
 
         const [startPeriod, endPeriod] = periodRange.includes('-')
             ? periodRange.split('-').map(Number)
-            : [parseInt(periodRange), parseInt(periodRange)];
+            : [parseFloat(periodRange), parseFloat(periodRange)]; // 단일 교시 처리
+
+        if (isNaN(startPeriod) || isNaN(endPeriod)) {
+            console.error("Invalid period data:", startPeriod, endPeriod);
+            return; // 유효하지 않은 교시 건너뜀
+        }
 
         const finalEndPeriod = endPeriod || startPeriod;
 
+        // 셀을 연하게 칠하기
         for (let period = startPeriod; period <= finalEndPeriod; period++) {
             const cellId = `${dayCode}-${period}`;
             const cell = document.getElementById(cellId);
 
-            if (cell && !cell.classList.contains('occupied')) {
-                // 원래 색상을 저장하는 부분 (이미 설정된 경우 덮어쓰지 않음)
+            if (cell) {
+                // 기존 색상을 덮어쓰지 않도록 수정
                 if (!cell.dataset.originalColor) {
                     cell.dataset.originalColor = cell.style.backgroundColor || '';
                 }
@@ -134,7 +126,6 @@ function highlightTemporary(course) {
     });
 }
 
-
 function clearTemporary(course) {
     const dayOfWeekMap = {
         '월': 'mon',
@@ -144,30 +135,45 @@ function clearTemporary(course) {
         '금': 'fri'
     };
 
-    const daysAndPeriods = course.time.split(', ');
+    // course.time이 유효한지 확인
+    if (!course || !course.formattedTime) {
+        console.error("Invalid course data:", course);
+        return; // 유효하지 않은 데이터라면 함수 종료
+    }
+
+    const daysAndPeriods = course.formattedTime.split(', '); // "월 1-2, 목 5" 형식
 
     daysAndPeriods.forEach(slot => {
+        // slot이 올바른 형식인지 확인
+        if (!slot.includes(' ')) {
+            console.error("Invalid slot data:", slot);
+            return; // 유효하지 않은 데이터라면 해당 slot 건너뜀
+        }
+
         const [day, periodRange] = slot.split(' ');
-        const dayCode = dayOfWeekMap[day];
+        const dayCode = dayOfWeekMap[day]; // 요일 매핑
+
+        if (!dayCode) {
+            console.error("Invalid day code:", day);
+            return; // 유효하지 않은 요일이라면 건너뜀
+        }
 
         const [startPeriod, endPeriod] = periodRange.includes('-')
             ? periodRange.split('-').map(Number)
-            : [parseInt(periodRange), parseInt(periodRange)];
+            : [parseInt(periodRange), parseInt(periodRange)]; // 단일 교시 처리
 
         const finalEndPeriod = endPeriod || startPeriod;
 
+        // 셀 색상 초기화
         for (let period = startPeriod; period <= finalEndPeriod; period++) {
             const cellId = `${dayCode}-${period}`;
             const cell = document.getElementById(cellId);
 
-            // 강의가 추가된 셀이 아니면서 임시 하이라이트된 경우에만 복원
-            if (cell && cell.classList.contains('highlighted-temporary') && !cell.classList.contains('occupied')) {
-                // 원래 색상으로 복원
+            if (cell && cell.classList.contains('highlighted-temporary')) {
+                // 임시 색상만 복원
                 const originalColor = cell.dataset.originalColor;
-                if (originalColor !== undefined) {
-                    cell.style.backgroundColor = originalColor;
-                    delete cell.dataset.originalColor; // 복원 후 제거
-                }
+                cell.style.backgroundColor = originalColor !== undefined ? originalColor : '';
+                delete cell.dataset.originalColor; // 복원 후 제거
                 cell.classList.remove('highlighted-temporary');
             }
         }
@@ -181,10 +187,16 @@ document.getElementById('mainList').addEventListener('mouseover', function(event
 
     if (target) {
         const course = {
-            courseName: target.querySelector('div:nth-child(2)').textContent,
-            professorName: target.querySelector('div:nth-child(4)').textContent,
-            time: target.querySelector('div:nth-child(6)').textContent // ex. "월 1-2, 목 5"
+            id: parseInt(target.querySelector('div:nth-child(1)').textContent),  // 강의 번호 (id)
+            departmentName: target.querySelector('div:nth-child(2)').textContent, // 과
+            courseName: target.querySelector('div:nth-child(3)').textContent,     // 과목명
+            division: target.querySelector('div:nth-child(4)').textContent,       // 이수구분
+            professorName: target.querySelector('div:nth-child(5)').textContent,  // 담당교수
+            credit: parseInt(target.querySelector('div:nth-child(6)').textContent), // 학점
+            formattedTime: target.querySelector('div:nth-child(7)').textContent,  // 시간
+            classroom: target.querySelector('div:nth-child(8)').textContent       // 강의실
         };
+
 
         highlightTemporary(course);  // 임시로 시간표 셀을 칠함
     }
@@ -195,26 +207,31 @@ document.getElementById('mainList').addEventListener('mouseout', function(event)
 
     if (target) {
         const course = {
-            courseName: target.querySelector('div:nth-child(2)').textContent,
-            professorName: target.querySelector('div:nth-child(4)').textContent,
-            time: target.querySelector('div:nth-child(6)').textContent // ex. "월 1-2, 목 5"
+            id: parseInt(target.querySelector('div:nth-child(1)').textContent),  // 강의 번호 (id)
+            departmentName: target.querySelector('div:nth-child(2)').textContent, // 과
+            courseName: target.querySelector('div:nth-child(3)').textContent,     // 과목명
+            division: target.querySelector('div:nth-child(4)').textContent,       // 이수구분
+            professorName: target.querySelector('div:nth-child(5)').textContent,  // 담당교수
+            credit: parseInt(target.querySelector('div:nth-child(6)').textContent), // 학점
+            formattedTime: target.querySelector('div:nth-child(7)').textContent,  // 시간
+            classroom: target.querySelector('div:nth-child(8)').textContent       // 강의실
         };
+
 
         clearTemporary(course);  // 색상 초기화
     }
 });
 
-// 강의 목록을 클릭할 때 실행될 이벤트 설정
-document.getElementById('mainList').addEventListener('click', function(event) {
+document.getElementById('mainList').addEventListener('click', function (event) {
     // 클릭된 li 요소를 찾음
     const target = event.target.closest('li');
 
     if (target) {
         // li 요소의 data-course-id 속성을 이용해 강의 ID 가져오기
-        const courseId = target.getAttribute('data-course-id');
+        const courseId = parseInt(target.getAttribute('data-course-id'));
 
         if (courseId) {
-            // Fetch API를 사용해 백엔드로 강의 정보를 요청함
+            // Fetch API를 사용해 백엔드로 해당 강의 ID의 정보를 요청함
             fetch(`http://localhost:8080/courses/${courseId}`)
                 .then(response => {
                     if (!response.ok) {
@@ -223,15 +240,51 @@ document.getElementById('mainList').addEventListener('click', function(event) {
                     return response.json();
                 })
                 .then(courseData => {
-                    // 서버에서 받아온 강의 데이터를 사용하여 시간표에 추가
-                    const conflict = fillTimeTable(courseData, true);
+                    console.log("Fetched course data:", courseData);
+                    // 해당 강의의 데이터를 가져온 후, 이후 ID들을 확인하여 같은 강의인지 확인
 
-                    if (!conflict) {
-                        // 시간이 중복되지 않으면 실제로 시간표에 추가
-                        fillTimeTable(courseData, false);
-                        // 로컬 스토리지에 시간표 업데이트
-                        updateLocalStorageWithTimetable(courseData);
+                    // 현재 강의 ID 이후부터 데이터베이스의 다른 항목들과 비교
+                    let courseList = [];
+                    courseList.push(courseData); // 첫 번째로 가져온 항목 추가
+
+                    // 다음 항목들을 반복적으로 조회
+                    const nextCourseId = courseId + 1;
+
+                    function fetchNextCourse(nextId) {
+                        fetch(`http://localhost:8080/courses/${nextId}`)
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.json();
+                                } else {
+                                    throw new Error('No more matching courses found.');
+                                }
+                            })
+                            .then(nextCourseData => {
+                                // 시간 정보만 다르고 나머지 정보가 같은지 비교
+                                if (
+                                    courseData.departmentName === nextCourseData.departmentName &&
+                                    courseData.courseCode === nextCourseData.courseCode &&
+                                    courseData.courseName === nextCourseData.courseName &&
+                                    courseData.courseNumber === nextCourseData.courseNumber &&
+                                    courseData.professorName === nextCourseData.professorName &&
+                                    courseData.credit === nextCourseData.credit &&
+                                    courseData.division === nextCourseData.division &&
+                                    courseData.capacity === nextCourseData.capacity &&
+                                    courseData.classroom === nextCourseData.classroom
+                                ) {
+                                    courseList.push(nextCourseData);
+                                    fetchNextCourse(nextId + 1); // 재귀 호출로 다음 항목 조회
+                                } else {
+                                    console.log('No more matching courses found.');
+                                    processCourseData(courseList);
+                                }
+                            })
+                            .catch(() => {
+                                processCourseData(courseList);
+                            });
                     }
+
+                    fetchNextCourse(nextCourseId);
                 })
                 .catch(error => {
                     console.error(`There has been a problem with your fetch operation: ${error.message}`);
@@ -241,6 +294,23 @@ document.getElementById('mainList').addEventListener('click', function(event) {
         }
     }
 });
+
+function processCourseData(courseList) {
+    // 여러 날에 걸친 강의 데이터 처리
+    const daysAndPeriods = courseList.map(course => course.formattedTime);
+    console.log("Parsed days and periods:", daysAndPeriods);
+
+    courseList.forEach(course => {
+        const conflict = fillTimeTable(course, true);
+
+        if (!conflict) {
+            // 시간이 중복되지 않으면 실제로 시간표에 추가
+            fillTimeTable(course, false);
+            // 로컬 스토리지에 시간표 업데이트
+            updateLocalStorageWithTimetable(course);
+        }
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     const searchButton = document.getElementById('searchButton');

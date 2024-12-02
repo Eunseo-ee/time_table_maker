@@ -33,6 +33,10 @@ public class CourseService {
         return courseRepository.save(course); // static 제거 후 인스턴스를 통해 호출
     }
 
+    public Optional<Courses> getCourseById(Long courseId) {
+        return courseRepository.findById(courseId);
+    }
+
     // 필터링된 강의 목록을 가져오는 메소드
     public List<Courses> getFilteredCourses(String department, String division, Integer credit, String searchOption, String searchQuery, List<String> selectedTimes) {
         // 모든 수업 데이터를 가져옴

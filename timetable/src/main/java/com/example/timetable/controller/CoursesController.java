@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/courses")
@@ -79,9 +80,9 @@ public class CoursesController {
 
     @GetMapping("/{courseId}")
     public ResponseEntity<Courses> getCourseById(@PathVariable Long courseId) {
-        Courses course = courseService.findCourseById(courseId);
-        if (course != null) {
-            return ResponseEntity.ok(course);
+        Optional<Courses> optionalCourse = courseService.getCourseById(courseId);
+        if (optionalCourse.isPresent()) {
+            return ResponseEntity.ok(optionalCourse.get());
         } else {
             return ResponseEntity.notFound().build();
         }
