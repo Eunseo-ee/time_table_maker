@@ -119,32 +119,32 @@ function updateLocalStorageWithTimetable(course) {
                 savedTimetables[activeTimetableIndex] = [];
             }
 
-            // 강의 정보를 주어진 형식에 맞게 객체로 생성
-            const courseData = {
-                capacity: course.capacity,
-                classroom: course.classroom,
-                courseCode: course.courseCode,
-                courseName: course.courseName,
-                courseNumber: course.courseNumber,
-                credit: course.credit,
-                dayOfWeek: course.dayOfWeek,
-                departmentId: course.departmentId,
-                departmentName: course.departmentName,
-                division: course.division,
-                endPeriod: course.endPeriod,
-                formattedTime: course.formattedTime,
-                id: course.id,
-                professorName: course.professorName,
-                startPeriod: course.startPeriod
-            };
-
             // 강의가 이미 추가되어 있는지 확인 후 중복 추가 방지
             const isAlreadyAdded = savedTimetables[activeTimetableIndex].some(
-                savedCourse => savedCourse.courseCode === courseData.courseCode && savedCourse.dayOfWeek === courseData.dayOfWeek && savedCourse.startPeriod === courseData.startPeriod
+                savedCourse => savedCourse.courseName === course.courseName && savedCourse.formattedTime === course.formattedTime
             );
 
             if (!isAlreadyAdded) {
-                savedTimetables[activeTimetableIndex].push(courseData);
+                // 강의 데이터를 일관된 형식으로 저장
+                const newCourse = {
+                    id: course.id || null,
+                    departmentId: course.departmentId || null,
+                    departmentName: course.departmentName || '',
+                    courseCode: course.courseCode || null,
+                    courseName: course.courseName || '',
+                    courseNumber: course.courseNumber || null,
+                    professorName: course.professorName || '',
+                    credit: course.credit || null,
+                    division: course.division || '',
+                    classroom: course.classroom || '',
+                    formattedTime: course.formattedTime || '',
+                    capacity: course.capacity || null,
+                    dayOfWeek: course.dayOfWeek || '',
+                    startPeriod: course.startPeriod || null,
+                    endPeriod: course.endPeriod || null
+                };
+
+                savedTimetables[activeTimetableIndex].push(newCourse);
                 localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables));
                 console.log(`시간표 ${activeTimetableIndex + 1}에 강의가 추가되었습니다.`);
             } else {
@@ -159,6 +159,7 @@ function updateLocalStorageWithTimetable(course) {
         console.error("활성화된 시간표가 없습니다. 시간표를 먼저 선택하세요.");
     }
 }
+
 
 // 시간표 테이블에 시간표를 표시하는 함수
 function displayTimetableInView(timetableCombination) {
