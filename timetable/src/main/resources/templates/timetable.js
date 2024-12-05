@@ -313,6 +313,97 @@ function processCourseData(courseList) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    addRightClickListenerToCells();
+
+    // 함수: 모든 timetable td 셀에 우클릭 이벤트 리스너 추가
+    function addRightClickListenerToCells() {
+        const timetableCells = document.querySelectorAll('.timetable td');
+
+        timetableCells.forEach(cell => {
+            // 우클릭 이벤트 리스너 추가
+            cell.addEventListener('contextmenu', function (event) {
+                // 우클릭 이벤트 기본 메뉴를 비활성화
+                event.preventDefault();
+
+                console.log("Right-click detected on:", cell);  // 우클릭된 셀 확인용 로그
+
+                const courseName = cell.querySelector('strong')?.textContent.trim();
+                const professorName = cell.querySelector('span')?.textContent.trim();
+
+                if (!courseName || !professorName) {
+                    console.error("해당 셀에서 강의 정보를 찾을 수 없습니다.");
+                    return;
+                }
+
+                // 삭제 확인창 표시
+                const confirmDelete = confirm(`강의 "${courseName}" (${professorName})를 삭제하시겠습니까?`);
+                if (confirmDelete) {
+                    // 로컬 스토리지에서 해당 강의를 삭제하고 시간표를 업데이트
+                    removeCourseFromLocalStorage(courseName, professorName);
+                    refreshTimetable();
+                }
+            });
+        });
+    }
+
+    // 로컬 스토리지에서 강의 삭제
+    function removeCourseFromLocalStorage(courseName, professorName) {
+        const currentIndex = localStorage.getItem('currentTimetableIndex');
+        let timetableCombinations = JSON.parse(localStorage.getItem('timetableCombinations'));
+
+        if (timetableCombinations && timetableCombinations.length > currentIndex) {
+            let currentCombination = timetableCombinations[currentIndex];
+
+            // 강의명과 교수명으로 일치하는 강의를 찾아서 삭제
+            currentCombination = currentCombination.filter(course => {
+                return !(course.courseName === courseName && course.professorName === professorName);
+            });
+
+            // 업데이트된 시간표를 로컬 스토리지에 저장
+            timetableCombinations[currentIndex] = currentCombination;
+            localStorage.setItem('timetableCombinations', JSON.stringify(timetableCombinations));
+        } else {
+            console.error("현재 활성화된 시간표를 찾을 수 없습니다.");
+        }
+    }
+
+    // 시간표를 새로고침하는 함수
+    function refreshTimetable() {
+        // 시간표를 모두 초기화
+        document.querySelectorAll('.timetable td').forEach(cell => {
+            cell.innerHTML = '';
+            cell.style.backgroundColor = ''; // 기존 색상 제거
+            cell.classList.remove('occupied'); // occupied 클래스 제거
+        });
+
+        // 현재 시간표 조합 인덱스를 가져와 다시 표시
+        const currentIndex = localStorage.getItem('currentTimetableIndex');
+        if (currentIndex !== null) {
+            displayTimetable(parseInt(currentIndex));
+        } else {
+            console.error("현재 시간표 인덱스를 찾을 수 없습니다.");
+        }
+    }
+
+    // 시간표 조합을 화면에 표시하는 함수
+    function displayTimetable(index) {
+        let timetableCombinations = JSON.parse(localStorage.getItem('timetableCombinations'));
+        if (timetableCombinations && timetableCombinations.length > index) {
+            let combination = timetableCombinations[index];
+
+            combination.forEach(course => {
+                fillTimeTable(course, false);
+            });
+
+            // 시간표가 업데이트된 후 다시 우클릭 이벤트 리스너 추가
+            addRightClickListenerToCells();
+        } else {
+            console.error("해당 인덱스의 시간표 조합을 찾을 수 없습니다.");
+        }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
     const searchButton = document.getElementById('searchButton');
     const departmentButton = document.getElementById('departmentButton');
     const creditButton = document.getElementById('creditButton');
@@ -481,6 +572,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 selectedTimes = selectedTimes.filter(time => time !== cellId);
             } else {
                 selectedTimes.push(cellId);
+                cell.style.backgroundColor = 'rgba(134,164,204,0.7)';
             }
             console.log("Selected times:", selectedTimes);  // 선택된 시간 배열 확인
         }
