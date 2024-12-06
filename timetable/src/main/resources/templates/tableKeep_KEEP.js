@@ -34,8 +34,10 @@ function saveTimetable(timetableData) {
 
 function updateTimetableChoices() {
     savedTimetables = JSON.parse(localStorage.getItem('savedTimetables')) || [];
+    confirmedTimetable = JSON.parse(localStorage.getItem('confirmedTimetable')) || null; // 확정된 시간표를 로드하거나 초기화
 
     const choiceContainer = document.querySelector('#timetableChoices');
+    const currentContainer = document.querySelector('#currentChoices');
 
     if (!choiceContainer) {
         console.error("Cannot find the choice container element.");
@@ -44,15 +46,26 @@ function updateTimetableChoices() {
 
     // 기존 목록 초기화
     choiceContainer.innerHTML = '';
+    currentContainer.innerHTML = '';
 
     // 저장된 시간표 데이터를 리스트에 추가
     savedTimetables.forEach((timetable, index) => {
         const listItem = document.createElement('li');
         listItem.className = 'timetable-item';
+        listItem.dataset.index = index; // 시간표 인덱스를 저장
 
         const button = document.createElement('button');
         button.textContent = `시간표${index + 1}`;
         button.className = 'timetable-button';
+
+        listItem.appendChild(button);
+
+        // 확정된 시간표인지 확인
+        if (confirmedTimetable && confirmedTimetable.index === index) {
+            currentContainer.appendChild(listItem);
+        } else {
+            choiceContainer.appendChild(listItem);
+        }
 
         // 왼쪽 클릭 이벤트 추가 - 시간표 활성화 및 메인 테이블에 시간표 표시
         button.addEventListener('click', () => {
@@ -70,22 +83,72 @@ function updateTimetableChoices() {
             console.log(`활성화된 시간표 인덱스: ${activeTimetableIndex}`);
         });
 
-        // 오른쪽 클릭 이벤트 추가 (삭제 기능)
+        // 오른쪽 클릭 이벤트 추가 - 삭제 및 확정 팝업 표시
         button.addEventListener('contextmenu', (event) => {
             event.preventDefault(); // 기본 컨텍스트 메뉴 방지
-            const confirmDelete = confirm(`시간표 ${activeTimetableIndex + 1}을(를) 삭제하시겠습니까?`);
-            if (confirmDelete) {
-                savedTimetables.splice(activeTimetableIndex, 1); // 해당 시간표 삭제
-                localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables)); // 로컬 스토리지 업데이트
-                updateTimetableChoices(); // 삭제 후 시간표 목록 업데이트
-                console.log(`시간표 ${index + 1} 삭제됨`);
-            }
+
+            // 팝업 창 생성
+            const popup = document.createElement('div');
+            popup.className = 'popup-menu';
+            popup.style.top = `${event.clientY}px`;
+            popup.style.left = `${event.clientX}px`;
+
+            // 삭제 버튼 추가
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '삭제';
+            deleteButton.className = 'popup-button delete-button';
+            deleteButton.addEventListener('click', () => {
+                const confirmDelete = confirm(`시간표 ${index + 1}을(를) 삭제하시겠습니까?`);
+                if (confirmDelete) {
+                    savedTimetables.splice(index, 1); // 해당 시간표 삭제
+                    localStorage.setItem('savedTimetables', JSON.stringify(savedTimetables)); // 로컬 스토리지 업데이트
+                    updateTimetableChoices(); // 삭제 후 시간표 목록 업데이트
+                    console.log(`시간표 ${index + 1} 삭제됨`);
+                }
+                document.body.removeChild(popup); // 팝업 제거
+            });
+
+            // 확정 버튼 추가
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = '확정';
+            confirmButton.className = 'popup-button confirm-button';
+            confirmButton.addEventListener('click', () => {
+                // 기존에 확정된 시간표가 있다면 timetableChoices로 되돌리기
+                if (confirmedTimetable) {
+                    const previousConfirmedIndex = confirmedTimetable.index;
+                    const previousConfirmedItem = document.querySelector(`[data-index='${previousConfirmedIndex}']`);
+                    if (previousConfirmedItem) {
+                        choiceContainer.insertBefore(previousConfirmedItem, newTimetableItem); // 새 시간표 만들기 버튼 위로 추가
+                    }
+                }
+
+                // 새로운 시간표를 확정하고 currentChoices로 이동
+                confirmedTimetable = { index: index };
+                localStorage.setItem('confirmedTimetable', JSON.stringify(confirmedTimetable));
+
+                currentContainer.appendChild(listItem);
+                console.log(`시간표 ${index + 1} 확정됨`);
+                document.body.removeChild(popup); // 팝업 제거
+
+                // 시간표 목록을 로컬 스토리지 순서에 맞게 갱신
+                updateTimetableChoices();
+            });
+
+            // 팝업에 버튼 추가
+            popup.appendChild(deleteButton);
+            popup.appendChild(confirmButton);
+
+            // 팝업을 body에 추가
+            document.body.appendChild(popup);
+
+            // 팝업 외부 클릭 시 팝업 제거
+            document.addEventListener('click', function handleClickOutside(event) {
+                if (!popup.contains(event.target)) {
+                    document.body.removeChild(popup);
+                    document.removeEventListener('click', handleClickOutside);
+                }
+            });
         });
-
-        listItem.appendChild(button);
-        choiceContainer.appendChild(listItem);
-
-        console.log(`Added event listener to timetable ${index + 1}`);
     });
 
     // '새 시간표 만들기' 옵션 추가
@@ -105,6 +168,10 @@ function updateTimetableChoices() {
     choiceContainer.appendChild(newTimetableItem);
 }
 
+// 페이지 로드 시 확정된 시간표 복원
+document.addEventListener('DOMContentLoaded', () => {
+    updateTimetableChoices();
+});
 
 function updateLocalStorageWithTimetable(course) {
     if (activeTimetableIndex !== null && activeTimetableIndex >= 0) {
