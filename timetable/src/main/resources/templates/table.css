@@ -17,13 +17,13 @@ main aside form select {
     height: 33px;
     border: solid 2px #bfbfbf;
     padding: 5px;
+    margin-bottom:2%;
 }
 
 main aside .current {
     width: 324px;
-    height: 170px;
-    background-color: white;
-    margin-top: 5px;
+    height: 100px;
+    background-color: #ced3da;
     border: solid 0.5px #bfbfbf;
 }
 
@@ -132,20 +132,25 @@ main aside .choice {
     padding: 0 15px; /* 양쪽 여백 추가 */
 }
 
+.tag-header {
+    position: sticky;
+    top: 0; /* 화면 상단에 붙도록 설정 */
+    background-color: #ffffff; /* 배경색을 설정해 스크롤 시 내용과 겹치지 않도록 */
+    z-index: 10; /* 다른 요소 위에 고정되도록 z-index 설정 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과를 주어 헤더를 돋보이게 */
+    border-bottom: 1px solid #ddd; /* 하단에 경계선을 추가해 구분 */
+}
+
 .tag {
-    width: 100%;
     display: flex;
-    background-color: white;
-    border-bottom: 1px solid #d6d6d6;
-    margin-top: 10px; /* 검색 옵션과 닫기 버튼 아래 여백 추가 */
+    align-items: center;
+    padding: 10px;
+    font-weight: bold; /* 제목을 더 두껍게 표시 */
 }
 
 .tag-item {
+    padding: 5px 10px;
     text-align: center;
-    font-weight: bold;
-    color: #595959;
-    padding: 0px 5px;
-    border-right: 1px solid #ededed;
 }
 
 .tag-item:last-child {
@@ -443,3 +448,57 @@ main aside .choice {
     color: #0056b3; /* 호버 시 색상 변화 */
 }
 
+#nowTitle {
+    font-size: 18px;
+    color: #6b90c3;
+    text-align: left;
+    margin-left: 5%;
+    font-weight: bold;
+}
+
+#currentChoices {
+    list-style: none;
+    padding: 0;
+}
+
+#currentChoices .timetable-item {
+    margin: 5px 0;
+}
+
+.popup-menu {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    z-index: 1000;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.popup-button {
+    display: block;
+    margin: 5px 0;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+
+.popup-button.delete-button {
+    background-color: #ff4d4d;
+    color: #fff;
+}
+
+.popup-button.confirm-button {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+/* 기본 목록 불릿 제거 */
+ul#timetableChoices,
+ul#currentChoices {
+    list-style-type: none;  /* 목록 불릿 제거 */
+    padding-left: 0;  /* 목록의 왼쪽 기본 여백 제거 */
+}
+
+.timetable-item {
+    margin-bottom: 10px;  /* 각 항목 간의 간격을 유지하기 위해 추가 */
+}

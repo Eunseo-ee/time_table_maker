@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="header.css" />
   <link rel="stylesheet" href="table.css" />
-  <title>에브리타임</title>
-  <link rel="icon" href="https://play-lh.googleusercontent.com/0oDBGRaLXdz92kZGHpCNts6KQUr38rG4uCTrV8_32WEyMy70tzC5CM5KbPk3yFoVrwM"/>
+  <title>고래</title>
+  <link rel="icon" href="고래.jpg">
   <style>
     .folded > ul {
       display: none;
@@ -26,11 +26,9 @@
   <div class="container">
 
     <div class="logo">
-      <img
-              src="고래.jpg"
-      />
+      <img src="고래.jpg"/>
       <p>
-        <span>에브리타임</span>
+        <span>고래고래</span>
         <span>서울과기대</span>
       </p>
     </div>
@@ -40,14 +38,9 @@
         <li><a href="view.html" target=”_blank>시간표</a></li>
         <li><a href="TimeTableCombination.html" target=”_blank>시간표조합찾기</a></li>
         <li><a href="/">TODO</a></li>
-        <li><a href="/">이수과목체크</a></li>
+<!--        <li><a href="/">이수과목체크</a></li>-->
         <li><a href="/">학점계산기</a></li>
-        <li><a href="/">친구</a></li>
       </ul>
-    </div>
-    <div class="icon">
-      <img src="https://cdn-icons-png.flaticon.com/512/1159/1159740.png" />
-      <img src="https://cdn-icons-png.flaticon.com/512/66/66933.png" />
     </div>
   </div>
 </header>
@@ -61,6 +54,11 @@
         ><option>2024년 2학기</option>
         </select>
       </form>
+      <div class="current">
+        <h2 id="nowTitle">NOW</h2>
+        <ul id="currentChoices">
+        </ul>
+      </div>
       <div class="choice">
         <ul id="timetableChoices">
         </ul>
@@ -358,16 +356,17 @@
         <button id="deleteButton" class="deleteButton">닫기</button>
       </div>
         <!-- 태그 정보가 있는 부분 -->
-      <div class="tag">
-        <div class="tag-item" style="flex: 0.5;">번호</div>
-        <div class="tag-item" style="flex: 1;">과</div>
-        <div class="tag-item" style="flex: 2;">과목명</div>
-        <div class="tag-item" style="flex: 0.5;">이수구분</div>
-        <div class="tag-item" style="flex: 1;">담당교수</div>
-        <div class="tag-item" style="flex: 0.5;">학점</div>
-        <div class="tag-item" style="flex: 0.5;">시간</div>
-        <div class="tag-item" style="flex: 0.7;">강의실</div>
-<!--        <div class="tag-item" style="flex: 0.5;">수강정원</div>-->
+      <div class="tag-header">
+        <div class="tag">
+          <div class="tag-item" style="flex: 0.5;">번호</div>
+          <div class="tag-item" style="flex: 1;">과</div>
+          <div class="tag-item" style="flex: 2;">과목명</div>
+          <div class="tag-item" style="flex: 0.5;">이수구분</div>
+          <div class="tag-item" style="flex: 1;">담당교수</div>
+          <div class="tag-item" style="flex: 0.5;">학점</div>
+          <div class="tag-item" style="flex: 0.5;">시간</div>
+          <div class="tag-item" style="flex: 0.7;">강의실</div>
+        </div>
       </div>
     </div>
 
