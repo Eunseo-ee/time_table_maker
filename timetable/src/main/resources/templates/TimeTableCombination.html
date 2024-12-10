@@ -33,7 +33,7 @@
 <main>
     <div class="container">
         <div class="main-tables-container">
-            <button class="prevButton" id="prevButton">◀</button>
+            <button class="prevButton" id="prevButton"></button>
             <table class="main-table" id="comparing">
                 <colgroup>
                     <col class="col1" />
@@ -214,7 +214,7 @@
                     <td id="fri_9"></td>
                 </tr>
             </table>
-            <button class="nextButton" id="nextButton">▶</button>
+            <button class="nextButton" id="nextButton"></button>
         </div>
         <div class="filter-container">
             <div class="button-group">
@@ -403,7 +403,10 @@
                 <button id="resetButton" class="resetButton">초기화</button>
                 <button id="generateButton" class="tableButton">Generate Timetable</button>
             </div>
-
+            <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+                <div class="spinner"></div>
+                <p>로딩 중...</p>
+            </div>
         </div>
         <div id="departmentContainer" class="departmentContainer"></div>
     </div>

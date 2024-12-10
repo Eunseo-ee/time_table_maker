@@ -1,0 +1,141 @@
+main {
+    display: flex; /* 플렉스 컨테이너로 설정 */
+    justify-content: space-between; /* 두 요소 사이에 공간 분배 */
+    align-items: flex-start; /* 요소들을 위쪽 정렬 */
+    padding: 20px; /* 여백 추가 */
+    gap: 20px; /* 요소 간의 간격 */
+}
+
+#calendar {
+    flex: 1;
+    max-width: 20%; /* 최대 너비 제한 */
+    min-width: 300px; /* 최소 너비 설정 */
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    /*!*background-color: #e9f0fb;*!*/
+
+    /*!* 화면에서 왼쪽 가운데로 위치 *!*/
+    /*position: absolute;*/
+    /*left: 0; !* 왼쪽 정렬 *!*/
+    /*top: 50%; !* 화면의 세로 중간 *!*/
+    /*transform: translateY(-50%); !* 세로 가운데로 보정 *!*/
+    margin-top:5%;
+    margin-left: 20%;
+}
+
+#todo {
+    flex: 2;
+    max-width: 70%; /* 최대 너비 제한 */
+    min-width: 60%; /* 최소 너비 설정 */
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    position: relative;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    font-weight: bolder;
+}
+
+.calendar-nav {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #333;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding-top: 5%;
+    padding-bottom: 5%;
+    /*background-color: #cdddef;*/
+    font-weight: bold;
+    text-align: center;
+    color:slategray;
+}
+
+.calendar-dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+}
+
+.calendar-dates div {
+    padding: 10px;
+    padding-top: 30%;
+    padding-bottom: 30%;
+    cursor: pointer;
+}
+
+.calendar-dates div:hover {
+    background-color: #c9dbf1;
+}
+
+.calendar-dates .selected {
+    background-color: #7cb4e8;
+    color: #fff;
+    font-weight: bold;
+}
+
+.calendar-days div:nth-child(6) {
+    color: #0080ff;
+}
+
+.calendar-days div:nth-child(7){
+    color: #f14848;
+}
+
+.saturday {
+    color: #0080ff;
+}
+
+.sunday{
+    color: #f14848;
+}
+
+.highlighted {
+    background-color: #b8d0ef; /* 선택된 날짜의 배경색 */
+    border-radius: 50%; /* 원형으로 표시 */
+    color: black; /* 선택된 날짜의 글자색 */
+    font-weight: bold;
+}
+
+.confirmed-subjects {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.subject-button {
+    background-color: #f0f0f0;
+    border: 1px solid #fafafa;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.subject-button:hover {
+    background-color: #aabfdc;
+}
+
+.addTodo {
+    background-color: #f0f0f0;
+    border: 1px solid #fafafa;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.addTodo:hover {
+    background-color: #aabfdc;
+}

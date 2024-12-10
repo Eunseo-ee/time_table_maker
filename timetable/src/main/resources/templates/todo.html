@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="header.css" />
+  <link rel="stylesheet" href="calendar.css" />
+  <link rel="stylesheet" href="calendar_modal.css" />
+  <title>TODO</title>
+  <link rel="icon" href="고래.jpg">
+  <style>
+    .folded > ul {
+      display: none;
+    }
+    .folded.open > ul {
+      display: block;
+    }
+    .parent {
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container">
+
+    <div class="logo">
+      <img src="고래.jpg"/>
+      <p>
+        <span>고래고래</span>
+        <span>서울과기대</span>
+      </p>
+    </div>
+
+    <div class="menu">
+      <ul>
+        <li><a href="view.html" target=”_blank>시간표</a></li>
+        <li><a href="TimeTableCombination.html" target=”_blank>시간표조합찾기</a></li>
+        <li><a href="todo.html" target=”_blank>TODO</a></li>
+        <!--        <li><a href="/">이수과목체크</a></li>-->
+        <li><a href="calculate.html" target=”_blank>학점계산기</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="calendar">
+    <div class="calendar-header">
+      <button id="prevMonth" class="calendar-nav"><</button>
+      <span id="currentMonth">2023년 12월</span>
+      <button id="nextMonth" class="calendar-nav">></button>
+    </div>
+    <div class="calendar-days">
+      <div>월</div>
+      <div>화</div>
+      <div>수</div>
+      <div>목</div>
+      <div>금</div>
+      <div>토</div>
+      <div>일</div>
+    </div>
+    <div id="calendarDates" class="calendar-dates"></div>
+  </div>
+  <div id="todo">
+    <button id="addTodo" class="addTodo">TODO +</button>
+
+    <div id="todoModal" class="modal">
+      <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+
+        <div id="courseButtons">
+          <!-- 확정된 강의명 버튼 동적으로 추가 -->
+        </div>
+
+        <div id="mandatorySection">
+          <label>
+            <input type="checkbox" id="mandatoryCheckbox" />
+            필수
+          </label>
+          <label for="dueDate">기한:</label>
+          <input type="date" id="dueDate" disabled />
+        </div>
+
+        <div id="taskInputSection">
+          <label for="taskName">할 일:</label>
+          <input type="text" id="taskName" placeholder="할 일을 입력하세요" />
+        </div>
+
+        <button id="saveTodo">저장</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="calendar.js"></script>
+<script src="calendar_modal.js"></script>
+</body>
+</html>

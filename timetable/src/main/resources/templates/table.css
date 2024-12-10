@@ -133,7 +133,7 @@ main aside .choice {
 }
 
 .tag-header {
-    position: sticky;
+    position: relative;
     top: 0; /* 화면 상단에 붙도록 설정 */
     background-color: #ffffff; /* 배경색을 설정해 스크롤 시 내용과 겹치지 않도록 */
     z-index: 10; /* 다른 요소 위에 고정되도록 z-index 설정 */

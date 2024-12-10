@@ -143,11 +143,16 @@ function updateTimetableChoices() {
 
             // 팝업 외부 클릭 시 팝업 제거
             document.addEventListener('click', function handleClickOutside(event) {
-                if (!popup.contains(event.target)) {
-                    document.body.removeChild(popup);
-                    document.removeEventListener('click', handleClickOutside);
+                if (popup && popup.parentNode) {
+                    if (!popup.contains(event.target)) {
+                        popup.parentNode.removeChild(popup); // 부모 노드에 자식 노드가 있는 경우만 삭제
+                        document.removeEventListener('click', handleClickOutside); // 이벤트 리스너 제거
+                    }
+                } else {
+                    console.warn("Popup is already removed or does not exist.");
                 }
             });
+
         });
     });
 
@@ -303,7 +308,9 @@ function clearTimeTable(tableId) {
             cell.innerHTML = '';              // 내용 초기화
             cell.classList.remove('occupied'); // 점유 클래스 제거
             cell.style.borderTop = '';        // 경계선 초기화
+            cell.style.borderRight = '';     // 경계선 초기화
             cell.style.borderBottom = '';     // 경계선 초기화
+            cell.style.borderLeft = '';     // 경계선 초기화
             cell.classList.remove('left-top-align'); // 왼쪽 상단 정렬 클래스 제거
         }
     }

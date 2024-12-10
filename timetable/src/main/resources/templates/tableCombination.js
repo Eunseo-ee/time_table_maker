@@ -58,6 +58,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // 로딩 오버레이를 보이게 하는 함수
+    function showLoading() {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        console.log("loading on")
+    }
+
+    // 로딩 오버레이를 숨기는 함수
+    function hideLoading() {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        console.log("loading end")
+    }
+
     // Generate Timetable 버튼 기능
     const generateButton = document.getElementById('generateButton');
     generateButton.addEventListener('click', async function () {
@@ -84,6 +96,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 서버로 필터링 요청
         try {
+            showLoading(); // 로딩 오버레이 표시
+
             const params = new URLSearchParams({
                 department_id: department_id,
                 totalCredits: totalCredits,
@@ -109,6 +123,8 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("Generated timetable combinations:", timetableCombinations);
         } catch (error) {
             console.error('Error fetching timetable combinations:', error);
+        } finally {
+            hideLoading(); // 로딩 오버레이 숨김
         }
 
         // 시간표 슬라이더 초기화 및 첫 시간표 표시
