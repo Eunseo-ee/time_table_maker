@@ -1,0 +1,91 @@
+#todo {
+    display: flex;
+    flex-direction: column; /* 요소를 세로로 정렬 */
+    gap: 10px; /* 요소 간 간격 추가 */
+}
+
+#addTodo {
+    align-self: flex-start; /* 버튼을 왼쪽 정렬 */
+    margin-left:15%;
+}
+
+#todoListContainer {
+    /*flex: 2;*/
+    margin-top: 10px; /* 버튼과 목록 간 간격 추가 */
+    align-self: flex-start; /* 버튼을 왼쪽 정렬 */
+}
+
+#imageUploadSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#fixedImage {
+    max-width: 100%; /* 이미지가 섹션 크기를 넘어가지 않도록 설정 */
+    max-height: 100%; /* 이미지가 섹션 높이를 넘어가지 않도록 설정 */
+    border-radius: 5px; /* 이미지 모서리 둥글게 */
+}
+
+.todo-section {
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 8px;*/
+    padding: 10px;
+    margin-left:20%;
+    width:100%;
+}
+
+.todo-section h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #333;
+    border-radius: 5px;
+    padding-left:5%;
+    padding-right:5%;
+    background-color: #d7e6f6;
+    width:100%;
+}
+
+#todoListContainer ul {
+    list-style: none; /* 기본 점 제거 */
+    padding: 0;
+    margin: 0;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.todo-check {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px; /* 텍스트와의 간격 */
+    text-align: center;
+    line-height: 24px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.todo-clear {
+    color:dodgerblue;
+    font-weight: bolder;
+    border:0;
+}
+
+.todo-notdone {
+    color:green;
+    font-weight: bolder;
+    border:0;
+}
+
+.todo-no {
+    color:darkred;
+    font-weight: bolder;
+    border:0;
+}

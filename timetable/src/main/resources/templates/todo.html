@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="header.css" />
   <link rel="stylesheet" href="calendar.css" />
   <link rel="stylesheet" href="calendar_modal.css" />
+  <link rel="stylesheet" href="todolist.css" />
   <title>TODO</title>
   <link rel="icon" href="고래.jpg">
   <style>
@@ -66,6 +67,13 @@
   <div id="todo">
     <button id="addTodo" class="addTodo">TODO +</button>
 
+    <!-- 목록 컨테이너 -->
+    <div id="todoListContainer">
+      <div id="todoList">
+        <!-- 할 일 목록 동적으로 추가 -->
+      </div>
+    </div>
+
     <div id="todoModal" class="modal">
       <div class="modal-content">
         <span id="closeModal" class="close">&times;</span>
@@ -91,11 +99,14 @@
         <button id="saveTodo">저장</button>
       </div>
     </div>
-
   </div>
+  <div id="imageUploadSection">
+    <img id="fixedImage" src="청엑.jpg"/>
+  </div>
+
 </main>
 
 <script src="calendar.js"></script>
-<script src="calendar_modal.js"></script>
+<script src="todolist.js"></script>
 </body>
 </html>

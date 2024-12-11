@@ -1,109 +1,85 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const calendarContainer = document.getElementById('calendar');
-    const calendarDates = document.getElementById('calendarDates');
-    const currentMonthLabel = document.getElementById('currentMonth');
-    const prevMonthButton = document.getElementById('prevMonth');
-    const nextMonthButton = document.getElementById('nextMonth');
+document.addEventListener("DOMContentLoaded", function () {
+    const calendarDates = document.getElementById("calendarDates");
+    const currentMonthLabel = document.getElementById("currentMonth");
+    const prevMonthButton = document.getElementById("prevMonth");
+    const nextMonthButton = document.getElementById("nextMonth");
+    const saveTodoButton = document.getElementById("saveTodo");
+    const modal = document.getElementById("todoModal");
+    const courseButtonsContainer = document.getElementById("courseButtons"); // 강의 버튼 컨테이너
+
+    const addTodoButton = document.getElementById("addTodo");
+    const closeModal = document.getElementById("closeModal");
+
+    // 모달창 입력 필드
+    const taskNameInput = document.getElementById("taskName"); // 할일 이름 입력 필드
+    const mandatoryCheckbox = document.getElementById("mandatoryCheckbox"); // 필수 여부 체크박스
+    const dueDateInput = document.getElementById("dueDate"); // 기한 입력 필드
+
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
-    let selectedDate = null; // 선택된 날짜를 추적
+    let selectedDate = null; // 선택된 날짜를 저장
+    let selectedCourseName = null; // 선택된 강의명을 저장
 
-    // 캘린더 위에 확정된 시간표 과목명 표시 영역 추가
-    const confirmedSubjectsContainer = document.createElement('div');
-    confirmedSubjectsContainer.id = 'confirmedSubjectsContainer';
-    confirmedSubjectsContainer.className = 'confirmed-subjects';
-    calendarContainer.insertBefore(confirmedSubjectsContainer, calendarContainer.firstChild); // 캘린더 바로 위에 추가
+    // 모달 열기
+    addTodoButton.addEventListener("click", () => {
+        populateCourseButtons(); // 강의 버튼 추가
+        modal.style.display = "block";
+    });
 
-    function loadConfirmedSubjects() {
-        const savedTimetables = JSON.parse(localStorage.getItem('savedTimetables')) || [];
-        const confirmedTimetable = JSON.parse(localStorage.getItem('confirmedTimetable'));
+    // 모달 닫기
+    closeModal.addEventListener("click", () => {
+        modal.style.display = "none";
+        resetModal();
+    });
 
-        confirmedSubjectsContainer.innerHTML = ''; // 기존 버튼 초기화
+    // 필수 체크박스에 따른 기한 활성화
+    mandatoryCheckbox.addEventListener("change", () => {
+        dueDateInput.disabled = !mandatoryCheckbox.checked;
+    });
 
-        if (!confirmedTimetable || confirmedTimetable.index == null) {
-            confirmedSubjectsContainer.innerHTML = '<p>확정된 시간표가 없습니다.</p>';
-            return;
-        }
-
-        const confirmedIndex = confirmedTimetable.index;
-        const confirmedTimetableData = savedTimetables[confirmedIndex];
-
-        if (!confirmedTimetableData || confirmedTimetableData.length === 0) {
-            confirmedSubjectsContainer.innerHTML = '<p>확정된 시간표에 과목이 없습니다.</p>';
-            return;
-        }
-
-        // 과목명을 중복 없이 수집
-        const uniqueSubjects = Array.from(new Set(confirmedTimetableData.map(subject => subject.courseName)));
-
-        // 과목명으로 버튼 생성
-        uniqueSubjects.forEach(courseName => {
-            const subjectButton = document.createElement('button');
-            subjectButton.textContent = courseName; // 과목명 표시
-            subjectButton.className = 'subject-button';
-            subjectButton.addEventListener('click', () => {
-                console.log(`Clicked on subject: ${courseName}`);
-                // 필요한 추가 동작을 이곳에 작성
-            });
-            confirmedSubjectsContainer.appendChild(subjectButton);
-        });
-    }
 
     function renderCalendar(year, month) {
-        // 월 이름 및 연도 표시
         currentMonthLabel.textContent = `${year}년 ${month + 1}월`;
 
-        // 첫 번째 날 및 마지막 날 계산
         const firstDayOfMonth = new Date(year, month, 1);
         const lastDayOfMonth = new Date(year, month + 1, 0);
 
-        // 첫 번째 날의 요일 계산 (0: 월요일, ..., 6: 일요일)
         let startDay = firstDayOfMonth.getDay();
         startDay = startDay === 0 ? 6 : startDay - 1; // 월요일 시작으로 변환
 
-        // 달력 날짜 초기화
-        calendarDates.innerHTML = '';
+        calendarDates.innerHTML = "";
 
-        // 빈 칸 채우기 (첫 번째 주 앞에 필요한 빈 셀 추가)
+        // 빈 칸 채우기
         for (let i = 0; i < startDay; i++) {
-            const emptyCell = document.createElement('div');
-            emptyCell.classList.add('empty');
+            const emptyCell = document.createElement("div");
+            emptyCell.classList.add("empty");
             calendarDates.appendChild(emptyCell);
         }
 
         // 날짜 채우기
         for (let date = 1; date <= lastDayOfMonth.getDate(); date++) {
-            const dateCell = document.createElement('div');
+            const dateCell = document.createElement("div");
             dateCell.textContent = date;
 
-            const dayOfWeek = (startDay + date - 1) % 7;
-
-            // 일요일 및 토요일 색상 적용
-            if (dayOfWeek === 5) {
-                dateCell.classList.add('saturday'); // 토요일
-            } else if (dayOfWeek === 6) {
-                dateCell.classList.add('sunday'); // 일요일
-            }
-
-            // 날짜 클릭 이벤트 추가
-            dateCell.addEventListener('click', function () {
-                // 이전 선택된 날짜의 하이라이트 제거
-                if (selectedDate) {
-                    selectedDate.classList.remove('highlighted');
+            // 클릭 이벤트 추가
+            dateCell.addEventListener("click", function () {
+                // 이전 선택된 날짜 초기화
+                const highlightedDate = calendarDates.querySelector(".highlighted");
+                if (highlightedDate) {
+                    highlightedDate.classList.remove("highlighted");
                 }
 
-                // 새로운 선택된 날짜에 하이라이트 적용
-                selectedDate = dateCell;
-                dateCell.classList.add('highlighted');
-                console.log(`Selected date: ${year}-${month + 1}-${date}`);
+                // 현재 선택된 날짜 하이라이트 추가
+                selectedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
+                dateCell.classList.add("highlighted");
+                console.log(`Selected date: ${selectedDate}`);
             });
 
             calendarDates.appendChild(dateCell);
         }
     }
 
-    // 이전 및 다음 버튼 이벤트 리스너 추가
-    prevMonthButton.addEventListener('click', function () {
+    prevMonthButton.addEventListener("click", function () {
         currentMonth--;
         if (currentMonth < 0) {
             currentMonth = 11;
@@ -112,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCalendar(currentYear, currentMonth);
     });
 
-    nextMonthButton.addEventListener('click', function () {
+    nextMonthButton.addEventListener("click", function () {
         currentMonth++;
         if (currentMonth > 11) {
             currentMonth = 0;
@@ -121,7 +97,119 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCalendar(currentYear, currentMonth);
     });
 
-    // 현재 월 달력 렌더링
+    // 강의 버튼 생성 및 클릭 처리
+    function populateCourseButtons() {
+        courseButtonsContainer.innerHTML = ""; // 기존 버튼 제거
+        const confirmedTimetable = JSON.parse(localStorage.getItem("confirmedTimetable"));
+        const savedTimetables = JSON.parse(localStorage.getItem("savedTimetables")) || [];
+        const courseNames = new Set();
+
+        if (confirmedTimetable) {
+            const timetableIndex = confirmedTimetable.index;
+            const courses = savedTimetables[timetableIndex] || [];
+
+            courses.forEach((course) => {
+                courseNames.add(course.courseName);
+            });
+        }
+
+        courseNames.forEach((courseName) => {
+            const button = document.createElement("button");
+            button.textContent = courseName;
+            button.className = "subject-button";
+
+            // 버튼 클릭 이벤트
+            button.addEventListener("click", () => {
+                // 기존 선택된 버튼 초기화
+                const previouslySelected = courseButtonsContainer.querySelector(".subject-button.selected");
+                if (previouslySelected) {
+                    previouslySelected.classList.remove("selected");
+                }
+
+                // 현재 버튼 선택
+                button.classList.add("selected");
+                selectedCourseName = courseName; // 강의명 저장
+                console.log(`Selected course: ${selectedCourseName}`);
+            });
+
+            courseButtonsContainer.appendChild(button);
+        });
+    }
+
+    // 저장 버튼 클릭 시
+    saveTodoButton.addEventListener("click", async () => {
+        if (!selectedDate) {
+            alert("날짜를 선택하세요.");
+            return;
+        }
+
+        if (!selectedCourseName) {
+            alert("강의를 선택하세요.");
+            return;
+        }
+
+        const taskName = taskNameInput.value.trim();
+        const isMandatory = mandatoryCheckbox.checked;
+        const dueDate = isMandatory ? dueDateInput.value : null;
+
+        if (!taskName) {
+            alert("할 일을 입력하세요.");
+            return;
+        }
+
+        const todoData = {
+            userId: 1, // 현재는 하드코딩된 예시, 로그인 구현 후 수정 필요
+            subjectName: selectedCourseName,
+            taskName: taskName,
+            isMandatory: isMandatory,
+            dueDate: dueDate,
+            taskDate: selectedDate,
+            status: "NO", // 기본 상태
+        };
+
+        try {
+            const response = await fetch("http://localhost:8080/api/todos", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(todoData),
+            });
+
+            if (!response.ok) {
+                throw new Error("할 일을 저장하지 못했습니다.");
+            }
+
+            alert("할 일이 저장되었습니다.");
+            modal.style.display = "none"; // 모달창 닫기
+            resetModal(); // 모달 초기화
+        } catch (error) {
+            console.error(error.message);
+            alert("할 일을 저장하는 데 문제가 발생했습니다.");
+        }
+    });
+
+    // 초기화 함수
+    function resetModal() {
+        selectedDate = null;
+        selectedCourseName = null;
+        taskNameInput.value = "";
+        mandatoryCheckbox.checked = false;
+        dueDateInput.value = "";
+        dueDateInput.disabled = true;
+
+        const highlightedDate = calendarDates.querySelector(".highlighted");
+        if (highlightedDate) {
+            highlightedDate.classList.remove("highlighted");
+        }
+
+        const selectedButton = courseButtonsContainer.querySelector(".subject-button.selected");
+        if (selectedButton) {
+            selectedButton.classList.remove("selected");
+        }
+    }
+
+    // 초기 렌더링
     renderCalendar(currentYear, currentMonth);
-    loadConfirmedSubjects(); // 확정된 과목 로드
+    populateCourseButtons(); // 강의 버튼 생성
 });

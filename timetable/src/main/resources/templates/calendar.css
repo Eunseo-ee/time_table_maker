@@ -1,6 +1,5 @@
 main {
     display: flex; /* 플렉스 컨테이너로 설정 */
-    justify-content: space-between; /* 두 요소 사이에 공간 분배 */
     align-items: flex-start; /* 요소들을 위쪽 정렬 */
     padding: 20px; /* 여백 추가 */
     gap: 20px; /* 요소 간의 간격 */
@@ -25,11 +24,10 @@ main {
 
 #todo {
     flex: 2;
-    max-width: 70%; /* 최대 너비 제한 */
-    min-width: 60%; /* 최소 너비 설정 */
+    max-width: 30%; /* 최대 너비 제한 */
+    min-width: 20%; /* 최소 너비 설정 */
     display: flex;
-    align-items: center;
-    padding: 10px;
+    align-items: start;
     justify-content: flex-start; /* 왼쪽 정렬 */
     position: relative;
 }
@@ -128,6 +126,7 @@ main {
 }
 
 .addTodo {
+    position: relative;
     background-color: #f0f0f0;
     border: 1px solid #fafafa;
     border-radius: 5px;
