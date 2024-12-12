@@ -10,6 +10,23 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!response.ok) throw new Error("할일 목록을 가져올 수 없습니다.");
             const todos = await response.json();
             renderTodos(todos);
+            // 체크박스 상태 업데이트
+            todos.forEach(todo => {
+                const checkBox = document.querySelector(`.todo-check[data-id="${todo.id}"]`);
+                const status = checkBox.dataset.status;
+                if (checkBox) {
+                    checkBox.className = "todo-check"; // 기존 클래스 초기화
+                    if (status === "clear") {
+                        checkBox.classList.add("todo-clear");
+                    } else if (status === "notdone") {
+                        checkBox.classList.add("todo-notdone");
+                    } else if (status === "no") {
+                        checkBox.classList.add("todo-no");
+                    } else {
+                        checkBox.classList.add("empty"); // 빈 상태
+                    }
+                }
+            });
         } catch (error) {
             console.error(error.message);
         }
@@ -71,21 +88,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 체크박스 상태 업데이트
     function updateCheckBoxState(checkBox, status) {
-        checkBox.dataset.status = status;
-        checkBox.className = "todo-check"; // 기존 클래스 초기화
+        checkBox.dataset.status = status; // 상태를 데이터 속성으로 저장
+        checkBox.className = "todo-check"; // 기본 클래스 초기화
         if (status === "CLEAR") {
             checkBox.classList.add("todo-clear");
-            checkBox.textContent = "O";
         } else if (status === "NOTDONE") {
             checkBox.classList.add("todo-notdone");
-            checkBox.textContent = "△";
         } else if (status === "NO") {
             checkBox.classList.add("todo-no");
-            checkBox.textContent = "X";
         } else {
-            checkBox.textContent = ""; // 빈 상태
+            checkBox.classList.add("empty"); // 빈 상태
         }
     }
+
 
     // 서버에 상태 업데이트
     async function updateTodoStatus(id, status) {

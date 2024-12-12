@@ -38,8 +38,8 @@ public class Todo {
     private LocalDate taskDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "enum('clear','no','notdone') default 'no'")
-    private Status status = Status.NO; // 기본값
+    @Column(name = "status", nullable = false, columnDefinition = "ENUM('CLEAR', 'NO', 'NOTDONE', 'EMPTY') DEFAULT 'EMPTY'")
+    private Status status = Status.EMPTY; // 기본값
 
     @Column(name = "is_mandatory", nullable = false)
     private Boolean isMandatory = false; // 기본값
@@ -54,7 +54,8 @@ public class Todo {
     public enum Status {
         NO("no"),
         CLEAR("clear"),
-        NOTDONE("notdone");
+        NOTDONE("notdone"),
+        EMPTY("empty");
 
         private final String value;
 

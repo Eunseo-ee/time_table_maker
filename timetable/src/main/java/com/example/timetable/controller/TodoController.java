@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -32,6 +33,19 @@ public class TodoController {
         Todo createdTodo = todoService.createTodo(todo);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTodo);
     }
+
+    @GetMapping
+    public List<Todo> getAllTodos() {
+        return todoService.getAllTodos();
+    }
+
+    @PatchMapping("/api/todos/{id}")
+    public ResponseEntity<?> updateTodoStatus(@PathVariable Long id, @RequestBody Map<String, String> updates) {
+        String status = updates.get("status");
+        todoService.updateStatus(id, status);
+        return ResponseEntity.ok().build();
+    }
+
 
     // 사용자별 할일 조회
     @GetMapping("/user/{userId}")

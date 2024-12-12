@@ -34,6 +34,10 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
+    public List<Todo> getAllTodos() {
+        return todoRepository.findAll();
+    }
+
     // 할일 업데이트
     public Todo updateTodoStatus(Long id, Todo.Status status) {
         Todo todo = todoRepository.findById(id)
@@ -41,6 +45,14 @@ public class TodoService {
         todo.setStatus(status);
         return todoRepository.save(todo);
     }
+
+    public void updateStatus(Long id, String status) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Todo not found"));
+        todo.setStatus(Todo.Status.valueOf(status.toUpperCase())); // Enum 변환
+        todoRepository.save(todo);
+    }
+
 
     // 할일 삭제
     public void deleteTodoById(Long id) {

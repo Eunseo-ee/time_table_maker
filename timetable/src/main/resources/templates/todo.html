@@ -7,9 +7,14 @@
   <link rel="stylesheet" href="calendar.css" />
   <link rel="stylesheet" href="calendar_modal.css" />
   <link rel="stylesheet" href="todolist.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
   <title>TODO</title>
   <link rel="icon" href="고래.jpg">
   <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif; /* Google Fonts에서 불러온 글씨체 */
+      font-weight: 500;
+    }
     .folded > ul {
       display: none;
     }
@@ -82,21 +87,18 @@
           <!-- 확정된 강의명 버튼 동적으로 추가 -->
         </div>
 
-        <div id="mandatorySection">
-          <label>
-            <input type="checkbox" id="mandatoryCheckbox" />
-            필수
-          </label>
-          <label for="dueDate">기한:</label>
-          <input type="date" id="dueDate" disabled />
-        </div>
-
-        <div id="taskInputSection">
-          <label for="taskName">할 일:</label>
+        <div id="mandatorySection" class="mandatory">
+          <!-- 기한 설정 부분 감싸기 -->
+          <div id="dueDateSection" class="active">
+            <div id="dueDateContainer">
+              <label for="dueDate">기한:</label>
+              <input type="date" id="dueDate" placeholder="YYYY-MM-DD" />
+            </div>
+          </div>
           <input type="text" id="taskName" placeholder="할 일을 입력하세요" />
+          <button id="mandatoryButton">필수</button>
+          <button id="saveTodo">저장</button>
         </div>
-
-        <button id="saveTodo">저장</button>
       </div>
     </div>
   </div>

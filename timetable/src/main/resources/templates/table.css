@@ -18,6 +18,8 @@ main aside form select {
     border: solid 2px #bfbfbf;
     padding: 5px;
     margin-bottom:2%;
+    font-family: 'Noto Sans KR', sans-serif; /* Google Fonts에서 불러온 글씨체 */
+    font-weight: 500;
 }
 
 main aside .current {
@@ -52,6 +54,7 @@ main aside .choice {
     /*padding: 15px;*/
     list-style-type: none;
     color: #bfbfbf;
+
 }
 
 .choice li:hover {
@@ -177,6 +180,8 @@ main aside .choice {
     display: flex;
     justify-content: space-between;
     padding: 0px;
+    font-family: 'Noto Sans KR', sans-serif; /* Google Fonts에서 불러온 글씨체 */
+    font-weight: 500;
 }
 
 .body li div {
@@ -424,7 +429,9 @@ main aside .choice {
     width: 300px;
     height: 50px;
     cursor: pointer;
-    padding-left:3%
+    padding-left:3%;
+    font-family: 'Noto Sans KR', sans-serif; /* Google Fonts에서 불러온 글씨체 */
+    font-weight: 500;
 }
 
 .timetable-button,
@@ -437,10 +444,14 @@ main aside .choice {
     color: #617aa1; /* 링크 스타일 색상 */
     cursor: grabbing;
     font-size: 1rem;
+    font-family: 'Noto Sans KR', sans-serif; /* Google Fonts에서 불러온 글씨체 */
+    font-weight: 500;
 }
 
 .new-timetable-button {
-    margin-left:3%
+    margin-left:3%;
+    font-family: 'Noto Sans KR', sans-serif; /* Google Fonts에서 불러온 글씨체 */
+    font-weight: 500;
 }
 
 .timetable-button:hover,

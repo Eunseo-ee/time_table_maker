@@ -12,13 +12,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 모달창 입력 필드
     const taskNameInput = document.getElementById("taskName"); // 할일 이름 입력 필드
-    const mandatoryCheckbox = document.getElementById("mandatoryCheckbox"); // 필수 여부 체크박스
+    const mandatoryButton = document.getElementById("mandatoryButton"); // 필수 여부 체크박스
     const dueDateInput = document.getElementById("dueDate"); // 기한 입력 필드
+    const dueDateSection = document.getElementById("dueDateSection"); // 기한 입력 섹션
 
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
     let selectedDate = null; // 선택된 날짜를 저장
     let selectedCourseName = null; // 선택된 강의명을 저장
+
+    let isMandatory = false;
 
     // 모달 열기
     addTodoButton.addEventListener("click", () => {
@@ -32,11 +35,31 @@ document.addEventListener("DOMContentLoaded", function () {
         resetModal();
     });
 
-    // 필수 체크박스에 따른 기한 활성화
-    mandatoryCheckbox.addEventListener("change", () => {
-        dueDateInput.disabled = !mandatoryCheckbox.checked;
+    // 저장 버튼 클릭 시
+    saveTodoButton.addEventListener("click", saveTodo);
+
+    // 엔터 키로 저장
+    taskNameInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            saveTodo();
+        }
     });
 
+    // 필수 체크박스에 따른 기한 활성화
+    mandatoryButton.addEventListener("click", () => {
+        isMandatory = !isMandatory; // 상태 토글
+        if (isMandatory) {
+            dueDateSection.style.display = "block"; // 기한 입력 부분 보이기
+            dueDateInput.disabled = false; // 활성화
+            mandatoryButton.textContent = "X"; // 버튼 텍스트 변경
+        } else {
+            dueDateSection.style.display = "none"; // 기한 입력 부분 숨기기
+            dueDateInput.disabled = true; // 비활성화
+            dueDateInput.value = ""; // 값 초기화
+            mandatoryButton.textContent = "필수"; // 버튼 텍스트 변경
+        }
+    });
 
     function renderCalendar(year, month) {
         currentMonthLabel.textContent = `${year}년 ${month + 1}월`;
@@ -136,8 +159,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // 저장 버튼 클릭 시
-    saveTodoButton.addEventListener("click", async () => {
+    // 할 일 저장 함수
+    async function saveTodo() {
         if (!selectedDate) {
             alert("날짜를 선택하세요.");
             return;
@@ -149,7 +172,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const taskName = taskNameInput.value.trim();
-        const isMandatory = mandatoryCheckbox.checked;
         const dueDate = isMandatory ? dueDateInput.value : null;
 
         if (!taskName) {
@@ -158,13 +180,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const todoData = {
-            userId: 1, // 현재는 하드코딩된 예시, 로그인 구현 후 수정 필요
+            userId: 1,
             subjectName: selectedCourseName,
             taskName: taskName,
             isMandatory: isMandatory,
             dueDate: dueDate,
             taskDate: selectedDate,
-            status: "NO", // 기본 상태
+            status: "EMPTY",
         };
 
         try {
@@ -181,22 +203,26 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             alert("할 일이 저장되었습니다.");
-            modal.style.display = "none"; // 모달창 닫기
-            resetModal(); // 모달 초기화
+            modal.style.display = "none";
+            resetModal();
         } catch (error) {
             console.error(error.message);
             alert("할 일을 저장하는 데 문제가 발생했습니다.");
         }
-    });
+    }
+
 
     // 초기화 함수
     function resetModal() {
         selectedDate = null;
         selectedCourseName = null;
         taskNameInput.value = "";
-        mandatoryCheckbox.checked = false;
-        dueDateInput.value = "";
-        dueDateInput.disabled = true;
+
+        isMandatory = false; // 상태 초기화
+        dueDateSection.style.display = "none"; // 기한 입력창 숨기기
+        dueDateInput.disabled = true; // 비활성화
+        dueDateInput.value = ""; // 값 초기화
+        mandatoryButton.textContent = "필수"; // 버튼 텍스트 초기화
 
         const highlightedDate = calendarDates.querySelector(".highlighted");
         if (highlightedDate) {

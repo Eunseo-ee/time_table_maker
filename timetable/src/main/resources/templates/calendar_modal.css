@@ -16,7 +16,7 @@
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 30%;
+    width: 25%;
     border-radius: 8px;
 }
 
@@ -44,7 +44,6 @@
     background-color: #f0f0f0;
     border: none;
     border-radius: 5px;
-    padding: 10px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
 }
@@ -54,4 +53,94 @@
     background-color: #aabfdc !important; /* 중요도 설정 */
     color: ghostwhite;
     font-weight: bold;
+}
+
+#mandatorySection {
+    margin-bottom:5%;
+}
+
+#taskName {
+    width: 70%;
+    margin-top: 5px;
+    padding: 7px 5px 7px 5px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#saveTodo {
+    width: 15%;
+    height: 34px;
+    border-radius: 10px;
+    background-color: rgb(156, 171, 195);
+    font-size: 15px;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#mandatoryButton{
+    width: 10%;
+    height: 34px;
+    padding:1%;
+    border-radius: 10px;
+    background-color: rgb(193, 132, 132);
+    font-size: 15px;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#mandatoryCheckbox:checked {
+    align-items: center; /* 세로 정렬을 가운데로 */
+    background-color: #aabfdc; /* 선택된 상태의 배경색 */
+    border-color: #aabfdc; /* 선택된 상태의 테두리 색상 */
+    border-radius: 4px;
+    content: '✔'; /* 선택된 상태의 체크 표시 */
+    color: white; /* 체크 표시 색상 */
+}
+
+#mandatory-label {
+    align-items: center; /* 세로 정렬을 가운데로 */
+    gap: 8px; /* 체크박스와 텍스트 사이 간격 */
+    font-size: 18px; /* 텍스트 크기 조정 */
+    margin-bottom: 10px;
+    color: #333; /* 텍스트 색상 */
+}
+
+/* 기한 입력 섹션 전체 스타일 */
+#dueDateSection {
+    display: none; /* 기본적으로 숨김 */
+    margin-bottom: 2%;
+    border-radius: 8px;
+}
+
+/* "기한" 라벨 */
+#dueDateSection label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px;
+}
+
+/* 날짜 입력 필드 */
+#dueDate {
+    padding: 1%;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    width: 50%;
+    max-width: 300px;
+}
+
+/* 전체 정렬을 위한 컨테이너 */
+#dueDateContainer {
+    margin-left:1%;
+    flex-direction: column;
+    width: 100%;
 }

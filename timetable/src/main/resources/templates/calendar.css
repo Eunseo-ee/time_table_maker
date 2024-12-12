@@ -10,7 +10,6 @@ main {
     max-width: 20%; /* 최대 너비 제한 */
     min-width: 300px; /* 최소 너비 설정 */
     overflow: hidden;
-    font-family: Arial, sans-serif;
     /*!*background-color: #e9f0fb;*!*/
 
     /*!* 화면에서 왼쪽 가운데로 위치 *!*/
@@ -20,6 +19,8 @@ main {
     /*transform: translateY(-50%); !* 세로 가운데로 보정 *!*/
     margin-top:5%;
     margin-left: 20%;
+    font-family: 'Noto Sans KR', sans-serif; /* Google Fonts에서 불러온 글씨체 */
+    font-weight: 500;
 }
 
 #todo {
@@ -67,8 +68,8 @@ main {
 
 .calendar-dates div {
     padding: 10px;
-    padding-top: 30%;
-    padding-bottom: 30%;
+    padding-top: 27%;
+    padding-bottom: 27%;
     cursor: pointer;
 }
 
