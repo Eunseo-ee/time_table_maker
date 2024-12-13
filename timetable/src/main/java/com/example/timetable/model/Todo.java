@@ -44,6 +44,9 @@ public class Todo {
     @Column(name = "is_mandatory", nullable = false)
     private Boolean isMandatory = false; // 기본값
 
+    @Column(name = "link", nullable = true)
+    private String link; // 기본값
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 

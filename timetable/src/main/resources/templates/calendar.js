@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isMandatory) {
             dueDateSection.style.display = "block"; // 기한 입력 부분 보이기
             dueDateInput.disabled = false; // 활성화
-            mandatoryButton.textContent = "X"; // 버튼 텍스트 변경
+            mandatoryButton.textContent = "OFF"; // 버튼 텍스트 변경
         } else {
             dueDateSection.style.display = "none"; // 기한 입력 부분 숨기기
             dueDateInput.disabled = true; // 비활성화

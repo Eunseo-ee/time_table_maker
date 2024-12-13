@@ -53,9 +53,25 @@ public class TodoService {
         todoRepository.save(todo);
     }
 
+    // 할 일 수정
+    public Todo updateTodo(Long id, Todo updatedTodo) {
+        return todoRepository.findById(id)
+                .map(existingTodo -> {
+                    existingTodo.setTaskName(updatedTodo.getTaskName());
+                    existingTodo.setStatus(updatedTodo.getStatus());
+                    existingTodo.setDueDate(updatedTodo.getDueDate());
+                    return todoRepository.save(existingTodo);
+                }).orElseThrow(() -> new RuntimeException("Todo not found"));
+    }
 
-    // 할일 삭제
+    // 할 일 삭제
     public void deleteTodoById(Long id) {
         todoRepository.deleteById(id);
+    }
+
+    public void updateTodoLink(Long id, String link) {
+        Todo todo = todoRepository.findById(id).orElseThrow(() -> new RuntimeException("할일을 찾을 수 없습니다."));
+        todo.setLink(link);
+        todoRepository.save(todo);
     }
 }

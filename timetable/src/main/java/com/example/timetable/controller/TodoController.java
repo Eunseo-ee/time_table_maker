@@ -68,10 +68,23 @@ public class TodoController {
     }
 
 
-    // 할일 삭제
+    // 할 일 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<Todo> updateTodo(@PathVariable Long id, @RequestBody Todo updatedTodo) {
+        return ResponseEntity.ok(todoService.updateTodo(id, updatedTodo));
+    }
+
+    // 할 일 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTodoById(@PathVariable Long id) {
         todoService.deleteTodoById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/todos/{id}/link")
+    public ResponseEntity<Void> updateTodoLink(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String link = request.get("link");
+        todoService.updateTodoLink(id, link);
+        return ResponseEntity.ok().build();
     }
 }
