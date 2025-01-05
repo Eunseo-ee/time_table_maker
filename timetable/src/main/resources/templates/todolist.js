@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch("http://localhost:8080/api/todos/user/1"); // userId는 예시
             if (!response.ok) throw new Error("할일 목록을 가져올 수 없습니다.");
             const todos = await response.json();
+            console.log("Todos data:", todos);
             renderTodos(todos);
             // 체크박스 상태 업데이트
             todos.forEach(todo => {
@@ -33,39 +34,92 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 링크 버튼 렌더링 함수
-    async function renderLinkButtons(todoListContainer) {
-        const todos = await fetchTodos(); // fetchTodos.js에서 데이터 가져오기
+    async function renderLinkButtons(todoListContainer, todos) {
 
         todos.forEach((todo) => {
-            const linkButton = document.createElement("button");
-            linkButton.classList.add("link-btn");
-            linkButton.textContent = "🖇️";
+            const todoItem = todoListContainer.querySelector(`.todo-item[data-id="${todo.id}"]`);
 
-            // 링크 버튼 클릭 이벤트 처리
-            linkButton.addEventListener("click", async () => {
-                if (!todo.link || todo.link.trim() === "") {
-                    // 링크가 없으면 입력창 표시
-                    const linkInput = prompt("사이트 주소를 입력하세요:");
-                    if (linkInput) {
-                        todo.link = linkInput; // 로컬 업데이트
-                        await updateTodoLink(todo.id, linkInput); // 서버 업데이트
-                        alert("주소가 저장되었습니다.");
-                    }
-                } else {
-                    // 링크가 있으면 새 탭에서 열기
-                    window.open(todo.link, "_blank");
-                }
-            });
-
-            // 링크가 이미 저장된 경우 스타일 변경
-            if (todo.link && todo.link.trim() !== "") {
-                linkButton.classList.add("has-link"); // 스타일 클래스 추가
+            if (!todoItem) {
+                console.log(`Todo item with ID ${todo.id} not found in the DOM`);
+                return;
+            }
+            // 이미 존재하는 링크 버튼이 있다면 제거
+            const existingLinkButton = todoItem.querySelector(".link-btn");
+            if (existingLinkButton) {
+                existingLinkButton.remove();
             }
 
-            // 할일 목록 요소에 버튼 추가
-            const todoItem = todoListContainer.querySelector(`.todo-item[data-id="${todo.id}"]`);
-            if (todoItem) {
+            // 새로운 링크 버튼 생성
+            try {
+                const linkButton = document.createElement("button");
+                linkButton.classList.add("link-btn");
+                linkButton.textContent = "🖇️";
+
+                // 링크 버튼 클릭 이벤트 처리
+                linkButton.addEventListener("click", async (event) => {
+                    event.stopPropagation(); // 이벤트 전파 방지
+
+                    if (!todo.link || todo.link.trim() === "") {
+                        // 링크가 없으면 입력창 표시
+                        const linkInput = prompt("사이트 주소를 입력하세요:");
+                        if (linkInput) {
+                            const formattedLink = formatLink(linkInput); // URL 포맷팅
+                            todo.link = formattedLink; // 로컬 업데이트
+
+                            try {
+                                await updateTodoLink(todo.id, formattedLink); // 서버 업데이트
+                                alert("주소가 저장되었습니다.");
+                            } catch (error) {
+                                console.error("Failed to update link:", error);
+                                alert("주소 저장 중 문제가 발생했습니다.");
+                            }
+                        }
+                    } else {
+                        // 링크가 있으면 새 탭에서 열기
+                        window.open(todo.link, "_blank");
+                    }
+                });
+
+                // 링크가 이미 저장된 경우 스타일 변경
+                if (todo.link && todo.link.trim() !== "") {
+                    linkButton.classList.add("has-link");
+                }
+
+                // 링크 버튼 우클릭 이벤트 처리
+                linkButton.addEventListener("contextmenu", async (event) => {
+                    event.preventDefault(); // 우클릭 기본 메뉴 방지
+
+                    const confirmDelete = confirm("이 링크를 삭제하시겠습니까?");
+                    if (confirmDelete) {
+                        try {
+                            // 서버에 링크 삭제 요청
+                            const response = await fetch(`http://localhost:8080/api/todos/${todo.id}/link`, {
+                                method: "DELETE",
+                            });
+
+                            if (!response.ok) {
+                                throw new Error("링크를 삭제하지 못했습니다.");
+                            }
+
+                            alert("링크가 삭제되었습니다.");
+                            todo.link = null; // 로컬 데이터에서도 링크 삭제
+                            linkButton.classList.remove("has-link"); // 버튼 스타일 초기화
+                        } catch (error) {
+                            console.error("링크 삭제 중 오류 발생:", error);
+                            alert("링크 삭제 중 문제가 발생했습니다.");
+                        }
+                    }
+                });
+
+                // 서버 요청 후 UI 업데이트
+                if (!todo.link) {
+                    linkButton.classList.remove("has-link"); // 링크가 없으면 스타일 제거
+                }
+
+                // 할일 목록 요소에 버튼 추가
                 todoItem.appendChild(linkButton);
+            } catch (error) {
+                console.error("Error creating link button:", error);
             }
         });
     }
@@ -89,12 +143,16 @@ document.addEventListener("DOMContentLoaded", function () {
             subjectTodos.forEach((todo) => {
                 const li = document.createElement("li");
                 li.classList.add("todo-item");
+                li.dataset.id = todo.id; // 여기에서 제대로 설정되는지 확인
 
                 // 체크박스 추가
                 const checkBox = document.createElement("div");
                 checkBox.classList.add("todo-check");
                 checkBox.dataset.id = todo.id; // 할일 ID 저장
+
+                li.appendChild(checkBox);
                 updateCheckBoxState(checkBox, todo.status); // 저장된 상태로 체크박스 초기화
+                todoListContainer.appendChild(li);
 
                 checkBox.addEventListener("click", async function () {
                     const newStatus = cycleStatus(checkBox);
@@ -141,11 +199,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 optionsMenu.appendChild(editButton);
                 optionsMenu.appendChild(deleteButton);
 
-                // "🖇️" 버튼 클릭 시 메뉴 표시/숨김
-                linkButton.addEventListener("click", (event) => {
-                    event.stopPropagation(); // 클릭 이벤트 전파 방지
-                    optionsMenu.classList.toggle("active");
-                });
+                // //"🖇️" 버튼 클릭 시 메뉴 표시/숨김
+                // linkButton.addEventListener("click", (event) => {
+                //     console.log("linkButton Clicked")
+                //     event.stopPropagation(); // 클릭 이벤트 전파 방지
+                //     optionsMenu.classList.toggle("active");
+                // });
 
                 // "..." 버튼 클릭 시 메뉴 표시/숨김
                 optionsButton.addEventListener("click", (event) => {
@@ -160,7 +219,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
 
-                li.appendChild(checkBox);
                 li.appendChild(taskText);
                 li.appendChild(linkButton);
                 li.appendChild(optionsButton);
@@ -173,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
             todoListContainer.appendChild(section);
         });
         // 링크 버튼 렌더링 호출
-        renderLinkButtons(todoListContainer);
+        renderLinkButtons(todoListContainer,todos);
     }
 
     // 수정 모달 열기

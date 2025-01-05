@@ -144,3 +144,8 @@
 .options-menu.active {
     display: flex;
 }
+
+.has-link {
+    background-color: #c9d8ec;
+    border-radius: 10px;
+}

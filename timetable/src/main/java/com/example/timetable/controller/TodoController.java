@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -81,10 +82,15 @@ public class TodoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/todos/{id}/link")
-    public ResponseEntity<Void> updateTodoLink(@PathVariable Long id, @RequestBody Map<String, String> request) {
+    @PutMapping("/{id}/link")
+    public void updateLink(@PathVariable Long id, @RequestBody Map<String, String> request) {
         String link = request.get("link");
-        todoService.updateTodoLink(id, link);
-        return ResponseEntity.ok().build();
+        todoService.updateLink(id, link);
+    }
+
+    @DeleteMapping("/{id}/link")
+    public ResponseEntity<Void> clearLink(@PathVariable Long id) {
+        todoService.clearLink(id);
+        return ResponseEntity.noContent().build();
     }
 }

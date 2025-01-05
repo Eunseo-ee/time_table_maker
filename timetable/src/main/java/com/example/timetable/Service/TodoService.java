@@ -3,9 +3,11 @@ package com.example.timetable.Service;
 import com.example.timetable.model.Todo;
 import com.example.timetable.repository.TodoRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,9 +71,23 @@ public class TodoService {
         todoRepository.deleteById(id);
     }
 
-    public void updateTodoLink(Long id, String link) {
-        Todo todo = todoRepository.findById(id).orElseThrow(() -> new RuntimeException("할일을 찾을 수 없습니다."));
-        todo.setLink(link);
-        todoRepository.save(todo);
+    public void updateLink(Long id, String link) {
+        Optional<Todo> todoOptional = todoRepository.findById(id);
+        if (todoOptional.isPresent()) {
+            Todo todo = todoOptional.get();
+            todo.setLink(link);
+            todoRepository.save(todo);
+        } else {
+            throw new RuntimeException("Todo not found with ID: " + id);
+        }
+    }
+
+    @Transactional // 트랜잭션 활성화
+    public void clearLink(Long id) {
+        if (todoRepository.existsById(id)) {
+            todoRepository.clearLinkById(id);
+        } else {
+            throw new RuntimeException("Todo not found with ID: " + id);
+        }
     }
 }
