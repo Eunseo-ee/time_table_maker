@@ -1,3 +1,5 @@
+let selectedDate=null;
+
 document.addEventListener("DOMContentLoaded", function () {
     const calendarDates = document.getElementById("calendarDates");
     const currentMonthLabel = document.getElementById("currentMonth");
@@ -8,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const courseButtonsContainer = document.getElementById("courseButtons"); // 강의 버튼 컨테이너
 
     const addTodoButton = document.getElementById("addTodo");
+    const totalTodoButton = document.getElementById("totalTodo");
     const closeModal = document.getElementById("closeModal");
 
     // 모달창 입력 필드
@@ -18,7 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
-    let selectedDate = null; // 선택된 날짜를 저장
     let selectedCourseName = null; // 선택된 강의명을 저장
 
     let isMandatory = false;
@@ -33,6 +35,14 @@ document.addEventListener("DOMContentLoaded", function () {
     closeModal.addEventListener("click", () => {
         modal.style.display = "none";
         resetModal();
+    });
+
+    // 전체 대답
+    totalTodoButton.addEventListener("click", () => {
+        selectedDate = null;
+        const highlightedDate = calendarDates.querySelector(".highlighted");
+        highlightedDate.classList.remove("highlighted");
+        fetchTodos()
     });
 
     // 저장 버튼 클릭 시
@@ -96,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 selectedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
                 dateCell.classList.add("highlighted");
                 console.log(`Selected date: ${selectedDate}`);
+                fetchTodos();
             });
 
             calendarDates.appendChild(dateCell);

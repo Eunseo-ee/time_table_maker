@@ -128,12 +128,15 @@ main {
 
 .addTodo {
     position: relative;
+    height:5%;
     background-color: #f0f0f0;
     border: 1px solid #fafafa;
     border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-family: 'Noto Sans KR', sans-serif; /* Google Fonts에서 불러온 글씨체 */
+    font-weight: 700;
 }
 
 .addTodo:hover {
