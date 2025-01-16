@@ -67,10 +67,17 @@ main {
 }
 
 .calendar-dates div {
-    padding: 10px;
-    padding-top: 27%;
-    padding-bottom: 27%;
+    width: 50%; /* 칸의 크기를 조절합니다 (7열 기준) */
+    aspect-ratio: 1; /* 정사각형 비율 유지 */
+    display: flex; /* 가운데 정렬을 위한 플렉스 박스 */
+    justify-content: center; /* 가로 가운데 정렬 */
+    align-items: center; /* 세로 가운데 정렬 */
+    position: relative; /* 빨간 점 위치를 조정하기 위한 기준 설정 */
     cursor: pointer;
+    margin: 10px; /* 칸 사이의 여백 조정 */
+    border-radius: 50%; /* 정사각형을 선택 시 원형 배경으로 변경 가능 */
+    transition: background-color 0.3s, transform 0.2s; /* 배경색 및 애니메이션 효과 */
+
 }
 
 .calendar-dates div:hover {
@@ -141,4 +148,9 @@ main {
 
 .addTodo:hover {
     background-color: #aabfdc;
+}
+
+.calendar-dates div.has-due-date {
+    color: #f64545; /* 텍스트를 빨간색으로 변경 */
+    font-weight: bold; /* 필요 시 글씨를 굵게 */
 }

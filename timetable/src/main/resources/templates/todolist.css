@@ -57,14 +57,14 @@
 
 .todo-item {
     display: flex;
-    align-items: center;
+    /*align-items: center;*/
     margin-bottom: 10px;
 }
 
 .todo-check {
     width: 18px; /* 기존 24px에서 줄임 */
     height: 18px;
-    margin-right: 10px;
+    margin-top:5px;
     cursor: pointer;
     display: inline-block;
     background-size: contain; /* 이미지가 컨테이너에 맞게 축소 */
@@ -102,6 +102,7 @@
 /* "..." 버튼 스타일 */
 .options-btn {
     background: none;
+    height:100%;
     border: none;
     font-size: 18px;
     cursor: pointer;
@@ -110,6 +111,7 @@
 
 .link-btn {
     background: none;
+    height:100%;
     border: none;
     font-size: 18px;
     cursor: pointer;
@@ -148,6 +150,7 @@
 
 .has-link {
     background-color: #c9d8ec;
+    height:100%;
     border-radius: 10px;
 }
 
@@ -158,4 +161,22 @@ p{
     padding-bottom:200%;
     padding-left:100%;
     font-size:15px;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column; /* 수직 배치 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+    margin-left: 10px; /* 체크박스와 간격 추가 */
+}
+
+.task-text {
+    font-size: 1em; /* 기본 크기 */
+    font-weight: bold; /* 할일 이름 강조 */
+}
+
+.due-date {
+    font-size: 0.8em; /* 할일보다 조금 작은 크기 */
+    color: #fd3131; /* 빨간색 */
+    margin-top: 2px; /* 위아래 간격 추가 */
 }

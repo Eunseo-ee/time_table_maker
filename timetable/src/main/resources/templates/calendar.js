@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let isMandatory = false;
 
+    fetchDueDates();
+    renderCalendar(currentYear, currentMonth); // 캘린더 렌더링
+
     // 모달 열기
     addTodoButton.addEventListener("click", () => {
         populateCourseButtons(); // 강의 버튼 추가
@@ -93,6 +96,14 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let date = 1; date <= lastDayOfMonth.getDate(); date++) {
             const dateCell = document.createElement("div");
             dateCell.textContent = date;
+
+            // 현재 날짜의 YYYY-MM-DD 형식 계산
+            const currentDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
+
+            // 빨간 점 추가
+            if (dueDates.includes(currentDate)) {
+                dateCell.classList.add("has-due-date"); // 해당 날짜에 클래스 추가
+            }
 
             // 클릭 이벤트 추가
             dateCell.addEventListener("click", function () {

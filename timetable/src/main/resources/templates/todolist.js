@@ -175,9 +175,25 @@ function renderTodos(todos) {
                 await updateTodoStatus(todo.id, newStatus);
             });
 
+            // 텍스트 컨테이너 생성
+            const textContainer = document.createElement("div");
+            textContainer.classList.add("text-container"); // 스타일을 위한 클래스 추가
+
             // 할일 이름 추가
             const taskText = document.createElement("span");
             taskText.textContent = todo.taskName;
+            taskText.classList.add("task-text"); // 스타일을 위한 클래스 추가
+            textContainer.appendChild(taskText);
+
+            // dueDate 추가
+            if (todo.dueDate) {
+                const dueDateText = document.createElement("span");
+                dueDateText.textContent = `→ ${todo.dueDate}`;
+                dueDateText.classList.add("due-date"); // 스타일을 위한 클래스 추가
+                textContainer.appendChild(dueDateText);
+            }
+
+            li.appendChild(textContainer);
 
             // "🖇️" 버튼 추가
             const linkButton = document.createElement("button");
@@ -215,13 +231,6 @@ function renderTodos(todos) {
             optionsMenu.appendChild(editButton);
             optionsMenu.appendChild(deleteButton);
 
-            // //"🖇️" 버튼 클릭 시 메뉴 표시/숨김
-            // linkButton.addEventListener("click", (event) => {
-            //     console.log("linkButton Clicked")
-            //     event.stopPropagation(); // 클릭 이벤트 전파 방지
-            //     optionsMenu.classList.toggle("active");
-            // });
-
             // "..." 버튼 클릭 시 메뉴 표시/숨김
             optionsButton.addEventListener("click", (event) => {
                 event.stopPropagation(); // 클릭 이벤트 전파 방지
@@ -235,7 +244,6 @@ function renderTodos(todos) {
                 }
             });
 
-            li.appendChild(taskText);
             li.appendChild(linkButton);
             li.appendChild(optionsButton);
             li.appendChild(optionsMenu);
@@ -408,4 +416,22 @@ function formatLink(link) {
         return `https://${link}`;
     }
     return link;
+}
+
+let dueDates = []; // due_date를 저장할 배열
+
+async function fetchDueDates() {
+    try {
+        const response = await fetch("http://localhost:8080/api/todos/user/1");
+        if (!response.ok) throw new Error("due_date 목록을 가져올 수 없습니다.");
+        const todos = await response.json();
+
+        // 모든 due_date를 배열에 저장
+        dueDates = todos
+            .filter(todo => todo.dueDate && todo.status !== "clear") // due_date가 있는 할일만 필터링
+            .map(todo => new Date(todo.dueDate).toISOString().slice(0, 10)); // YYYY-MM-DD 형식으로 저장
+        console.log("Fetched due_dates:", dueDates);
+    } catch (error) {
+        console.error("Error fetching due_date:", error);
+    }
 }
