@@ -10,12 +10,19 @@ async function fetchTodos() {
         console.log("Todos data:", todos);
 
         renderTodos(todos);
-        // 체크박스 상태 업데이트
-        todos.forEach(todo => {
-            const checkBox = document.querySelector(`.todo-check[data-id="${todo.id}"]`);
-            const status = checkBox.dataset.status;
-            if (checkBox) {
+
+        // DOM이 렌더링된 후 실행하도록 setTimeout 추가
+        setTimeout(() => {
+            todos.forEach(todo => {
+                const checkBox = document.querySelector(`.todo-check[data-id="${todo.id}"]`);
+
+                if (!checkBox) {
+                    return; // checkBox가 없으면 건너뛴다.
+                }
+
+                const status = todo.status; // 데이터에서 상태 가져오기
                 checkBox.className = "todo-check"; // 기존 클래스 초기화
+
                 if (status === "clear") {
                     checkBox.classList.add("todo-clear");
                 } else if (status === "notdone") {
@@ -25,12 +32,14 @@ async function fetchTodos() {
                 } else {
                     checkBox.classList.add("empty"); // 빈 상태
                 }
-            }
-        });
+            });
+        }, 50); // 50ms 후 실행 (렌더링이 완료되도록 약간의 딜레이 추가)
+
     } catch (error) {
-        console.error(error.message);
+        console.error("Error fetching todos:", error);
     }
 }
+
 
 // 링크 버튼 렌더링 함수
 async function renderLinkButtons(todoListContainer, todos) {
@@ -139,6 +148,7 @@ function renderTodos(todos) {
     if (filteredTodos.length === 0) {
         const noTodoMessage = document.createElement("p");
         noTodoMessage.textContent = "노는 날인가보죠?ㅋ";
+        noTodoMessage.id = "noTodoMessage"; // ID 추가
         noTodoMessage.style.textAlign = "center";
         todoListContainer.appendChild(noTodoMessage);
         return;
