@@ -1,0 +1,71 @@
+main {
+    display: flex; /* 플렉스 컨테이너로 설정 */
+    align-items: flex-start; /* 요소들을 위쪽 정렬 */
+    padding: 20px; /* 여백 추가 */
+    gap: 20px; /* 요소 간의 간격 */
+}
+
+#score_list {
+    flex: 2;
+    /*max-width: 20%; !* 최대 너비 제한 *!*/
+    /*min-width: 300px; !* 최소 너비 설정 *!*/
+    overflow: hidden;
+    /*!*background-color: #e9f0fb;*!*/
+
+    /*!* 화면에서 왼쪽 가운데로 위치 *!*/
+    /*position: absolute;*/
+    /*left: 0; !* 왼쪽 정렬 *!*/
+    /*top: 50%; !* 화면의 세로 중간 *!*/
+    /*transform: translateY(-50%); !* 세로 가운데로 보정 *!*/
+    margin-top:5%;
+    margin-left: 10%;
+    font-family: 'Noto Sans KR', sans-serif; /* Google Fonts에서 불러온 글씨체 */
+    font-weight: 500;
+}
+
+#score_graph {
+    flex: 2;
+    /*max-width: 30%; !* 최대 너비 제한 *!*/
+    /*min-width: 20%; !* 최소 너비 설정 *!*/
+    display: flex;
+    align-items: start;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    position: relative;
+}
+
+.score_table {
+    width: auto;
+    height: 1100px;
+    position: relative;
+    padding: 18px;
+}
+
+.score_input_table {
+    width: calc(100% - 340px);
+    height: auto;
+    float: left;
+    margin-left: 15px;
+    border-collapse: collapse;
+    border-spacing:0px;
+    table-layout: fixed;
+}
+
+.score_input_table .table_head td{
+    height: 1%;
+    border: solid 1px #e6e6e6;
+    text-align: center;
+    background-color: #f2f2f2;
+}
+
+.score_input_table tr {
+    height: 65px;
+    border: solid 0.5px #ffffff;
+    background-color: #f8f8f8;
+}
+
+.score_input_table td {
+    width: 100px; /* 각 셀의 너비 고정 */
+    height: 80px; /* 각 셀의 높이 고정 */
+    border: solid 1px #e6e6e6;
+    text-align: center;
+}
