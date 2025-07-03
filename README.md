@@ -49,3 +49,16 @@
 ### ✅ 투두리스트 페이지
 - 선택된 강의 조합 기반으로 **과제 및 시험 일정 관리**
 - **마감일 설정**, 제출 페이지 링크 등 **할 일 관리 기능**
+
+### 🔎시스템 아키텍처
+![Image](https://github.com/user-attachments/assets/10e279e9-07f5-4200-9bf5-7393f6729234)
+
+### 스크린샷
+- 메인 페이지
+  ![Image](https://github.com/user-attachments/assets/be037773-16e9-46ba-ae16-2fdbaec91028)
+- 메인 페이지 (강의 조회)
+  ![Image](https://github.com/user-attachments/assets/e787e9c7-81aa-4e44-9d74-ebe19541b53c)
+- 시간표 조합 생성 페이지
+  ![Image](https://github.com/user-attachments/assets/30a2daa1-a15f-4a4d-853c-f0d5245de137)
+- 강의별 투두리스트 페이지
+  ![Image](https://github.com/user-attachments/assets/75358088-1c9a-462d-b392-55e92941b2bd)
